@@ -1,0 +1,37 @@
+generated: '2026-07-17'
+method: searched
+source: openapi/agentcard-openapi-original.json + https://docs.agentcard.sh/companies/authentication/oauth + https://mcp.agentcard.sh/.well-known/oauth-authorization-server
+docs: https://docs.agentcard.sh/companies/api/user-authentication
+summary:
+  types: [http, oauth2]
+  http_schemes: [bearer]
+  oauth2_flows: [clientCredentials, authorizationCode]
+schemes:
+- name: platformToken
+  type: http
+  scheme: bearer
+  description: >-
+    Platform access token for the REST v2 API. Mint it via POST /api/v2/oauth/token by
+    exchanging client_id + client_secret (OAuth2 client credentials, RFC 6749 §4.4). Send as
+    Authorization: Bearer <token>. Tokens live one hour; no refresh token on this grant — re-mint.
+  sources: [openapi/agentcard-openapi-original.json]
+- name: connectWithAgentcard
+  type: oauth2
+  flow: authorizationCode
+  pkce: required   # S256, enforced for every client including confidential
+  authorization_server: https://mcp.agentcard.sh
+  authorization_endpoint: https://mcp.agentcard.sh/authorize
+  token_endpoint: https://mcp.agentcard.sh/token
+  registration_endpoint: https://mcp.agentcard.sh/register
+  revocation_endpoint: https://mcp.agentcard.sh/revoke
+  resource: https://mcp.agentcard.sh/mcp   # audience-bound, sent on /authorize and /token
+  refresh: rotating   # refresh tokens rotate on every refresh — persist the new one
+  description: >-
+    "Connect with Agentcard" — OAuth 2.1 + PKCE for end-user authorization to the hosted MCP
+    server. Confidential clients get an acs_ secret; public (PKCE-only) clients omit it.
+    Discoverable via /.well-known/oauth-authorization-server and /.well-known/oauth-protected-resource.
+  sources: [https://mcp.agentcard.sh/.well-known/oauth-authorization-server, https://docs.agentcard.sh/companies/authentication/oauth]
+notes: >-
+  The REST spec declares only the platformToken bearer scheme; the OAuth 2.1 + PKCE end-user
+  flow is documented in the Companies auth docs and the MCP authorization-server metadata.
+  A headless phone-authentication path exists for messaging agents with no browser moment.
