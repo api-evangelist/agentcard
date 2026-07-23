@@ -1,0 +1,64 @@
+generated: '2026-07-17'
+method: searched
+status: published
+source: https://www.agentcard.sh/.well-known/mcp/server-card.json
+server:
+  name: Agentcard
+  description: Virtual Visa cards for AI agents with MCP-native spending controls and per-task budget limits.
+  transport: http          # Streamable HTTP
+  url: https://mcp.agentcard.sh/mcp
+  version: '1.0.0'
+authorization:
+  type: oauth2
+  scheme: OAuth 2.1 + PKCE (S256)
+  authorization_server: https://mcp.agentcard.sh
+  authorization_endpoint: https://mcp.agentcard.sh/authorize
+  token_endpoint: https://mcp.agentcard.sh/token
+  registration_endpoint: https://mcp.agentcard.sh/register
+  revocation_endpoint: https://mcp.agentcard.sh/revoke
+  resource: https://mcp.agentcard.sh/mcp
+  discovery:
+  - https://mcp.agentcard.sh/.well-known/oauth-authorization-server
+  - https://mcp.agentcard.sh/.well-known/oauth-protected-resource
+  notes: >-
+    No API keys — the first tool call opens the OAuth flow. Company integrations pass each
+    end-user's Bearer token. Tools list dynamically; register whatever tools/list returns.
+install:
+  claude_code: claude mcp add --transport http agent-cards https://mcp.agentcard.sh/mcp
+  cli_helper: agent-cards setup-mcp
+  config: '{ "mcpServers": { "agent-cards": { "url": "https://mcp.agentcard.sh/mcp" } } }'
+tools:
+- {name: get_instructions, description: Fetch the latest usage guide for shopping and workflows}
+- {name: whoami, description: Show which account this session is operating}
+- {name: create_card, description: Create a new virtual Visa card funded from the wallet}
+- {name: list_cards, description: List all virtual cards with balances and status}
+- {name: get_card_details, description: Get decrypted PAN, CVV, expiry (may require approval)}
+- {name: check_balance, description: Check the live balance on a virtual card}
+- {name: close_card, description: Permanently close a virtual card}
+- {name: pause_card, description: Pause a multi-use card to block new charges}
+- {name: resume_card, description: Resume a paused multi-use card}
+- {name: update_card_limit, description: Raise or lower a multi-use card total spend limit}
+- {name: list_transactions, description: List transactions for a specific card}
+- {name: list_all_transactions, description: List transactions across all cards}
+- {name: approve_request, description: Approve or deny a pending approval request}
+- {name: get_wallet, description: Show the agent funding wallet and its balance}
+- {name: fund_wallet, description: Add money to the wallet with Apple Pay or Google Pay}
+- {name: withdraw_wallet, description: Withdraw wallet funds to a bank account or crypto address}
+- {name: start_phone_verification, description: Send a one-time code to unlock wallet funding}
+- {name: verify_phone, description: Check the one-time code and unlock wallet funding}
+- {name: start_kyc, description: Begin identity verification}
+- {name: get_kyc_status, description: Check identity verification status}
+- {name: submit_user_info, description: Save phone number and terms acceptance for card creation}
+- {name: buy, description: Shop and check out at linked merchants using natural language}
+- {name: buy_search_products, description: Search a linked merchant for products}
+- {name: buy_checkout, description: Place and pay for the current cart with a one-time card}
+- {name: buy_list_merchants, description: List commerce merchants and link status}
+- {name: buy_set_budget, description: Set a spending budget enforced before every checkout}
+- {name: get_plan, description: Show the current plan, card limits, and usage}
+- {name: upgrade_plan, description: Start an upgrade to a paid plan}
+- {name: cancel_plan, description: Cancel the active paid subscription}
+- {name: get_rewards, description: Show tokenback balance and recent activity}
+- {name: start_support_chat, description: Start a new support conversation}
+notes: >-
+  Tool list is representative (the server advertises tools dynamically and the buy_* family
+  is broader). See docs.agentcard.sh/companies/mcp and /personal/mcp for the full surface.

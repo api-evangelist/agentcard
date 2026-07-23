@@ -1,0 +1,383 @@
+openapi: 3.1.0
+info:
+  title: Agentcard Authentication Connect API
+  version: 2.0.0
+  description: The Agentcard v2 API — connect your users and verify their identity from your own backend. Every call is authenticated with a platform access token minted from your `client_id` + `client_secret`.
+servers:
+- url: https://api.agentcard.sh
+  description: There is one base URL. Sandbox vs production is decided by the client credential you use, never by the host.
+security:
+- platformToken: []
+tags:
+- name: Connect
+  description: 'Connect a user to your platform: send a one-time code, verify it, record consent, and keep the connection alive.'
+paths:
+  /api/v2/connect/start:
+    post:
+      tags:
+      - Connect
+      summary: Send a code
+      operationId: connectStart
+      description: 'Sends a one-time code to the user by email or phone. Provide **exactly one** of `email` or `phone`. Codes are valid for 10 minutes.
+
+
+        If you''ve designed a connect email in your dashboard, we send that branded email; otherwise we send a default one.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: The user's email address. Provide this or `phone`, not both.
+                phone:
+                  type: string
+                  description: The user's phone number in E.164 format (e.g. `+15551234567`). Provide this or `email`, not both.
+                external_user_id:
+                  type: string
+                  maxLength: 255
+                  description: Optional. Your own identifier for the user, stored on the attempt for your reference.
+            example:
+              email: user@example.com
+      responses:
+        '201':
+          description: The attempt. Pass its `id` back as `connect_id` when you verify.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectAttempt'
+              example:
+                object: connect_attempt
+                id: ca_9f8e7d6c
+                channel: email
+                expires_at: '2026-07-12T20:30:00.000Z'
+        '400':
+          description: '`invalid_request` — missing or both of `email` and `phone`. `invalid_phone` — the number isn''t valid or supported. `client_credentials_required` — the token wasn''t minted from client credentials.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '502':
+          description: '`auth_provider_error` — the code couldn''t be sent. Try again.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: '`auth_unavailable` — authentication is temporarily unavailable. Retry shortly.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v2/connect/verify:
+    post:
+      tags:
+      - Connect
+      summary: Verify the code
+      operationId: connectVerify
+      description: 'Checks the code the user entered and, on success, connects the user and returns the token pair to store. Completing the code **is** the authorization — there is no separate approval screen.
+
+
+        The returned `access_token` is the **user''s connection token**: it acts on behalf of this user (send it as the bearer token to the MCP server to create cards, check balances, and shop as them). It is not the platform token — the endpoints in this reference keep using your platform access token and name the user with `user_id`.
+
+
+        A code can be verified once: a second verify of the same attempt returns `invalid_connect_attempt`.
+
+
+        In **sandbox** the code is always `111111`.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - connect_id
+              - code
+              properties:
+                connect_id:
+                  type: string
+                  description: The `id` returned by `/connect/start`.
+                code:
+                  type: string
+                  maxLength: 12
+                  description: The one-time code the user entered. Always `111111` in sandbox.
+            example:
+              connect_id: ca_9f8e7d6c
+              code: '111111'
+      responses:
+        '200':
+          description: The connection. Store the token pair and `user.id` — every KYC call names the user by it.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Connection'
+              example:
+                object: connection
+                access_token: act_1a2b3c…
+                refresh_token: rct_4d5e6f…
+                token_type: Bearer
+                expires_in: 3600
+                user:
+                  id: user_7g8h9i
+                  email: user@example.com
+                  phone: null
+        '400':
+          description: '`invalid_request` — missing `connect_id` or `code`. `invalid_connect_attempt` — the attempt is unknown, already used, or expired. `client_credentials_required` — the token wasn''t minted from client credentials.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: '`invalid_code` — that code is invalid or expired.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: '`auth_provider_error` — verification failed downstream. Try again.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v2/connect/consent:
+    post:
+      tags:
+      - Connect
+      summary: Record consent
+      operationId: connectConsent
+      description: Records that the user authorized your platform to act on their behalf. Safe to retry — it's idempotent per user, so a repeat call updates the same record instead of creating a duplicate.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - user_id
+              properties:
+                user_id:
+                  type: string
+                  description: The `user.id` from `/connect/verify`.
+                terms_version:
+                  type: string
+                  maxLength: 64
+                  description: Optional. The version of your terms the user accepted, stored for your audit trail.
+            example:
+              user_id: user_7g8h9i
+              terms_version: '2026-07-01'
+      responses:
+        '201':
+          description: The consent record.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Consent'
+              example:
+                object: consent
+                id: cns_1a2b3c
+                user_id: user_7g8h9i
+                terms_version: '2026-07-01'
+                created_at: '2026-07-12T20:30:00.000Z'
+        '400':
+          description: '`invalid_request` — missing `user_id`. `client_credentials_required` — the token wasn''t minted from client credentials.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: '`connection_not_found` — no connection exists for that user under your client.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v2/connect/refresh:
+    post:
+      tags:
+      - Connect
+      summary: Refresh the connection
+      operationId: connectRefresh
+      description: 'Connection access tokens expire after one hour. Exchange the refresh token for a new pair before then.
+
+
+        Each refresh returns a **new** refresh token and invalidates the old one — replace the stored token every time.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - refresh_token
+              properties:
+                refresh_token:
+                  type: string
+                  description: The refresh token from the most recent `/connect/verify` or `/connect/refresh`.
+            example:
+              refresh_token: rct_4d5e6f…
+      responses:
+        '200':
+          description: The new token pair.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionRefreshed'
+              example:
+                object: connection
+                access_token: act_9z8y7x…
+                refresh_token: rct_6w5v4u…
+                token_type: Bearer
+                expires_in: 3600
+        '400':
+          description: '`invalid_request` — missing `refresh_token`. `client_credentials_required` — the token wasn''t minted from client credentials.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: '`invalid_refresh_token` — that refresh token is invalid or expired.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    ConnectionRefreshed:
+      type: object
+      properties:
+        object:
+          type: string
+          enum:
+          - connection
+        access_token:
+          type: string
+          description: The new connection access token.
+        refresh_token:
+          type: string
+          description: The new refresh token. The old one is now invalid — replace the stored token every time.
+        token_type:
+          type: string
+          enum:
+          - Bearer
+        expires_in:
+          type: integer
+          description: Seconds until the access token expires (3600 = one hour).
+    Error:
+      type: object
+      description: Every v2 error uses the same envelope.
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: A stable, machine-readable string (snake_case). Branch on this.
+            message:
+              type: string
+              description: A human-readable explanation, safe to log.
+            docs:
+              type: string
+              description: A link back to the reference.
+            field_errors:
+              type: object
+              additionalProperties:
+                type: string
+              description: Only on `invalid_fields` — names each field to fix.
+            warnings:
+              type: array
+              items:
+                type: string
+              description: Only on document upload errors — actionable feedback safe to show the user.
+    Connection:
+      type: object
+      properties:
+        object:
+          type: string
+          enum:
+          - connection
+        access_token:
+          type: string
+          description: The user's connection token — store it to act on their behalf. Send it as the bearer token to the MCP server; never in the `Authorization` header of these endpoints.
+        refresh_token:
+          type: string
+          description: Use it with `/connect/refresh` to get a new pair before the access token expires.
+        token_type:
+          type: string
+          enum:
+          - Bearer
+        expires_in:
+          type: integer
+          description: Seconds until the access token expires (3600 = one hour).
+        user:
+          type: object
+          description: The connected user. Store `id` — every KYC call names the user by it.
+          properties:
+            id:
+              type: string
+            email:
+              type:
+              - string
+              - 'null'
+              description: Set when the user connected by email, otherwise `null`.
+            phone:
+              type:
+              - string
+              - 'null'
+              description: Set when the user connected by phone, otherwise `null`.
+    Consent:
+      type: object
+      properties:
+        object:
+          type: string
+          enum:
+          - consent
+        id:
+          type: string
+        user_id:
+          type: string
+        terms_version:
+          type:
+          - string
+          - 'null'
+        created_at:
+          type: string
+          format: date-time
+    ConnectAttempt:
+      type: object
+      properties:
+        object:
+          type: string
+          enum:
+          - connect_attempt
+        id:
+          type: string
+          description: The attempt id. Pass it back as `connect_id` when you verify.
+        channel:
+          type: string
+          enum:
+          - email
+          - phone
+          description: The channel the code was sent on.
+        expires_at:
+          type: string
+          format: date-time
+          description: When the attempt expires (ISO 8601). Codes are valid for 10 minutes.
+  responses:
+    Unauthorized:
+      description: '`unauthorized` — the platform access token is missing or expired. Exchange your client credentials for a fresh one.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    platformToken:
+      type: http
+      scheme: bearer
+      description: 'A platform access token. Get one on the **Create an access token** endpoint by exchanging your `client_id` + `client_secret`, then send it as `Authorization: Bearer <token>`. Tokens live one hour.'

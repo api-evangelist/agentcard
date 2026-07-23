@@ -1,0 +1,81 @@
+arazzo: 1.0.1
+info:
+  title: Agentcard — connect a user and verify identity
+  version: 1.0.0
+  summary: Connect an end user, record consent, and run identity verification (KYC) end to end.
+sourceDescriptions:
+- name: agentcard
+  url: ../openapi/agentcard-openapi-original.json
+  type: openapi
+workflows:
+- workflowId: connectAndVerifyIdentity
+  summary: Mint a platform token, connect a user by code, record consent, and verify their ID.
+  inputs:
+    type: object
+    properties:
+      client_id: {type: string}
+      client_secret: {type: string}
+      email: {type: string}
+      code: {type: string}
+      id_front_base64: {type: string}
+      id_back_base64: {type: string}
+  steps:
+  - stepId: mintToken
+    operationId: createAccessToken
+    requestBody:
+      contentType: application/json
+      payload:
+        grant_type: client_credentials
+        client_id: $inputs.client_id
+        client_secret: $inputs.client_secret
+    successCriteria:
+    - condition: $statusCode == 200
+    outputs:
+      access_token: $response.body#/access_token
+  - stepId: startConnect
+    operationId: connectStart
+    requestBody:
+      contentType: application/json
+      payload:
+        email: $inputs.email
+    successCriteria:
+    - condition: $statusCode == 201
+  - stepId: verifyConnect
+    operationId: connectVerify
+    requestBody:
+      contentType: application/json
+      payload:
+        code: $inputs.code
+    successCriteria:
+    - condition: $statusCode == 200
+    outputs:
+      user_access_token: $response.body#/access_token
+  - stepId: recordConsent
+    operationId: connectConsent
+    successCriteria:
+    - condition: $statusCode == 201
+  - stepId: uploadFront
+    operationId: kycUploadFront
+    requestBody:
+      contentType: application/json
+      payload:
+        image: $inputs.id_front_base64
+    successCriteria:
+    - condition: $statusCode == 200
+  - stepId: uploadBack
+    operationId: kycUploadBack
+    requestBody:
+      contentType: application/json
+      payload:
+        image: $inputs.id_back_base64
+    successCriteria:
+    - condition: $statusCode == 200
+  - stepId: checkStatus
+    operationId: kycGetStatus
+    successCriteria:
+    - condition: $statusCode == 200
+    outputs:
+      kyc_status: $response.body#/status
+  outputs:
+    user_access_token: $steps.verifyConnect.user_access_token
+    kyc_status: $steps.checkStatus.kyc_status

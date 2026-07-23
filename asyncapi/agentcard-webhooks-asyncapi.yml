@@ -1,0 +1,67 @@
+asyncapi: 3.0.0
+# generated: '2026-07-17'
+# method: generated
+# source: https://docs.agentcard.sh/companies/webhooks.md (webhook catalog -> AsyncAPI by API Evangelist; no provider AsyncAPI is published)
+info:
+  title: Agentcard Webhooks
+  version: 2.0.0
+  description: >-
+    Event notifications Agentcard delivers to destinations you register in the dashboard.
+    Every delivery is a POST with a signed envelope { id, type, created, livemode, data }.
+    Verify the AgentCard-Signature header (HMAC-SHA256 of "{t}.{raw_body}" with your whsec_
+    secret) against the raw body and dedupe on id. This document is generated from the
+    published event catalog; Agentcard does not publish its own AsyncAPI.
+  contact:
+    name: Agentcard Support
+    email: support@agentcard.sh
+    url: https://docs.agentcard.sh/companies/webhooks
+defaultContentType: application/json
+servers:
+  webhook:
+    host: your-app.example.com
+    protocol: https
+    description: Your registered webhook destination (mode-scoped; sandbox receives only livemode=false).
+components:
+  messageTraits:
+    signed:
+      headers:
+        type: object
+        properties:
+          AgentCard-Signature:
+            type: string
+            description: 't=<unix>,v1=<hex-hmac>; HMAC-SHA256 of "{t}.{raw_body}" keyed with the whsec_ secret.'
+  schemas:
+    Envelope:
+      type: object
+      required: [id, type, created, livemode, data]
+      properties:
+        id: {type: string, description: Unique event id (dedupe on this), example: evt_123}
+        type: {type: string, description: Event type, example: transaction.authorized}
+        created: {type: integer, description: Unix timestamp}
+        livemode: {type: boolean, description: false for sandbox deliveries}
+        data: {type: object, description: Event-specific payload}
+  messages:
+    Event:
+      name: Event
+      title: Agentcard webhook event
+      contentType: application/json
+      traits: [{$ref: '#/components/messageTraits/signed'}]
+      payload: {$ref: '#/components/schemas/Envelope'}
+channels:
+  events:
+    address: /webhooks/agentcard
+    description: The single destination endpoint that receives every subscribed event.
+    messages:
+      event: {$ref: '#/components/messages/Event'}
+operations:
+  receiveEvent:
+    action: receive
+    channel: {$ref: '#/channels/events'}
+    summary: Receive a signed Agentcard webhook event.
+    description: >-
+      Event types delivered on this channel — card.created, card.updated, card.closed,
+      cardholder.created, cardholder.updated, cardholder_onboarding_session.completed,
+      transaction.authorized, transaction.cleared, transaction.declined, transaction.voided,
+      identity.verification.updated, balance.low, merchant.connected, card_flow.started,
+      card_flow.failed, transfer.approved, transfer.initiated, transfer.completed,
+      transfer.failed, transfer.released, wallet.funded, wallet.balance.low.

@@ -1,0 +1,461 @@
+openapi: 3.1.0
+info:
+  title: Agentcard Authentication Wallet funding API
+  version: 2.0.0
+  description: The Agentcard v2 API — connect your users and verify their identity from your own backend. Every call is authenticated with a platform access token minted from your `client_id` + `client_secret`.
+servers:
+- url: https://api.agentcard.sh
+  description: There is one base URL. Sandbox vs production is decided by the client credential you use, never by the host.
+security:
+- platformToken: []
+tags:
+- name: Wallet funding
+  description: Fund a connected user's wallet from your own UI — request a payment link, relay the phone verification code, and poll until the funds land.
+paths:
+  /api/v2/wallet:
+    get:
+      tags:
+      - Wallet funding
+      summary: Get the user's wallet
+      operationId: walletGet
+      description: The connected user's wallet and current balance — render it in your own wallet UI. Provisions the wallet on first read.
+      parameters:
+      - name: user_id
+        in: query
+        required: true
+        schema:
+          type: string
+        description: The connected user's id.
+      responses:
+        '200':
+          description: The wallet.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Wallet'
+              example:
+                object: wallet
+                user_id: usr_123
+                address: 0xabc…
+                balance_usdc: '25.00'
+                status: active
+        '400':
+          description: '`invalid_request` — missing `user_id`.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/ConnectionNotFound'
+        '409':
+          $ref: '#/components/responses/UserConflict'
+        '503':
+          description: '`wallet_unavailable` — wallets are temporarily unavailable.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v2/wallet/fund:
+    post:
+      tags:
+      - Wallet funding
+      summary: Create a funding session
+      operationId: walletFund
+      description: Returns an Apple Pay / Google Pay payment link for the amount you specify. Show it in your UI; when the user completes the payment the funds land in their wallet. The link is single-use and expires after 30 minutes. Requires a phone verification fresh within 60 days — see `POST /api/v2/wallet/phone/start`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - user_id
+              - amount_cents
+              properties:
+                user_id:
+                  type: string
+                  description: The connected user's id.
+                amount_cents:
+                  type: integer
+                  description: Amount to fund, in USD cents.
+                payment_method:
+                  type: string
+                  enum:
+                  - apple_pay
+                  - google_pay
+                  default: apple_pay
+                link_type:
+                  type: string
+                  enum:
+                  - hosted
+                  - embedded
+                  default: hosted
+                  description: hosted returns an Agentcard-hosted payment page, safe to relay anywhere (chat, email, QR); the underlying payment order is created only when the user opens it, so unopened hosted sessions cost nothing. embedded creates a REAL payment order immediately and returns the raw single-use Apple Pay link for rendering inside your own in-app webview; it lives about 5 minutes, must never be relayed through chat (link unfurlers consume it), and counts toward the user's per-user payment limits even if never paid, so mint it only when the user initiates payment. Embedded sessions support payment_method apple_pay only (google_pay with embedded is rejected). Sandbox-mode credentials create TEST orders (never charged).
+            example:
+              user_id: usr_123
+              amount_cents: 5000
+              payment_method: apple_pay
+      responses:
+        '201':
+          description: The funding session, with the payment link to show the user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FundingSession'
+              example:
+                object: funding_session
+                id: os_123
+                user_id: usr_123
+                status: pending
+                amount_cents: 5000
+                currency: USD
+                payment_method: apple_pay
+                checkout_url: https://api.agentcard.sh/fund/…
+                expires_at: '2026-07-13T18:30:00.000Z'
+        '400':
+          description: '`invalid_request` — missing or malformed fields.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/ConnectionNotFound'
+        '409':
+          $ref: '#/components/responses/UserConflict'
+        '422':
+          description: '`amount_out_of_range` (with `min_amount_cents` / `max_amount_cents`), `phone_verification_required`, `email_required`, or `region_not_supported`.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: '`funding_provider_error` — try again.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: '`funding_unavailable` — funding is temporarily unavailable.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v2/wallet/fund/{session_id}:
+    get:
+      tags:
+      - Wallet funding
+      summary: Get a funding session
+      operationId: walletFundStatus
+      description: Poll a funding session until it is `completed` — the payment status is refreshed from the provider on every read.
+      parameters:
+      - name: session_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The funding session.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FundingSession'
+              example:
+                object: funding_session
+                id: os_123
+                user_id: usr_123
+                status: completed
+                amount_cents: 5000
+                currency: USD
+                payment_method: apple_pay
+                failure_reason: null
+                completed_at: '2026-07-13T18:12:00.000Z'
+                created_at: '2026-07-13T18:00:00.000Z'
+                expires_at: '2026-07-13T18:30:00.000Z'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: '`not_found` — no funding session with that id for your users.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v2/wallet/phone/start:
+    post:
+      tags:
+      - Wallet funding
+      summary: Start phone verification
+      operationId: walletPhoneStart
+      description: Sends the user a one-time code. Relay it through your UI — the user reads it back to you, same pattern as the connect code. A verification stays fresh for 60 days. Provide `phone_number` only when the user has no phone on file (US numbers only).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - user_id
+              properties:
+                user_id:
+                  type: string
+                phone_number:
+                  type: string
+                  description: E.164 US number (`+1XXXXXXXXXX`). Used only when the user has no phone on file.
+            example:
+              user_id: usr_123
+              phone_number: '+14155550100'
+      responses:
+        '200':
+          description: '`sent` (code on its way) or `already_verified` (nothing to do — proceed to fund).'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhoneVerification'
+              example:
+                object: phone_verification
+                status: sent
+                channel: sms
+                phone: +1••••••0100
+                expires_in_seconds: 600
+        '400':
+          description: '`invalid_request` — malformed `phone_number`.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/ConnectionNotFound'
+        '422':
+          description: '`phone_number_required` — the user has no phone on file and none was provided.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: '`otp_rate_limited` (with `retry_after_seconds`).'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: '`otp_send_failed` — try again.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v2/wallet/phone/verify:
+    post:
+      tags:
+      - Wallet funding
+      summary: Verify the phone code
+      operationId: walletPhoneVerify
+      description: Checks the code the user read back. On success the verification stays fresh for 60 days and funding sessions can be created.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - user_id
+              - code
+              properties:
+                user_id:
+                  type: string
+                code:
+                  type: string
+                phone_number:
+                  type: string
+                  description: Required only when the code was sent to a number you provided.
+            example:
+              user_id: usr_123
+              code: '123456'
+              phone_number: '+14155550100'
+      responses:
+        '200':
+          description: Verified.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhoneVerification'
+              example:
+                object: phone_verification
+                status: verified
+        '400':
+          description: '`invalid_request` — missing fields.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/ConnectionNotFound'
+        '422':
+          description: '`invalid_code` (with `reason`) or `phone_number_required`.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  responses:
+    UserConflict:
+      description: '`user_conflict` — the email on file in your organization belongs to a different account. Contact support.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: '`unauthorized` — the platform access token is missing or expired. Exchange your client credentials for a fresh one.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ConnectionNotFound:
+      description: '`connection_not_found` — no connection exists for that user under your client.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    PhoneVerification:
+      type: object
+      properties:
+        object:
+          type: string
+          const: phone_verification
+        status:
+          type: string
+          enum:
+          - sent
+          - already_verified
+          - verified
+        channel:
+          type: string
+          enum:
+          - sms
+          - email
+          description: Where the code was sent (status `sent` only).
+        phone:
+          type: string
+          description: The masked destination number (status `sent` only).
+        expires_in_seconds:
+          type: integer
+          description: How long the code stays valid (status `sent` only).
+    Error:
+      type: object
+      description: Every v2 error uses the same envelope.
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: A stable, machine-readable string (snake_case). Branch on this.
+            message:
+              type: string
+              description: A human-readable explanation, safe to log.
+            docs:
+              type: string
+              description: A link back to the reference.
+            field_errors:
+              type: object
+              additionalProperties:
+                type: string
+              description: Only on `invalid_fields` — names each field to fix.
+            warnings:
+              type: array
+              items:
+                type: string
+              description: Only on document upload errors — actionable feedback safe to show the user.
+    FundingSession:
+      type: object
+      properties:
+        object:
+          type: string
+          const: funding_session
+        id:
+          type: string
+        user_id:
+          type: string
+        status:
+          type: string
+          enum:
+          - pending
+          - processing
+          - completed
+          - failed
+          - expired
+        amount_cents:
+          type: integer
+        currency:
+          type: string
+        payment_method:
+          type: string
+          enum:
+          - apple_pay
+          - google_pay
+        checkout_url:
+          type: string
+          description: 'The payment link to show the user. hosted: an Agentcard-hosted page, present while the link can still be opened. embedded: the raw provider Apple Pay link, present ONLY on the create response; the poll endpoint never re-serves it, so load it in an in-app webview immediately, never relay it, and create a new session if it lapses.'
+        failure_reason:
+          type:
+          - string
+          - 'null'
+          enum:
+          - region_not_supported
+          - provider_error
+          - null
+        completed_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+        expires_at:
+          type: string
+          format: date-time
+          description: 'On the create response: hosted links stay openable for 30 minutes; embedded links are single-use and expire about 5 minutes after creation (create a new session instead of retrying a lapsed link). On the poll endpoint, expires_at always reflects the session''s 30-minute fundability window, not the embedded link''s shorter life.'
+        link_type:
+          type: string
+          enum:
+          - hosted
+          - embedded
+          description: Which kind of checkout_url this session carries. Returned only on the create response; the poll endpoint does not include it.
+        fee_cents:
+          type:
+          - integer
+          - 'null'
+          description: Provider fee included in amount_cents, in USD cents. Returned only on the create response of embedded sessions (the order is priced at create time); absent on hosted sessions and on the poll endpoint.
+    Wallet:
+      type: object
+      properties:
+        object:
+          type: string
+          const: wallet
+        user_id:
+          type: string
+        address:
+          type: string
+          description: The wallet's on-chain address.
+        balance_usdc:
+          type: string
+          description: Current balance in USD, as a decimal string.
+        balance_unavailable:
+          type: boolean
+          description: Present and true when the balance could not be read right now — distinguish "no funds" from "couldn't read".
+        status:
+          type: string
+  securitySchemes:
+    platformToken:
+      type: http
+      scheme: bearer
+      description: 'A platform access token. Get one on the **Create an access token** endpoint by exchanging your `client_id` + `client_secret`, then send it as `Authorization: Bearer <token>`. Tokens live one hour.'

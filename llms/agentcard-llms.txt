@@ -1,0 +1,147 @@
+# Agentcard
+
+## Docs
+
+- [Identity verification](https://docs.agentcard.sh/companies/api/identity-verification.md): Verify a connected user's identity from inside your own app.
+- [API overview](https://docs.agentcard.sh/companies/api/overview.md): The Agentcard v2 API — connect your users and verify their identity from inside your own app.
+- [Postman collection](https://docs.agentcard.sh/companies/api/postman.md): Run the entire v2 API from your machine — download, set two variables, and go.
+- [API reference](https://docs.agentcard.sh/companies/api/reference.md): Every v2 endpoint on its own page — parameters, responses, and a live playground to test with your own credentials.
+- [Record consent](https://docs.agentcard.sh/companies/api/reference/connect-consent.md): Records that the user authorized your platform to act on their behalf. Safe to retry — it's idempotent per user, so a repeat call updates the same record instead of creating a duplicate.
+- [Refresh the connection](https://docs.agentcard.sh/companies/api/reference/connect-refresh.md): Connection access tokens expire after one hour. Exchange the refresh token for a new pair before then.
+- [Send a code](https://docs.agentcard.sh/companies/api/reference/connect-start.md): Sends a one-time code to the user by email or phone. Provide **exactly one** of `email` or `phone`. Codes are valid for 10 minutes.
+- [Verify the code](https://docs.agentcard.sh/companies/api/reference/connect-verify.md): Checks the code the user entered and, on success, connects the user and returns the token pair to store. Completing the code **is** the authorization — there is no separate approval screen.
+- [Create an access token](https://docs.agentcard.sh/companies/api/reference/create-access-token.md): Exchanges your `client_id` + `client_secret` for a platform access token (OAuth2 client credentials, RFC 6749 §4.4). The token lives one hour — when it expires, exchange again; there are no refresh tokens on this grant.
+- [Introspect credential](https://docs.agentcard.sh/companies/api/reference/introspect.md): Returns the organization and mode your token acts as. Useful as a health check and to confirm you're pointed at the right credential.
+- [Simulate an outcome (test mode)](https://docs.agentcard.sh/companies/api/reference/kyc-simulate.md): **Test mode only.** Drives a test-mode verification to a chosen terminal outcome instantly — test verifications never complete on their own. The simulated verdict flows through the same status contract and fires the same `identity.verification.updated` webhook a real review produces, so your status…
+- [Get verification status](https://docs.agentcard.sh/companies/api/reference/kyc-status.md): Polls the current verification status — the alternative to the `identity.verification.updated` webhook.
+- [Submit information](https://docs.agentcard.sh/companies/api/reference/kyc-submit-information.md): Submits the extra fields requested by a `needs_information` response. Send only the fields listed in `required_fields`. On success, the response returns the `iframe_url` for the face scan.
+- [Upload the back of the ID](https://docs.agentcard.sh/companies/api/reference/kyc-upload-back.md): Uploads the back of the document. The response tells you what to do next — this is the branch point of the flow:
+- [Upload the front of the ID](https://docs.agentcard.sh/companies/api/reference/kyc-upload-front.md): Uploads the front of the user's identity document as a base64-encoded image. This step acknowledges receipt; the next step (`back`) tells you what comes next.
+- [Create a funding session](https://docs.agentcard.sh/companies/api/reference/wallet-fund.md): Returns an Apple Pay / Google Pay payment link for the amount you specify. Show it in your UI; when the user completes the payment the funds land in their wallet. The link is single-use and expires after 30 minutes. Requires a phone verification fresh within 60 days — see `POST /api/v2/wallet/phone/…
+- [Get a funding session](https://docs.agentcard.sh/companies/api/reference/wallet-fund-status.md): Poll a funding session until it is `completed` — the payment status is refreshed from the provider on every read.
+- [Get the user's wallet](https://docs.agentcard.sh/companies/api/reference/wallet-get.md): The connected user's wallet and current balance — render it in your own wallet UI. Provisions the wallet on first read.
+- [Start phone verification](https://docs.agentcard.sh/companies/api/reference/wallet-phone-start.md): Sends the user a one-time code. Relay it through your UI — the user reads it back to you, same pattern as the connect code. A verification stays fresh for 60 days. Provide `phone_number` only when the user has no phone on file (US numbers only).
+- [Verify the phone code](https://docs.agentcard.sh/companies/api/reference/wallet-phone-verify.md): Checks the code the user read back. On success the verification stays fresh for 60 days and funding sessions can be created.
+- [Request a withdrawal](https://docs.agentcard.sh/companies/api/reference/wallet-withdraw.md): Requests a withdrawal from the user's spendable balance. Two rails: `bank` (default) pays a saved destination by wire; `address` sends USDC on Base to `destination_address`. Both are processed manually by the Agentcard team, usually within 1-3 business days; the user is emailed when the request is r…
+- [Save a bank destination](https://docs.agentcard.sh/companies/api/reference/wallet-withdrawal-recipient-create.md): Saves a bank account the user can withdraw to. `ach` needs `routing_number`, `account_number`, and `account_type`; `international_wire` needs `iban` and `swift_code`. Some countries need extra fields via `country_specific` (for example `ifsc`, `clabe`, `bsb`); the validation error names any missing…
+- [Remove a bank destination](https://docs.agentcard.sh/companies/api/reference/wallet-withdrawal-recipient-delete.md): Soft-removes a saved destination. Withdrawals already requested against it are unaffected.
+- [List saved bank destinations](https://docs.agentcard.sh/companies/api/reference/wallet-withdrawal-recipients-list.md): The user's active bank destinations, masked. Removed destinations never appear.
+- [List withdrawals](https://docs.agentcard.sh/companies/api/reference/wallet-withdrawals-list.md): The user's most recent withdrawals (up to 20), newest first, across every rail. Poll this to reflect status changes in your UI; `completed` and `rejected` are terminal and also emailed to the user.
+- [User authentication](https://docs.agentcard.sh/companies/api/user-authentication.md): Connect your users to Agentcard from inside your own app.
+- [Email](https://docs.agentcard.sh/companies/authentication/email.md): Completing the OAuth flow with an email magic link
+- [Overview](https://docs.agentcard.sh/companies/authentication/oauth.md): How Connect with Agentcard works, end to end
+- [BlueBubbles](https://docs.agentcard.sh/companies/examples/bluebubbles.md): Claude agent on BlueBubbles, with Agentcard cards per user
+- [Hermes](https://docs.agentcard.sh/companies/examples/hermes.md): Claude agent on Hermes, with Agentcard cards per user
+- [Linq](https://docs.agentcard.sh/companies/examples/linq.md): Claude agent on Linq, with Agentcard cards per user
+- [LoopMessage](https://docs.agentcard.sh/companies/examples/loopmessage.md): Claude agent on LoopMessage, with Agentcard cards per user
+- [Overview](https://docs.agentcard.sh/companies/examples/overview.md): Runnable example integrations, one per messaging surface
+- [Photon](https://docs.agentcard.sh/companies/examples/photon.md): Claude agent on Photon (Spectrum), with Agentcard cards per user
+- [Respond.io](https://docs.agentcard.sh/companies/examples/respond-io.md): Claude agent on Respond.io, with Agentcard cards per user
+- [Sendblue](https://docs.agentcard.sh/companies/examples/sendblue.md): Claude agent on Sendblue, with Agentcard cards per user
+- [Twilio](https://docs.agentcard.sh/companies/examples/twilio.md): Claude agent on Twilio SMS/MMS, with Agentcard cards per user
+- [Vercel Chat SDK](https://docs.agentcard.sh/companies/examples/vercel-chat-sdk.md): Claude agent behind a POST /api/chat endpoint, with Agentcard cards per user
+- [Manual Implementation](https://docs.agentcard.sh/companies/getting-started/manual-implementation.md): Set up your account, create an OAuth client, and wire the flow yourself
+- [Overview](https://docs.agentcard.sh/companies/getting-started/quickstart.md): From zero to issuing cards for your users
+- [The Wizard](https://docs.agentcard.sh/companies/getting-started/wizard.md): Implement Agentcard in your codebase with one command
+- [Introduction](https://docs.agentcard.sh/companies/introduction.md): Payments infrastructure for AI agents
+- [Overview](https://docs.agentcard.sh/companies/mcp/overview.md): Authenticated requests on behalf of your users
+- [approve_request](https://docs.agentcard.sh/companies/mcp/tools/approve_request.md): Approve or deny a pending approval request and complete the follow-up action.
+- [buy](https://docs.agentcard.sh/companies/mcp/tools/buy.md): Shop and check out at linked merchants using natural language
+- [buy_add_to_cart](https://docs.agentcard.sh/companies/mcp/tools/buy_add_to_cart.md): Add a product to the cart at a linked merchant
+- [buy_addresses](https://docs.agentcard.sh/companies/mcp/tools/buy_addresses.md): List delivery addresses saved on a linked merchant account
+- [buy_checkout](https://docs.agentcard.sh/companies/mcp/tools/buy_checkout.md): Place and pay for the current cart with a one-time card
+- [buy_clear_cart](https://docs.agentcard.sh/companies/mcp/tools/buy_clear_cart.md): Empty the cart at a linked merchant
+- [buy_confirm_merchant](https://docs.agentcard.sh/companies/mcp/tools/buy_confirm_merchant.md): Finish linking a cooperative merchant with its one-time code
+- [buy_connect](https://docs.agentcard.sh/companies/mcp/tools/buy_connect.md): Connect a merchant for shopping, with a hosted login when needed
+- [buy_connect_status](https://docs.agentcard.sh/companies/mcp/tools/buy_connect_status.md): Check the progress of a hosted merchant login
+- [buy_link_merchant](https://docs.agentcard.sh/companies/mcp/tools/buy_link_merchant.md): Link a merchant account so the agent can shop and check out there
+- [buy_list_merchants](https://docs.agentcard.sh/companies/mcp/tools/buy_list_merchants.md): List commerce merchants and whether the user has linked each one
+- [buy_order_history](https://docs.agentcard.sh/companies/mcp/tools/buy_order_history.md): List recent orders at a linked merchant
+- [buy_remove_from_cart](https://docs.agentcard.sh/companies/mcp/tools/buy_remove_from_cart.md): Remove a product from the cart at a linked merchant
+- [buy_reorder](https://docs.agentcard.sh/companies/mcp/tools/buy_reorder.md): Rebuild the cart from a past order
+- [buy_search_products](https://docs.agentcard.sh/companies/mcp/tools/buy_search_products.md): Search a linked merchant for products by keyword
+- [buy_search_stores](https://docs.agentcard.sh/companies/mcp/tools/buy_search_stores.md): Find orderable stores inside a multi-store merchant by name
+- [buy_select_store](https://docs.agentcard.sh/companies/mcp/tools/buy_select_store.md): Scope product searches and the cart to one store
+- [buy_set_budget](https://docs.agentcard.sh/companies/mcp/tools/buy_set_budget.md): Set a spending budget enforced before every checkout
+- [buy_set_default_address](https://docs.agentcard.sh/companies/mcp/tools/buy_set_default_address.md): Set the default delivery address at a linked merchant
+- [buy_set_item_quantity](https://docs.agentcard.sh/companies/mcp/tools/buy_set_item_quantity.md): Change the quantity of a cart item, 0 removes it
+- [buy_set_substitution](https://docs.agentcard.sh/companies/mcp/tools/buy_set_substitution.md): Set the out-of-stock preference for an item in a placed order
+- [buy_track_order](https://docs.agentcard.sh/companies/mcp/tools/buy_track_order.md): Check the status and ETA of a placed order
+- [buy_unlink_merchant](https://docs.agentcard.sh/companies/mcp/tools/buy_unlink_merchant.md): Disconnect a linked merchant and drop its saved session
+- [buy_view_cart](https://docs.agentcard.sh/companies/mcp/tools/buy_view_cart.md): View the current cart and totals at a linked merchant
+- [cancel_plan](https://docs.agentcard.sh/companies/mcp/tools/cancel_plan.md): Cancel the active paid subscription and return to the free plan
+- [check_balance](https://docs.agentcard.sh/companies/mcp/tools/check_balance.md): Check the live balance on a virtual card
+- [close_card](https://docs.agentcard.sh/companies/mcp/tools/close_card.md): Permanently close a virtual card
+- [create_card](https://docs.agentcard.sh/companies/mcp/tools/create_card.md): Create a new virtual card funded from the wallet
+- [create_withdrawal_recipient](https://docs.agentcard.sh/companies/mcp/tools/create_withdrawal_recipient.md): Save a bank account the user can withdraw to.
+- [detect_checkout](https://docs.agentcard.sh/companies/mcp/tools/detect_checkout.md): Check whether the current browser tab is a checkout page
+- [fill_card](https://docs.agentcard.sh/companies/mcp/tools/fill_card.md): Fill an existing Agentcard into the current checkout form
+- [fund_wallet](https://docs.agentcard.sh/companies/mcp/tools/fund_wallet.md): Add money to the funding wallet with Apple Pay or Google Pay.
+- [get_card_details](https://docs.agentcard.sh/companies/mcp/tools/get_card_details.md): Get the full card number, CVV, and expiry for a card
+- [get_instructions](https://docs.agentcard.sh/companies/mcp/tools/get_instructions.md): Fetch the latest usage guide for shopping with the buy tool
+- [get_kyc_status](https://docs.agentcard.sh/companies/mcp/tools/get_kyc_status.md): Check whether the user has passed identity verification.
+- [get_plan](https://docs.agentcard.sh/companies/mcp/tools/get_plan.md): Show the current plan, card limits, and this month usage
+- [get_rewards](https://docs.agentcard.sh/companies/mcp/tools/get_rewards.md): Show the tokenback balance and recent activity
+- [get_settings](https://docs.agentcard.sh/companies/mcp/tools/get_settings.md): View notification preferences and authorization settings
+- [get_wallet](https://docs.agentcard.sh/companies/mcp/tools/get_wallet.md): Show the agent funding wallet and its balance.
+- [list_all_transactions](https://docs.agentcard.sh/companies/mcp/tools/list_all_transactions.md): List transactions across all your cards in one list
+- [list_cards](https://docs.agentcard.sh/companies/mcp/tools/list_cards.md): List all your virtual cards with balances and status
+- [list_connections](https://docs.agentcard.sh/companies/mcp/tools/list_connections.md): List third-party apps connected to the Agentcard account
+- [list_payment_methods](https://docs.agentcard.sh/companies/mcp/tools/list_payment_methods.md): List the saved payment methods (charged only for flight bookings).
+- [list_transactions](https://docs.agentcard.sh/companies/mcp/tools/list_transactions.md): List transactions for a specific card
+- [list_transactions_by_payment_method](https://docs.agentcard.sh/companies/mcp/tools/list_transactions_by_payment_method.md): List transactions grouped by payment method, with merchant and order info
+- [manage_subscription](https://docs.agentcard.sh/companies/mcp/tools/manage_subscription.md): Manage a recurring meal or grocery subscription
+- [pause_card](https://docs.agentcard.sh/companies/mcp/tools/pause_card.md): Pause a multi-use card to block new charges
+- [pay_checkout](https://docs.agentcard.sh/companies/mcp/tools/pay_checkout.md): Auto-fill a checkout page with an Agentcard virtual card and pay
+- [read_support_chat](https://docs.agentcard.sh/companies/mcp/tools/read_support_chat.md): Read the message history of a support conversation
+- [redeem_rewards](https://docs.agentcard.sh/companies/mcp/tools/redeem_rewards.md): Redeem tokens as wallet credit
+- [remove_payment_method](https://docs.agentcard.sh/companies/mcp/tools/remove_payment_method.md): Permanently remove a saved payment method.
+- [resume_card](https://docs.agentcard.sh/companies/mcp/tools/resume_card.md): Resume a paused multi-use card
+- [revoke_connection](https://docs.agentcard.sh/companies/mcp/tools/revoke_connection.md): Revoke a connected app from the Agentcard account
+- [send_support_message](https://docs.agentcard.sh/companies/mcp/tools/send_support_message.md): Send a message in an existing support conversation
+- [set_default_payment_method](https://docs.agentcard.sh/companies/mcp/tools/set_default_payment_method.md): Choose which saved payment method is charged for flight bookings.
+- [setup_payment_method](https://docs.agentcard.sh/companies/mcp/tools/setup_payment_method.md): Get a secure checkout link so the user can save a card for flight bookings.
+- [start_kyc](https://docs.agentcard.sh/companies/mcp/tools/start_kyc.md): Begin identity verification and get a secure URL for the user to open.
+- [start_phone_verification](https://docs.agentcard.sh/companies/mcp/tools/start_phone_verification.md): Send the user a one-time code to unlock wallet funding.
+- [start_support_chat](https://docs.agentcard.sh/companies/mcp/tools/start_support_chat.md): Start a new support conversation with a first message
+- [submit_user_info](https://docs.agentcard.sh/companies/mcp/tools/submit_user_info.md): Save the phone number and terms acceptance needed for card creation.
+- [update_card_limit](https://docs.agentcard.sh/companies/mcp/tools/update_card_limit.md): Raise or lower the total spend limit of a multi-use card
+- [update_settings](https://docs.agentcard.sh/companies/mcp/tools/update_settings.md): Update email notification preferences
+- [upgrade_plan](https://docs.agentcard.sh/companies/mcp/tools/upgrade_plan.md): Start an upgrade to a paid Agentcard plan
+- [verify_phone](https://docs.agentcard.sh/companies/mcp/tools/verify_phone.md): Check the one-time code and unlock wallet funding.
+- [whoami](https://docs.agentcard.sh/companies/mcp/tools/whoami.md): Show which account this session is operating
+- [withdraw_wallet](https://docs.agentcard.sh/companies/mcp/tools/withdraw_wallet.md): Withdraw money from the wallet to a bank account or a crypto address.
+- [Getting into Production](https://docs.agentcard.sh/companies/production.md): Take your integration live
+- [Testing](https://docs.agentcard.sh/companies/testing.md): Exercise every card, transaction, identity, and webhook state in test mode — no real money, no real people
+- [Messaging Agents](https://docs.agentcard.sh/companies/use-cases/messaging-agents.md): The expected flow for agents on iMessage, WhatsApp, SMS, and more
+- [Company wallet](https://docs.agentcard.sh/companies/wallet-funding/company-wallet.md): Fund your users' cards from one pooled wallet, with your billing in the loop
+- [User funded](https://docs.agentcard.sh/companies/wallet-funding/user-funded.md): Each user funds their own wallet — cards spend their money, you never touch it
+- [Withdrawals](https://docs.agentcard.sh/companies/wallet-funding/withdrawals.md): Move money back out of the company wallet — to your bank or a crypto address
+- [Webhooks](https://docs.agentcard.sh/companies/webhooks.md): Get notified when cards, cardholders, and transactions change
+- [Agentcard](https://docs.agentcard.sh/introduction.md): Virtual Visa cards for AI agents
+- [Checkout Autofill](https://docs.agentcard.sh/personal/checkout-autofill.md): Fill cards into checkout forms with the Chrome extension
+- [Account & Session](https://docs.agentcard.sh/personal/cli/account.md): Sign in, connect your agent, and manage connected apps
+- [Buy](https://docs.agentcard.sh/personal/cli/buy.md): Shop and check out at linked merchants from the terminal
+- [Cards](https://docs.agentcard.sh/personal/cli/cards.md): Create, list, inspect, and close virtual cards
+- [CLI Overview](https://docs.agentcard.sh/personal/cli/overview.md): Manage your cards, wallet, and shopping from the terminal
+- [Payment Methods](https://docs.agentcard.sh/personal/cli/payment-methods.md): Save, list, default, and remove the cards that fund your virtual cards
+- [Plan](https://docs.agentcard.sh/personal/cli/plan.md): View and change your subscription
+- [Settings](https://docs.agentcard.sh/personal/cli/settings.md): Notification and authorization preferences
+- [Wallet](https://docs.agentcard.sh/personal/cli/wallet.md): Check your balance, add funds, and withdraw
+- [Cards](https://docs.agentcard.sh/personal/concepts/cards.md): How personal virtual cards work
+- [Tokenback](https://docs.agentcard.sh/personal/concepts/rewards.md): A share of every purchase comes back to you as AI spending power
+- [Test Cards](https://docs.agentcard.sh/personal/concepts/test-mode.md): Why a card can be marked TEST, and how to get live cards
+- [Introduction](https://docs.agentcard.sh/personal/introduction.md): Give your own AI agent a virtual card
+- [KYC & Approvals](https://docs.agentcard.sh/personal/kyc-and-approvals.md): One-time identity verification and approval requests
+- [MCP Overview](https://docs.agentcard.sh/personal/mcp/overview.md): Connect AgentCard to your AI agent via MCP
+- [Agent Skill](https://docs.agentcard.sh/personal/mcp/skill.md): Teach your agent AgentCard workflows with the installable skill
+- [Tools Reference](https://docs.agentcard.sh/personal/mcp/tools.md): Every tool the AgentCard MCP server exposes
+- [Payment Methods](https://docs.agentcard.sh/personal/payment-methods.md): Saved payment methods pay for flight bookings — cards are funded from your wallet
+- [Plans](https://docs.agentcard.sh/personal/plans.md): Free, Basic, and Pro limits
+- [Quickstart](https://docs.agentcard.sh/personal/quickstart.md): Sign up, fund your wallet, and create your first card
+- [Shopping](https://docs.agentcard.sh/personal/shopping.md): Let your agent order from merchants end-to-end with buy
+- [Support](https://docs.agentcard.sh/personal/support.md): Talk to AgentCard support
+
+## OpenAPI Specs
+
+- [openapi](https://docs.agentcard.sh/openapi.json)

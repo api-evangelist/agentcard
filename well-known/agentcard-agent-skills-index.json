@@ -1,0 +1,19 @@
+{
+  "$schema": "https://agentskills.io/schemas/v0.2.0/index.json",
+  "version": "0.2.0",
+  "skills": [
+    {
+      "name": "agent-card",
+      "type": "skill",
+      "description": "Issue virtual Visa cards for AI agents. Fund a wallet with Apple Pay or Google Pay, create single-use or multi-use cards with fixed USD budgets, check balances, view credentials, pay for things, manage plans and limits, close cards, and contact support.",
+      "url": "https://www.agentcard.sh/.well-known/agent-skills/agent-card/SKILL.md",
+      "sha256": "3231e1d33cdcd41a9144b1ba3ac7cd3a8b55ec5c801dd605776a8f0469bcc123"
+    },
+    {
+      "name": "mcp-server",
+      "type": "mcp-server",
+      "description": "Agentcard MCP server \u2014 expose virtual card tools to AI agents: list_cards, create_card, get_card_details, check_balance, close_card, and support chat tools.",
+      "url": "https://www.agentcard.sh/.well-known/mcp/server-card.json"
+    }
+  ]
+}

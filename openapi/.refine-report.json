@@ -1,0 +1,22 @@
+{
+  "provider": "agentcard",
+  "sources": [
+    "agentcard-authentication-api-openapi.yml",
+    "agentcard-connect-api-openapi.yml",
+    "agentcard-identity-verification-api-openapi.yml",
+    "agentcard-wallet-funding-api-openapi.yml",
+    "agentcard-withdrawals-api-openapi.yml"
+  ],
+  "outputs": [
+    "agentcard-authentication-api-openapi.yml",
+    "agentcard-connect-api-openapi.yml",
+    "agentcard-identity-verification-api-openapi.yml",
+    "agentcard-wallet-funding-api-openapi.yml",
+    "agentcard-withdrawals-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}

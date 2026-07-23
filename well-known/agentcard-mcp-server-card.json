@@ -1,0 +1,57 @@
+{
+  "name": "Agentcard",
+  "description": "Virtual Visa cards for AI agents with MCP-native spending controls and per-task budget limits",
+  "version": "1.0.0",
+  "url": "https://mcp.agentcard.sh/mcp",
+  "transport": "http",
+  "authentication": {
+    "type": "bearer",
+    "instructions": "Get your JWT by running: npx agent-cards signup && npx agent-cards login"
+  },
+  "tools": [
+    {
+      "name": "list_cards",
+      "description": "List all virtual cards with balances, expiry, and status"
+    },
+    {
+      "name": "create_card",
+      "description": "Create a new virtual Visa card with a fixed USD budget"
+    },
+    {
+      "name": "get_card_details",
+      "description": "Get decrypted PAN, CVV, expiry (requires human approval)"
+    },
+    {
+      "name": "check_balance",
+      "description": "Fast balance check without exposing credentials"
+    },
+    {
+      "name": "close_card",
+      "description": "Permanently close a virtual card"
+    },
+    {
+      "name": "list_transactions",
+      "description": "List card transactions with amount, merchant, status, and timestamps"
+    },
+    {
+      "name": "get_plan",
+      "description": "Show the current plan, card limits, and month's usage"
+    },
+    {
+      "name": "start_support_chat",
+      "description": "Start a support conversation"
+    },
+    {
+      "name": "send_support_message",
+      "description": "Send a message in a support thread"
+    },
+    {
+      "name": "read_support_chat",
+      "description": "Read support conversation history"
+    }
+  ],
+  "homepage": "https://www.agentcard.sh",
+  "repository": "https://github.com/agent-cards/mcp",
+  "keywords": ["mcp", "virtual-card", "ai-agent", "payments", "fintech"],
+  "logo": "https://www.agentcard.sh/card.png"
+}

@@ -1,0 +1,44 @@
+generated: '2026-07-17'
+method: searched
+source: https://docs.agentcard.sh + openapi/agentcard-openapi-original.json + https://www.agentcard.sh/agent.txt
+authentication:
+  style: Bearer platform access token (OAuth2 client credentials, RFC 6749 §4.4)
+  header: 'Authorization: Bearer <platform_access_token>'
+  token_lifetime: 3600s (one hour; re-mint via POST /api/v2/oauth/token — no refresh on this grant)
+  end_user_flow: OAuth 2.1 + PKCE ("Connect with Agentcard") via mcp.agentcard.sh; per-user tokens rotate on refresh
+  ref: authentication/agentcard-authentication.yml
+idempotency:
+  supported: true
+  mechanism: natural-key idempotency
+  detail: >-
+    POST /api/v2/connect/consent (connectConsent) is idempotent per user — a repeat call
+    updates the same consent record instead of creating a duplicate. Card issuance is
+    single-use by design; funding sessions are single-use and expire after 30 minutes.
+    No global Idempotency-Key header is documented across all write endpoints.
+  ref: https://docs.agentcard.sh/companies/api/reference/connect-consent.md
+pagination:
+  style: bounded-latest
+  detail: >-
+    List endpoints return recent windows rather than cursored pages — e.g. withdrawals
+    returns up to 20 most recent, newest first. No cursor/offset query parameters documented.
+versioning:
+  scheme: uri-path
+  current: v2
+  base_path: /api/v2
+  note: A separate v1 surface (/api/v1/cards, test_* helpers) also exists for card operations.
+error_envelope:
+  shape: '{ "error": { "code, message, docs, field_errors?, warnings? } }'
+  branch_on: error.code (stable snake_case)
+  ref: errors/agentcard-problem-types.yml
+mode_separation:
+  model: split universes (the Stripe model) — sandbox vs live decided by the credential, never the URL
+  base_url: https://api.agentcard.sh (single host for both modes)
+  ref: sandbox/agentcard-sandbox.yml
+request_tracing:
+  detail: No documented request-id/correlation header on the REST v2 surface. MCP transport echoes Mcp-Session-Id.
+rate_limiting:
+  detail: 429 returned on one-time-code sends (walletPhoneStart). No published RateLimit response headers.
+webhooks:
+  signing: AgentCard-Signature header, HMAC-SHA256 of "{t}.{raw_body}" keyed with whsec_ secret; verify raw body, reject stale ts (±300s)
+  envelope: '{ id, type, created, livemode, data }'  # dedupe on id
+  ref: asyncapi/agentcard-webhooks.yml

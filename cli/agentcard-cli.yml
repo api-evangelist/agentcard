@@ -1,0 +1,50 @@
+generated: '2026-07-17'
+method: searched
+source: https://docs.agentcard.sh/personal/cli/overview + https://docs.agentcard.sh/companies/getting-started/manual-implementation
+clis:
+- name: agent-cards
+  audience: personal
+  package: packages/agentcard-packages.yml
+  install:
+  - npm install -g agent-cards
+  auth: Magic-link signin (agent-cards signup); OAuth to the hosted MCP server. No API keys.
+  amount_units: dollars   # e.g. --amount 25 = $25.00 (MCP tools use cents)
+  command_groups:
+  - group: account
+    commands: [signup, whoami, setup-mcp, connections, "connections revoke <clientId>"]
+  - group: wallet
+    commands: ["wallet fund --amount <dollars>", wallet, "wallet withdraw"]
+  - group: cards
+    commands: ["cards create --amount <dollars>", "cards list", "cards details <card-id>", "balance <card-id>", "cards transactions <card-id>", "cards close <card-id>"]
+  - group: payment-methods
+    commands: [setup, list, default, remove]
+  - group: plan
+    commands: [plan, "plan upgrade basic|pro", "plan cancel"]
+  - group: buy
+    commands: [buy]
+  - group: extension
+    commands: ["extension install"]
+  flags:
+  - flag: "--yes"
+    description: skip confirmation prompt (headless agents)
+  - flag: "--json"
+    description: 'machine-readable output: {"ok":true,"card":{...}}'
+- name: agent-cards-admin
+  audience: companies
+  package: packages/agentcard-packages.yml
+  install:
+  - npm install -g agent-cards-admin
+  auth: Magic-link login; provisions org + confidential OAuth client (secrets to env).
+  command_groups:
+  - group: account
+    commands: [login, "env production", subscribe]
+  - group: orgs
+    commands: ["orgs create"]
+  - group: oauth-clients
+    commands: ["oauth-clients create --org <org-id> --name <name> --redirect-uri <uri> [--public]"]
+  - group: wizard
+    commands: [wizard, "wizard --agent --yes --email <email> --app-url <url>"]
+  wizard_notes: >-
+    The wizard is an AI agent that implements the whole OAuth + MCP integration in your repo
+    (sandbox-forced), then proves it by issuing a real sandbox card. Runs on Agentcard's hosted
+    gateway (no model API key). Last stdout line is AGENTCARD_WIZARD_RESULT {json}. Idempotent.

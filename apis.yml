@@ -1,22 +1,196 @@
 aid: agentcard
 name: Agentcard
-description: Agentcard is a company surfaced as a portfolio company of y-combinator and added to the API
-  Evangelist network as a stub for enrichment. This profile is a lead awaiting the enrichment pipeline.
+description: >-
+  Agentcard is a Y Combinator (Summer 2026) startup building card-issuing
+  payments infrastructure for AI agents. It issues virtual Visa cards that are
+  funded with a fixed USD amount and close after their first charge, giving
+  agents scoped, single-use spending power with hard budget limits and no
+  overdraft risk. Access is available three ways over one host: a REST v2 API,
+  a hosted Model Context Protocol (MCP) server, and first-party CLIs. There are
+  two products: Personal (an individual gives their own agent a card, funded via
+  Apple Pay / Google Pay) and Companies ("Connect with Agentcard" — a platform
+  issues cards to many users through OAuth 2.1 + PKCE). The platform covers user
+  connect, identity verification (KYC), wallet funding, withdrawals, virtual card
+  creation, transactions, and merchant shopping (buy) with HMAC-signed webhooks
+  and a sandbox mode split from live by credential.
 url: https://raw.githubusercontent.com/api-evangelist/agentcard/refs/heads/main/apis.yml
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://www.agentcard.sh/favicon.ico
 x-type: company
 x-source: vc-portfolio
 x-backed-by:
 - y-combinator
-x-tier: stub
-x-tier-reason: portfolio-lead
+x-tier: profiled
+x-tier-reason: enriched-from-portfolio-lead
 specificationVersion: '0.20'
 created: '2026-07-17'
 modified: '2026-07-17'
 tags:
 - Company
-apis: []
+- Payments
+- Virtual Cards
+- Card Issuing
+- AI Agents
+- Agentic Commerce
+- MCP
+- Fintech
+- Wallet
+- Visa
+apis:
+- aid: agentcard:agentcard-authentication-api
+  name: Agentcard Authentication API
+  description: >-
+    Exchange your client credentials for a platform access token, and introspect what a token acts as.
+  humanURL: https://docs.agentcard.sh/companies/api/overview
+  baseURL: https://api.agentcard.sh
+  tags:
+  - Authentication
+  properties:
+  - type: OpenAPI
+    url: openapi/agentcard-authentication-api-openapi.yml
+- aid: agentcard:agentcard-connect-api
+  name: Agentcard Connect API
+  description: >-
+    Connect a user to your platform: send a one-time code, verify it, record consent, and keep the connection
+    alive.
+  humanURL: https://docs.agentcard.sh/companies/api/overview
+  baseURL: https://api.agentcard.sh
+  tags:
+  - Connect
+  properties:
+  - type: OpenAPI
+    url: openapi/agentcard-connect-api-openapi.yml
+- aid: agentcard:agentcard-identity-verification-api
+  name: Agentcard Identity verification API
+  description: >-
+    Verify a connected user's identity: upload their ID, submit any extra fields we ask for, then show
+    a short face scan.
+  humanURL: https://docs.agentcard.sh/companies/api/overview
+  baseURL: https://api.agentcard.sh
+  tags:
+  - Identity verification
+  properties:
+  - type: OpenAPI
+    url: openapi/agentcard-identity-verification-api-openapi.yml
+- aid: agentcard:agentcard-wallet-funding-api
+  name: Agentcard Wallet funding API
+  description: >-
+    Fund a connected user's wallet from your own UI — request a payment link, relay the phone verification
+    code, and poll until the funds land.
+  humanURL: https://docs.agentcard.sh/companies/api/overview
+  baseURL: https://api.agentcard.sh
+  tags:
+  - Wallet funding
+  properties:
+  - type: OpenAPI
+    url: openapi/agentcard-wallet-funding-api-openapi.yml
+- aid: agentcard:agentcard-withdrawals-api
+  name: Agentcard Withdrawals API
+  description: >-
+    Move money out of a connected user's wallet — to a saved bank account or a crypto address on Base.
+    Transfers are processed manually by the Agentcard team, usually within 1-3 business days.
+  humanURL: https://docs.agentcard.sh/companies/api/overview
+  baseURL: https://api.agentcard.sh
+  tags:
+  - Withdrawals
+  properties:
+  - type: OpenAPI
+    url: openapi/agentcard-withdrawals-api-openapi.yml
+common:
+- type: Website
+  url: https://www.agentcard.sh
+- type: DeveloperPortal
+  url: https://docs.agentcard.sh
+- type: Documentation
+  url: https://docs.agentcard.sh
+- type: APIReference
+  url: https://docs.agentcard.sh/companies/api/reference
+- type: GettingStarted
+  url: https://docs.agentcard.sh/companies/getting-started/quickstart
+- type: Quickstart
+  url: https://docs.agentcard.sh/personal/quickstart
+- type: Support
+  url: https://docs.agentcard.sh/personal/support
+- type: Blog
+  url: https://www.agentcard.sh/blog/
+- type: GitHubOrganization
+  url: https://github.com/agentcard
+- type: Pricing
+  url: https://docs.agentcard.sh/personal/plans
+- type: SignUp
+  url: https://app.agentcard.sh
+- type: TermsOfService
+  url: https://www.agentcard.sh/terms
+- type: PrivacyPolicy
+  url: https://www.agentcard.sh/privacy
+- type: Postman
+  url: https://docs.agentcard.sh/companies/api/postman
+- type: StatusPage
+  url: https://agentcard.checkly-status-page.com
+- type: Authentication
+  url: authentication/agentcard-authentication.yml
+- type: AgenticAccess
+  url: agentic-access/agentcard-agentic-access.yml
+- type: DomainSecurity
+  url: security/agentcard-domain-security.yml
+- type: Packages
+  url: packages/agentcard-packages.yml
+- type: SDKs
+  url: packages/agentcard-packages.yml
+- type: CLI
+  url: cli/agentcard-cli.yml
+- type: MCPServer
+  url: mcp/agentcard-mcp.yml
+- type: LLMsTxt
+  url: llms/agentcard-llms.txt
+- type: WellKnown
+  url: well-known/agentcard-well-known.yml
+- type: APICatalog
+  url: well-known/agentcard-api-catalog.json
+- type: ErrorCatalog
+  url: errors/agentcard-problem-types.yml
+- type: Conventions
+  url: conventions/agentcard-conventions.yml
+- type: Idempotency
+  url: conventions/agentcard-conventions.yml
+- type: Lifecycle
+  url: lifecycle/agentcard-lifecycle.yml
+- type: Sandbox
+  url: sandbox/agentcard-sandbox.yml
+- type: Conformance
+  url: conformance/agentcard-conformance.yml
+- type: DataModel
+  url: data-model/agentcard-data-model.yml
+- type: AsyncAPI
+  url: asyncapi/agentcard-webhooks-asyncapi.yml
+- type: Webhooks
+  url: asyncapi/agentcard-webhooks.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: Arazzo
+  name: Connect a user and verify identity
+  url: arazzo/agentcard-connect-and-verify.arazzo.yml
+- type: Arazzo
+  name: Verify phone and fund wallet
+  url: arazzo/agentcard-fund-wallet.arazzo.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+x-enrichment:
+  date: '2026-07-19'
+  status: backfilled
+  pass: local-v1
+  note: backfilled from .gitignore signal + verified work evidence

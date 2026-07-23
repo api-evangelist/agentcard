@@ -1,0 +1,48 @@
+generated: '2026-07-17'
+method: derived
+source: openapi/agentcard-openapi-original.json (components.schemas) + https://docs.agentcard.sh
+entities:
+- name: Connection
+  description: A connected end user authorized to a platform (result of the connect/verify flow).
+  schema: Connection
+- name: Consent
+  description: Record that a user authorized the platform to act on their behalf (idempotent per user).
+  schema: Consent
+- name: KycState
+  description: Identity-verification state for a connected user.
+  schema: KycState
+- name: Wallet
+  description: The connected user's funding wallet and balance (provisioned on first read).
+  schema: Wallet
+- name: FundingSession
+  description: A single-use Apple/Google Pay funding link (expires after 30 minutes).
+  schema: FundingSession
+- name: PhoneVerification
+  description: A phone verification, fresh for 60 days, required before funding.
+  schema: PhoneVerification
+- name: WithdrawalRecipient
+  description: A saved bank/crypto destination a user can withdraw to.
+  schema: WithdrawalRecipient
+- name: Withdrawal
+  description: A requested withdrawal from spendable balance (bank or USDC-on-Base).
+  schema: Withdrawal
+- name: Card
+  description: A virtual Visa card funded from the wallet (v1/MCP surface; not in the v2 REST schemas).
+  schema: null
+- name: Transaction
+  description: An authorization/clearing/decline/void event on a card (webhook + v1 surface).
+  schema: null
+relationships:
+- {from: Connection, type: has_one, to: Consent, via: user}
+- {from: Connection, type: has_one, to: KycState, via: user}
+- {from: Connection, type: has_one, to: Wallet, via: user}
+- {from: Wallet, type: has_many, to: FundingSession, via: wallet}
+- {from: Wallet, type: has_many, to: WithdrawalRecipient, via: wallet}
+- {from: Wallet, type: has_many, to: Withdrawal, via: wallet}
+- {from: Wallet, type: has_many, to: Card, via: wallet}
+- {from: Withdrawal, type: belongs_to, to: WithdrawalRecipient, via: destination}
+- {from: Card, type: has_many, to: Transaction, via: card}
+notes: >-
+  The v2 REST spec models connect/KYC/wallet/withdrawals; Card and Transaction entities live
+  on the v1/MCP surface and in the webhook catalog. No documented id-prefix scheme was found
+  (evt_ for webhook events, whsec_ for signing secrets, acs_ for OAuth client secrets).

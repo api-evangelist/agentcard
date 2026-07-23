@@ -1,0 +1,52 @@
+generated: '2026-07-17'
+method: derived
+source: openapi/agentcard-openapi-original.json
+format: custom-envelope
+envelope:
+  description: >-
+    Every v2 error uses the same JSON envelope. Branch on error.code (stable snake_case string).
+    The token endpoint alone uses the RFC 6749 §5.2 shape ({error, error_description}).
+  shape:
+    error:
+      code: string        # stable, machine-readable snake_case — branch on this
+      message: string     # human-readable, safe to log
+      docs: string        # link back to the reference
+      field_errors: object   # only on invalid_fields — names each field to fix
+      warnings: array        # only on document-upload errors — safe to show the user
+  oauth_shape:
+    error: string          # RFC 6749 §5.2 machine-readable code (token endpoint only)
+    error_description: string
+statuses:
+- status: 400
+  meaning: Bad request / invalid input (invalid_fields carries field_errors)
+  operations: [createAccessToken, connectStart, connectVerify, connectConsent, connectRefresh, kycUploadFront, kycUploadBack, kycSubmitInformation, kycGetStatus, kycSimulate, walletGet, walletFund, walletPhoneStart, walletPhoneVerify, walletWithdrawalRecipientCreate, walletWithdraw]
+- status: 401
+  meaning: Missing / invalid / expired platform access token (tokens live one hour)
+  operations: [createAccessToken, introspectCredential, connectStart, connectVerify, connectConsent, connectRefresh, kycUploadFront, kycUploadBack, kycSubmitInformation, kycGetStatus, kycSimulate, walletGet, walletFund, walletFundStatus, walletPhoneStart, walletPhoneVerify]
+- status: 403
+  meaning: Forbidden — includes sandbox_only (test helpers rejected on live credentials)
+  operations: [createAccessToken, kycSimulate, walletWithdrawalRecipientCreate, walletWithdraw]
+- status: 404
+  meaning: Resource not found (user, wallet, funding session, recipient)
+  operations: [connectConsent, kycUploadFront, kycUploadBack, kycSubmitInformation, kycGetStatus, kycSimulate, walletGet, walletFund, walletFundStatus, walletPhoneStart, walletPhoneVerify, walletWithdrawalRecipientCreate, walletWithdrawalRecipientsList, walletWithdrawalRecipientRemove, walletWithdraw, walletWithdrawalsList]
+- status: 409
+  meaning: Conflict — KYC/wallet state does not permit the action (e.g. already verified, wrong step)
+  operations: [kycUploadFront, kycUploadBack, kycSubmitInformation, kycGetStatus, kycSimulate, walletGet, walletFund]
+- status: 422
+  meaning: Unprocessable — validation of documents / withdrawal fields failed (warnings, country_specific)
+  operations: [kycUploadFront, kycUploadBack, walletFund, walletPhoneStart, walletPhoneVerify, walletWithdrawalRecipientCreate, walletWithdraw]
+- status: 429
+  meaning: Rate limited (one-time code sends)
+  operations: [walletPhoneStart]
+- status: 502
+  meaning: Upstream provider error (KYC / payments / phone provider)
+  operations: [connectStart, connectVerify, kycUploadFront, kycUploadBack, kycSubmitInformation, kycSimulate, walletFund, walletPhoneStart]
+- status: 503
+  meaning: Service temporarily unavailable
+  operations: [connectStart, walletGet, walletFund]
+notes: >-
+  Errors are NOT RFC 9457 problem+json; they use the provider's own stable-code envelope.
+  No published error-code registry table was found beyond the envelope contract and the
+  named codes surfaced in docs (invalid_fields, sandbox_only) and the MCP recovery states
+  (user_info_required, kyc_required, wallet_funding_required, deposit_confirming,
+  phone_verification_required, amount_exceeds_limit, card_limit_reached).

@@ -1,0 +1,23 @@
+generated: '2026-07-17'
+method: searched
+source: https://docs.agentcard.sh + openapi/agentcard-openapi-original.json + https://www.agentcard.sh/.well-known/api-catalog
+versioning:
+  scheme: uri-path
+  current: v2
+  api_version: 2.0.0
+  docs: https://docs.agentcard.sh/companies/api/overview
+  note: v1 card endpoints coexist with the v2 connect/KYC/wallet surface.
+deprecation:
+  policy_url: null
+  sunset_header: false
+  note: >-
+    No formal deprecation policy or RFC 8594 Sunset/Deprecation header support was found in
+    docs or spec. The v2 API is the current surface; the personal MCP guidance warns that
+    raw API routes are "internal and will change" — integrators are steered to the MCP tools
+    and CLIs rather than calling REST directly, which functions as the stability boundary.
+sla:
+  url: null
+  uptime_target: null
+status_page: https://agentcard.checkly-status-page.com
+health_check: https://api.agentcard.sh/health
+deprecated_operations: []

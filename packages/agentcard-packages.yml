@@ -1,0 +1,26 @@
+generated: '2026-07-17'
+method: searched
+source: https://www.npmjs.com/package/agent-cards + https://www.npmjs.com/package/agent-cards-admin
+packages:
+- language: javascript
+  registry: npm
+  name: agent-cards
+  version: 0.5.65
+  url: https://www.npmjs.com/package/agent-cards
+  install: npm install -g agent-cards
+  description: CLI for managing virtual debit cards for AI agents (Personal). Signup, wallet, cards, plans, MCP setup.
+  bin: agent-cards
+  official: true
+- language: javascript
+  registry: npm
+  name: agent-cards-admin
+  version: 0.3.30
+  url: https://www.npmjs.com/package/agent-cards-admin
+  install: npm install -g agent-cards-admin
+  description: Admin CLI for managing B2B organizations, OAuth clients, and members (Companies). Includes the integration wizard.
+  bin: agent-cards-admin
+  official: true
+notes: >-
+  Both packages are first-party Agentcard CLIs published to npm. They are command-line
+  clients rather than embeddable code libraries; the REST v2 API is called directly or
+  via the hosted MCP server. No Python/Go/Ruby/Java SDKs are published as of this pass.

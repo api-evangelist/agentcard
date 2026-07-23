@@ -1,0 +1,193 @@
+openapi: 3.1.0
+info:
+  title: Agentcard Authentication API
+  version: 2.0.0
+  description: The Agentcard v2 API — connect your users and verify their identity from your own backend. Every call is authenticated with a platform access token minted from your `client_id` + `client_secret`.
+servers:
+- url: https://api.agentcard.sh
+  description: There is one base URL. Sandbox vs production is decided by the client credential you use, never by the host.
+security:
+- platformToken: []
+tags:
+- name: Authentication
+  description: Exchange your client credentials for a platform access token, and introspect what a token acts as.
+paths:
+  /api/v2/oauth/token:
+    post:
+      tags:
+      - Authentication
+      summary: Create an access token
+      operationId: createAccessToken
+      security: []
+      description: 'Exchanges your `client_id` + `client_secret` for a platform access token (OAuth2 client credentials, RFC 6749 §4.4). The token lives one hour — when it expires, exchange again; there are no refresh tokens on this grant.
+
+
+        Get your credentials in the Agentcard dashboard under **Organization → Developer → Credentials**. A sandbox client mints tokens that act in sandbox; a production client acts in production.
+
+
+        You can also send the credentials as HTTP Basic (`Authorization: Basic base64(client_id:client_secret)`) instead of in the form body.
+
+
+        This endpoint is rate limited to 30 requests per 5 minutes per IP — cache the token and reuse it until it expires.'
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+              - grant_type
+              - client_id
+              - client_secret
+              properties:
+                grant_type:
+                  type: string
+                  enum:
+                  - client_credentials
+                  description: Always `client_credentials`.
+                client_id:
+                  type: string
+                  description: Your client id, from the dashboard.
+                client_secret:
+                  type: string
+                  description: Your client secret (`acs_…`), shown once when you create the client.
+      responses:
+        '200':
+          description: 'The token to send as `Authorization: Bearer <access_token>` on every other call.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+              example:
+                access_token: eyJhbGciOiJIUzI1NiIs…
+                token_type: Bearer
+                expires_in: 3600
+                scope: api
+        '400':
+          description: '`unsupported_grant_type` — the `grant_type` isn''t `client_credentials`. `unauthorized_client` — the client can''t use this grant.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAuthError'
+              example:
+                error: unsupported_grant_type
+                error_description: Only grant_type=client_credentials is supported here
+        '401':
+          description: '`invalid_client` — unknown client or bad credentials.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAuthError'
+              example:
+                error: invalid_client
+                error_description: Unknown client or bad credentials
+        '403':
+          description: '`access_denied` — the organization is suspended.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAuthError'
+              example:
+                error: access_denied
+                error_description: Organization is suspended
+  /api/v2:
+    get:
+      tags:
+      - Authentication
+      summary: Introspect credential
+      operationId: introspectCredential
+      description: Returns the organization and mode your token acts as. Useful as a health check and to confirm you're pointed at the right credential.
+      responses:
+        '200':
+          description: The organization and mode behind the token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object:
+                    type: string
+                    enum:
+                    - api_v2
+                  organization_id:
+                    type: string
+                    description: The organization the token belongs to.
+                  mode:
+                    type: string
+                    enum:
+                    - sandbox
+                    - production
+                    description: Decided by the client the token was minted from.
+              example:
+                object: api_v2
+                organization_id: org_a1b2c3
+                mode: sandbox
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  schemas:
+    Error:
+      type: object
+      description: Every v2 error uses the same envelope.
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: A stable, machine-readable string (snake_case). Branch on this.
+            message:
+              type: string
+              description: A human-readable explanation, safe to log.
+            docs:
+              type: string
+              description: A link back to the reference.
+            field_errors:
+              type: object
+              additionalProperties:
+                type: string
+              description: Only on `invalid_fields` — names each field to fix.
+            warnings:
+              type: array
+              items:
+                type: string
+              description: Only on document upload errors — actionable feedback safe to show the user.
+    TokenResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+          description: 'The platform access token. Send it as `Authorization: Bearer <access_token>` on every other endpoint.'
+        token_type:
+          type: string
+          enum:
+          - Bearer
+        expires_in:
+          type: integer
+          description: Seconds until the token expires (3600 = one hour).
+        scope:
+          type: string
+          enum:
+          - api
+    OAuthError:
+      type: object
+      description: RFC 6749 §5.2 error shape — only the token endpoint uses it.
+      properties:
+        error:
+          type: string
+          description: A stable, machine-readable code.
+        error_description:
+          type: string
+          description: A human-readable explanation.
+  responses:
+    Unauthorized:
+      description: '`unauthorized` — the platform access token is missing or expired. Exchange your client credentials for a fresh one.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    platformToken:
+      type: http
+      scheme: bearer
+      description: 'A platform access token. Get one on the **Create an access token** endpoint by exchanging your `client_id` + `client_secret`, then send it as `Authorization: Bearer <token>`. Tokens live one hour.'

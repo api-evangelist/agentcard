@@ -1,0 +1,66 @@
+arazzo: 1.0.1
+info:
+  title: Agentcard — verify phone and fund wallet
+  version: 1.0.0
+  summary: Verify a user's phone, create an Apple/Google Pay funding session, and poll it to completion.
+sourceDescriptions:
+- name: agentcard
+  url: ../openapi/agentcard-openapi-original.json
+  type: openapi
+workflows:
+- workflowId: verifyPhoneAndFundWallet
+  summary: Phone-verify a connected user, start a funding session, and poll until funds land.
+  inputs:
+    type: object
+    properties:
+      phone_number: {type: string}
+      code: {type: string}
+      amount_cents: {type: integer}
+      session_id: {type: string}
+  steps:
+  - stepId: getWallet
+    operationId: walletGet
+    successCriteria:
+    - condition: $statusCode == 200
+    outputs:
+      balance: $response.body#/balance
+  - stepId: startPhone
+    operationId: walletPhoneStart
+    requestBody:
+      contentType: application/json
+      payload:
+        phone_number: $inputs.phone_number
+    successCriteria:
+    - condition: $statusCode == 200
+  - stepId: verifyPhone
+    operationId: walletPhoneVerify
+    requestBody:
+      contentType: application/json
+      payload:
+        code: $inputs.code
+    successCriteria:
+    - condition: $statusCode == 200
+  - stepId: fund
+    operationId: walletFund
+    requestBody:
+      contentType: application/json
+      payload:
+        amount_cents: $inputs.amount_cents
+    successCriteria:
+    - condition: $statusCode == 201
+    outputs:
+      session_id: $response.body#/session_id
+      payment_url: $response.body#/payment_url
+  - stepId: pollFunding
+    operationId: walletFundStatus
+    parameters:
+    - name: session_id
+      in: path
+      value: $steps.fund.session_id
+    successCriteria:
+    - condition: $statusCode == 200
+    outputs:
+      status: $response.body#/status
+  outputs:
+    payment_url: $steps.fund.payment_url
+    funding_status: $steps.pollFunding.status

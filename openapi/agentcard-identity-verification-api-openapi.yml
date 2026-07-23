@@ -1,0 +1,440 @@
+openapi: 3.1.0
+info:
+  title: Agentcard Authentication Identity verification API
+  version: 2.0.0
+  description: The Agentcard v2 API — connect your users and verify their identity from your own backend. Every call is authenticated with a platform access token minted from your `client_id` + `client_secret`.
+servers:
+- url: https://api.agentcard.sh
+  description: There is one base URL. Sandbox vs production is decided by the client credential you use, never by the host.
+security:
+- platformToken: []
+tags:
+- name: Identity verification
+  description: 'Verify a connected user''s identity: upload their ID, submit any extra fields we ask for, then show a short face scan.'
+paths:
+  /api/v2/kyc/documents/front:
+    post:
+      tags:
+      - Identity verification
+      summary: Upload the front of the ID
+      operationId: kycUploadFront
+      description: 'Uploads the front of the user''s identity document as a base64-encoded image. This step acknowledges receipt; the next step (`back`) tells you what comes next.
+
+
+        Any upload response may include a `warnings` array with actionable feedback (for example, that the other side of the document is still needed).'
+      requestBody:
+        $ref: '#/components/requestBodies/KycDocument'
+      responses:
+        '200':
+          description: Receipt acknowledged — upload the back next. May include a `warnings` array.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KycState'
+              example:
+                object: kyc
+                status: awaiting_documents
+        '400':
+          $ref: '#/components/responses/KycDocumentBadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/ConnectionNotFound'
+        '409':
+          $ref: '#/components/responses/UserConflict'
+        '422':
+          $ref: '#/components/responses/DocumentUnprocessable'
+        '502':
+          $ref: '#/components/responses/VerificationError'
+  /api/v2/kyc/documents/back:
+    post:
+      tags:
+      - Identity verification
+      summary: Upload the back of the ID
+      operationId: kycUploadBack
+      description: 'Uploads the back of the document. The response tells you what to do next — this is the branch point of the flow:
+
+
+        - `needs_information` → collect exactly the `required_fields` and post them to `/kyc/information`.
+
+        - `requires_verification` → show the user the `iframe_url` for the face scan.
+
+        - `rejected` → the document couldn''t be verified.'
+      requestBody:
+        $ref: '#/components/requestBodies/KycDocument'
+      responses:
+        '200':
+          description: The next step of the flow.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KycState'
+              examples:
+                needs_information:
+                  summary: Needs more info
+                  value:
+                    object: kyc
+                    status: needs_information
+                    required_fields:
+                    - national_id_number
+                    - phone_number
+                    - address_line1
+                    - address_city
+                    - address_region
+                    - address_postal_code
+                    - address_country
+                requires_verification:
+                  summary: Ready for face scan
+                  value:
+                    object: kyc
+                    status: requires_verification
+                    iframe_url: https://in.sumsub.com/websdk/p/…
+        '400':
+          $ref: '#/components/responses/KycDocumentBadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/ConnectionNotFound'
+        '409':
+          $ref: '#/components/responses/UserConflict'
+        '422':
+          $ref: '#/components/responses/DocumentUnprocessable'
+        '502':
+          $ref: '#/components/responses/VerificationError'
+  /api/v2/kyc/information:
+    post:
+      tags:
+      - Identity verification
+      summary: Submit information
+      operationId: kycSubmitInformation
+      description: Submits the extra fields requested by a `needs_information` response. Send only the fields listed in `required_fields`. On success, the response returns the `iframe_url` for the face scan.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - user_id
+              properties:
+                user_id:
+                  type: string
+                  description: The connected user's id.
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                date_of_birth:
+                  type: string
+                  description: ISO 8601 date, `YYYY-MM-DD`.
+                national_id_number:
+                  type: string
+                  description: The user's national identification number.
+                phone_number:
+                  type: string
+                  description: E.164 format with country code (e.g. `+15551234567`).
+                address_line1:
+                  type: string
+                address_line2:
+                  type: string
+                address_city:
+                  type: string
+                address_region:
+                  type: string
+                  description: State, province, or region.
+                address_postal_code:
+                  type: string
+                address_country:
+                  type: string
+                  description: ISO 3166-1 alpha-2 country code (e.g. `US`).
+            example:
+              user_id: user_7g8h9i
+              national_id_number: '123456789'
+              address_line1: 123 Main St
+              address_city: San Francisco
+              address_region: CA
+              address_postal_code: '94105'
+              address_country: US
+      responses:
+        '200':
+          description: The next step — usually `requires_verification` with the `iframe_url`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KycState'
+              example:
+                object: kyc
+                status: requires_verification
+                iframe_url: https://in.sumsub.com/websdk/p/…
+        '400':
+          description: '`invalid_request` — missing `user_id`. `invalid_fields` — a value didn''t check out; the error adds a `field_errors` object naming each field to fix.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error:
+                  code: invalid_fields
+                  message: Some of the information provided is invalid.
+                  field_errors:
+                    date_of_birth: Enter a valid date.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/ConnectionNotFound'
+        '409':
+          $ref: '#/components/responses/UserConflict'
+        '502':
+          $ref: '#/components/responses/VerificationError'
+  /api/v2/kyc:
+    get:
+      tags:
+      - Identity verification
+      summary: Get verification status
+      operationId: kycGetStatus
+      description: Polls the current verification status — the alternative to the `identity.verification.updated` webhook.
+      parameters:
+      - name: user_id
+        in: query
+        required: true
+        schema:
+          type: string
+        description: The connected user's id.
+      responses:
+        '200':
+          description: The current status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KycState'
+              example:
+                object: kyc
+                status: approved
+        '400':
+          description: '`invalid_request` — missing `user_id`.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/ConnectionNotFound'
+        '409':
+          $ref: '#/components/responses/UserConflict'
+  /api/v2/kyc/simulate:
+    post:
+      tags:
+      - Identity verification
+      summary: Simulate an outcome (test mode)
+      operationId: kycSimulate
+      description: '**Test mode only.** Drives a test-mode verification to a chosen terminal outcome instantly — test verifications never complete on their own. The simulated verdict flows through the same status contract and fires the same `identity.verification.updated` webhook a real review produces, so your status handling and webhook consumer are exercised end to end. Requires a test-mode client credential; live tokens get `403 sandbox_only`.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - user_id
+              - outcome
+              properties:
+                user_id:
+                  type: string
+                  description: The connected user's id.
+                outcome:
+                  type: string
+                  enum:
+                  - approved
+                  - rejected
+                  - requires_input
+                  description: The verdict to apply. `approved` — verification succeeds. `rejected` — terminal rejection. `requires_input` — a retryable bounce asking for new document photos.
+                reason:
+                  type: string
+                  maxLength: 300
+                  description: Optional end-user-safe explanation carried on non-approved outcomes — it appears as `reason` in statuses and webhook events, exactly like a real review's. It must not name internal providers or identifiers (rejected with `400 invalid_reason`), since it is shown to end users verbatim.
+            example:
+              user_id: user_7g8h9i
+              outcome: rejected
+              reason: The name on the document does not match the application.
+      responses:
+        '200':
+          description: The verification's new state, exactly as `GET /api/v2/kyc` now reports it.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KycState'
+              example:
+                object: kyc
+                simulated: true
+                status: rejected
+                reason: The name on the document does not match the application.
+        '400':
+          description: '`invalid_request` — missing `user_id` or an unknown `outcome`. `invalid_reason` — the `reason` names an internal provider or identifier (it is shown to end users verbatim).'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          description: '`sandbox_only` — the token is a live credential. Live verifications are decided by the identity provider and cannot be simulated.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error:
+                  code: sandbox_only
+                  message: Simulated verification outcomes only exist in test mode. Live verifications are decided by the identity provider.
+        '404':
+          $ref: '#/components/responses/ConnectionNotFound'
+        '409':
+          $ref: '#/components/responses/UserConflict'
+        '502':
+          $ref: '#/components/responses/VerificationError'
+components:
+  responses:
+    UserConflict:
+      description: '`user_conflict` — the email on file in your organization belongs to a different account. Contact support.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: '`unauthorized` — the platform access token is missing or expired. Exchange your client credentials for a fresh one.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    VerificationError:
+      description: '`verification_error` — the step failed downstream. Try again.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    KycDocumentBadRequest:
+      description: '`invalid_request` — missing `user_id` or `image`, or an unrecognized `document_type` / `issuing_country`. `invalid_image` — `image` isn''t valid base64. `client_credentials_required` — the token wasn''t minted from client credentials.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ConnectionNotFound:
+      description: '`connection_not_found` — no connection exists for that user under your client.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    DocumentUnprocessable:
+      description: '`document_rejected` — the image couldn''t be processed; ask the user to retake the photo. `document_expired` — the document itself is expired; ask for a valid one. Either may include a `warnings` array with actionable feedback.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: document_rejected
+              message: The document image could not be processed — ask the user for a new, clear photo.
+              warnings:
+              - The verification provider still needs the back of the document — ask the user for the other side.
+  requestBodies:
+    KycDocument:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+            - user_id
+            - image
+            properties:
+              user_id:
+                type: string
+                description: The connected user's id.
+              image:
+                type: string
+                description: The image bytes, base64-encoded.
+              mime_type:
+                type: string
+                default: image/jpeg
+                description: The image's MIME type.
+              document_type:
+                type: string
+                enum:
+                - drivers_license
+                - state_id
+                - passport
+                description: Optional document-type hint. Without it the document is auto-detected and defaults to a US driver's license. If a response `warnings` entry asks you to resubmit with a `document_type`, send the same image again with this field set — no need to go back to the user.
+              issuing_country:
+                type: string
+                description: Optional ISO 3166-1 country code (alpha-2 or alpha-3) of the country that issued the document. Defaults to US when the document doesn't reveal it — always send it for non-US documents (e.g. `DE` for a German national ID).
+          example:
+            user_id: user_7g8h9i
+            image: <base64>
+            mime_type: image/jpeg
+  schemas:
+    Error:
+      type: object
+      description: Every v2 error uses the same envelope.
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: A stable, machine-readable string (snake_case). Branch on this.
+            message:
+              type: string
+              description: A human-readable explanation, safe to log.
+            docs:
+              type: string
+              description: A link back to the reference.
+            field_errors:
+              type: object
+              additionalProperties:
+                type: string
+              description: Only on `invalid_fields` — names each field to fix.
+            warnings:
+              type: array
+              items:
+                type: string
+              description: Only on document upload errors — actionable feedback safe to show the user.
+    KycState:
+      type: object
+      description: The single status contract every KYC response carries.
+      properties:
+        object:
+          type: string
+          enum:
+          - kyc
+        status:
+          type: string
+          enum:
+          - awaiting_documents
+          - needs_information
+          - requires_verification
+          - pending
+          - approved
+          - rejected
+          description: '`awaiting_documents` — upload the front and back. `needs_information` — collect the `required_fields` and submit them. `requires_verification` — show the user the `iframe_url`. `pending` — under review, no action needed. `approved` — verified, done. `rejected` — the user did not pass. Statuses are not one-way: a review can send a user back — `pending` may return to `needs_information` (a detail didn''t match the document; re-collect the listed fields and resubmit, the check re-runs automatically) or to `awaiting_documents` (the images were unusable; upload both sides again). Always branch on the current status.'
+        required_fields:
+          type: array
+          items:
+            type: string
+          description: Only on `needs_information` — exactly the fields to collect and post to `/kyc/information`.
+        iframe_url:
+          type: string
+          description: 'Only on `requires_verification` — the URL to show the user for the face scan. Embed it in an iframe with `allow="camera; microphone"`. Short-lived: always use the most recent one from a poll or webhook, never a stored copy.'
+        warnings:
+          type: array
+          items:
+            type: string
+          description: Optional, on document uploads — actionable feedback safe to show the user (for example, that the other side of the document is still needed).
+        reason:
+          type: string
+          description: Optional, on `needs_information`, `awaiting_documents`, `requires_verification`, and `rejected` — a short, end-user-safe explanation of what the review asked for (for example, “Enter your full name exactly as it appears on your identity document.”). Safe to show the user verbatim.
+  securitySchemes:
+    platformToken:
+      type: http
+      scheme: bearer
+      description: 'A platform access token. Get one on the **Create an access token** endpoint by exchanging your `client_id` + `client_secret`, then send it as `Authorization: Bearer <token>`. Tokens live one hour.'

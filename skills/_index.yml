@@ -1,0 +1,25 @@
+generated: '2026-07-17'
+method: searched
+skills:
+- file: agentcard-published-skill.md
+  name: agent-card (provider-published)
+  method: searched
+  source: https://www.agentcard.sh/.well-known/agent-skills/agent-card/SKILL.md
+  registry: https://skills.sh (tiny-agent-company/agent-card-skill)
+  api: mcp/agentcard-mcp.yml
+  note: Verbatim copy of Agentcard's own MCP skill (MIT). Teaches the wallet/card/shopping MCP workflows.
+- file: agentcard-connect-user.md
+  name: Connect and consent a user
+  method: generated
+  api: openapi/agentcard-openapi-original.json
+  operations: [createAccessToken, connectStart, connectVerify, connectConsent]
+- file: agentcard-verify-identity.md
+  name: Verify a user's identity (KYC)
+  method: generated
+  api: openapi/agentcard-openapi-original.json
+  operations: [kycGetStatus, kycUploadFront, kycUploadBack, kycSubmitInformation, kycSimulate]
+- file: agentcard-fund-wallet.md
+  name: Fund a user's wallet
+  method: generated
+  api: openapi/agentcard-openapi-original.json
+  operations: [walletPhoneStart, walletPhoneVerify, walletFund, walletFundStatus, walletGet]

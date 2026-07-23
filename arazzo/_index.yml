@@ -1,0 +1,12 @@
+generated: '2026-07-17'
+method: derived
+source: openapi/agentcard-openapi-original.json
+workflows:
+- file: agentcard-connect-and-verify.arazzo.yml
+  workflowId: connectAndVerifyIdentity
+  title: Connect a user and verify identity
+  summary: Mint a platform token, connect a user by one-time code, record consent, and run KYC.
+- file: agentcard-fund-wallet.arazzo.yml
+  workflowId: verifyPhoneAndFundWallet
+  title: Verify phone and fund wallet
+  summary: Phone-verify a connected user, create an Apple/Google Pay funding session, and poll to completion.

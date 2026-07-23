@@ -1,0 +1,29 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for Agentcard v2 API
+  version: 1.0.0
+extends: openapi/agentcard-openapi-original.json
+actions:
+- target: $.info
+  update:
+    x-apievangelist-rating: 4
+    x-apievangelist-notes: >-
+      Card-issuing payments API for AI agents. Single host, credential-scoped sandbox/live
+      split. Bearer platform token (client-credentials); end-user access via OAuth 2.1 + PKCE
+      on mcp.agentcard.sh. Custom stable-code error envelope (not RFC 9457). Idempotent
+      connect/consent. HMAC-signed webhooks. Hosted MCP server + two first-party CLIs.
+    x-artifacts:
+      authentication: authentication/agentcard-authentication.yml
+      conventions: conventions/agentcard-conventions.yml
+      errors: errors/agentcard-problem-types.yml
+      sandbox: sandbox/agentcard-sandbox.yml
+      webhooks: asyncapi/agentcard-webhooks.yml
+      mcp: mcp/agentcard-mcp.yml
+      data_model: data-model/agentcard-data-model.yml
+- target: $.info
+  update:
+    x-agentic-access: agentic-access/agentcard-agentic-access.yml
+- target: $.paths['/api/v2/connect/consent'].post
+  update:
+    x-idempotent: true
+    x-idempotency-note: Idempotent per user — a repeat call updates the same consent record.

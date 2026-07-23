@@ -1,0 +1,52 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://api.agentcard.sh",
+      "service-desc": [
+        {
+          "href": "https://docs.agentcard.sh/api-reference/openapi.json",
+          "type": "application/json",
+          "title": "Agentcard REST API — OpenAPI specification"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://docs.agentcard.sh",
+          "type": "text/html",
+          "title": "Agentcard REST API documentation"
+        }
+      ],
+      "status": [
+        {
+          "href": "https://api.agentcard.sh/health",
+          "type": "application/json",
+          "title": "Agentcard REST API health check"
+        }
+      ]
+    },
+    {
+      "anchor": "https://mcp.agentcard.sh/mcp",
+      "service-desc": [
+        {
+          "href": "https://www.agentcard.sh/.well-known/mcp/server-card.json",
+          "type": "application/json",
+          "title": "Agentcard MCP server card"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://docs.agentcard.sh/mcp",
+          "type": "text/html",
+          "title": "Agentcard MCP server documentation"
+        }
+      ],
+      "status": [
+        {
+          "href": "https://mcp.agentcard.sh/health",
+          "type": "application/json",
+          "title": "Agentcard MCP server health check"
+        }
+      ]
+    }
+  ]
+}

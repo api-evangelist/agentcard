@@ -1,0 +1,33 @@
+generated: '2026-07-17'
+method: searched
+source: https://docs.agentcard.sh/companies/testing.md + https://docs.agentcard.sh/personal/concepts/test-mode.md
+mode_model:
+  description: >-
+    Sandbox and live are split universes (the Stripe model). One base URL for both
+    (https://api.agentcard.sh); the credential decides the universe, never the host.
+    Test credentials trigger simulated end-to-end flows and issue test cards that are
+    never charged.
+  base_url: https://api.agentcard.sh
+  live_restriction: Test helper endpoints return 403 sandbox_only on live credentials.
+test_cards:
+  pan_prefix: '4242'
+  detail: Test card numbers start with 4242…, carry simulated balances, and honor the same single-use contract (first approval consumes the card).
+kyc_simulation:
+  endpoint: POST /api/v2/kyc/simulate
+  note: Test-mode only; drives a verification to a chosen terminal outcome instantly (test verifications never complete on their own). Fires identity.verification.updated.
+  outcomes: [approved, rejected, requires_input]
+transaction_simulation:
+  note: v1 test helpers on a card (test credentials only).
+  helpers:
+  - {endpoint: 'POST /api/v1/cards/{id}/test_charge', effect: authorize + settle; fires transaction.authorized then transaction.cleared}
+  - {endpoint: 'POST /api/v1/cards/{id}/test_authorization', effect: create PENDING hold (add "outcome":"declined" to fire transaction.declined)}
+  - {endpoint: 'POST /api/v1/cards/{id}/test_transactions/{payment_id}/capture', effect: settle fully or partially}
+  - {endpoint: 'POST /api/v1/cards/{id}/test_transactions/{payment_id}/reverse', effect: void PENDING hold; fires transaction.voided}
+  - {endpoint: 'POST /api/v1/cards/{id}/test_transactions/{payment_id}/refund', effect: separate negative-amount transaction}
+webhooks:
+  note: Sandbox destinations receive only livemode:false events; register a separate destination per mode. Signatures, retries, and catalog identical to live.
+provisioning:
+  note: >-
+    The agent-cards-admin wizard forces sandbox mode and proves the integration by issuing a
+    real sandbox card. Production is gated on a subscription (agent-cards-admin subscribe →
+    env production → oauth-clients create).

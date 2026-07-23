@@ -1,0 +1,38 @@
+generated: '2026-07-17'
+method: searched
+source: https://docs.agentcard.sh/companies/webhooks.md
+transport: https-webhook
+registration: Dashboard → organization → Webhooks → Add destination (per mode; sandbox destinations get only livemode:false events)
+signing:
+  header: AgentCard-Signature
+  format: 't=<unix>,v1=<hex-hmac>'
+  algorithm: HMAC-SHA256 of "{t}.{raw_request_body}" keyed with the whsec_ signing secret
+  verification: verify against the RAW body before JSON parsing; reject stale timestamps (±300s typical)
+delivery:
+  method: POST
+  envelope: '{ id, type, created, livemode, data }'
+  dedupe_on: id
+  retries: up to 5 attempts with backoff; 10s timeout or non-2xx is retried; endpoint failing 7 days is disabled
+events:
+- card.created
+- card.updated
+- card.closed
+- cardholder.created
+- cardholder.updated
+- cardholder_onboarding_session.completed
+- transaction.authorized
+- transaction.cleared
+- transaction.declined
+- transaction.voided
+- identity.verification.updated
+- balance.low
+- merchant.connected
+- card_flow.started
+- card_flow.failed
+- transfer.approved
+- transfer.initiated
+- transfer.completed
+- transfer.failed
+- transfer.released
+- wallet.funded
+- wallet.balance.low
