@@ -1,0 +1,148 @@
+{
+  "name": "Agentcard",
+  "version": "1.0.0",
+  "description": "Issue virtual Visa cards for AI agents. Fund a card with a fixed USD budget, hand the credentials to an agent via MCP, and spend anywhere Visa is accepted. Single-use by design \u2014 the blast radius of any misstep is capped at the card balance.",
+  "url": "https://www.agentcard.sh",
+  "documentationUrl": "https://docs.agentcard.sh",
+  "provider": {
+    "organization": "Agentcard",
+    "url": "https://www.agentcard.sh"
+  },
+  "supportedInterfaces": [
+    {
+      "url": "https://mcp.agentcard.sh/mcp",
+      "transport": "http",
+      "protocol": "mcp",
+      "version": "2025-06-18"
+    },
+    {
+      "url": "https://api.agentcard.sh",
+      "transport": "https",
+      "protocol": "rest",
+      "specification": "https://docs.agentcard.sh/api-reference/openapi.json"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "card-issuance",
+      "name": "Virtual card issuance",
+      "description": "Create a single-use virtual Visa card funded with a fixed USD amount."
+    },
+    {
+      "id": "card-payment",
+      "name": "Card payment",
+      "description": "Authorize a payment using an issued Agentcard on any site that accepts Visa."
+    },
+    {
+      "id": "balance-inquiry",
+      "name": "Balance inquiry",
+      "description": "Check the remaining balance on any issued card without exposing credentials."
+    },
+    {
+      "id": "support-chat",
+      "name": "Support chat",
+      "description": "Start and continue a support conversation from inside an agent runtime."
+    }
+  ],
+  "skills": [
+    {
+      "id": "create_card",
+      "name": "Create virtual card",
+      "description": "Create a new virtual Visa card funded with a specified USD amount.",
+      "tags": [
+        "payments",
+        "card-issuance",
+        "mcp"
+      ],
+      "examples": [
+        "Create a $25 card for this checkout"
+      ]
+    },
+    {
+      "id": "list_cards",
+      "name": "List virtual cards",
+      "description": "List all cards with balance, status, last four digits, and expiry.",
+      "tags": [
+        "payments",
+        "mcp"
+      ],
+      "examples": [
+        "Show me my active cards"
+      ]
+    },
+    {
+      "id": "get_card_balance",
+      "name": "Get card balance",
+      "description": "Return one card's live balance.",
+      "tags": [
+        "payments",
+        "mcp"
+      ]
+    },
+    {
+      "id": "get_card_details",
+      "name": "Get card credentials",
+      "description": "Return the PAN, CVV, and expiry for a card (may require user approval).",
+      "tags": [
+        "payments",
+        "mcp",
+        "sensitive"
+      ]
+    },
+    {
+      "id": "close_card",
+      "name": "Close virtual card",
+      "description": "Permanently close a card so it can no longer be used.",
+      "tags": [
+        "payments",
+        "mcp"
+      ]
+    },
+    {
+      "id": "start_support_chat",
+      "name": "Start support chat",
+      "description": "Open a new support conversation with Agentcard.",
+      "tags": [
+        "support",
+        "mcp"
+      ]
+    },
+    {
+      "id": "send_support_message",
+      "name": "Send support message",
+      "description": "Send a message inside an existing support conversation.",
+      "tags": [
+        "support",
+        "mcp"
+      ]
+    },
+    {
+      "id": "read_support_chat",
+      "name": "Read support chat",
+      "description": "Read the history of a support conversation.",
+      "tags": [
+        "support",
+        "mcp"
+      ]
+    }
+  ],
+  "authentication": {
+    "schemes": [
+      "oauth2",
+      "bearer"
+    ],
+    "oauth2": {
+      "authorizationServer": "https://mcp.agentcard.sh",
+      "metadata": "https://www.agentcard.sh/.well-known/oauth-authorization-server",
+      "protectedResource": "https://www.agentcard.sh/.well-known/oauth-protected-resource"
+    }
+  },
+  "defaultInputModes": [
+    "text/plain",
+    "application/json"
+  ],
+  "defaultOutputModes": [
+    "text/plain",
+    "application/json"
+  ]
+}

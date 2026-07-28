@@ -108,6 +108,10 @@ apis:
   - type: OpenAPI
     url: openapi/agentcard-withdrawals-api-openapi.yml
 common:
+- type: AgentCard
+  url: a2a/agentcard-a2a.yml
+  name: A2A Agent Card
+  description: Agent Card served at /.well-known/agent-card.json (flavored against A2A 1.0.0).
 - type: Website
   url: https://www.agentcard.sh
 - type: DeveloperPortal

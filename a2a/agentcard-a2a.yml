@@ -1,0 +1,38 @@
+generated: '2026-07-28'
+method: probed
+source: https://www.agentcard.sh/.well-known/agent-card.json
+description: 'A2A Agent Card observed at /.well-known/agent-card.json on agentcard.sh. Grade is measured
+  against the A2A 1.0.0 AgentCard object: ''conformant'' passes every structural check, ''near-conformant''
+  is correctly shaped but omits optional fields, ''flavored'' fails a hard check and is an agent card
+  in spirit rather than in schema. Provider-published by construction — served from the provider''s own
+  host; nothing here is derived or generated.'
+discovery:
+  path: /.well-known/agent-card.json
+  canonical: true
+  host: agentcard.sh
+conformance:
+  spec: A2A 1.0.0
+  grade: flavored
+  protocol_version: null
+  preferred_transport: null
+  deviations:
+  - capabilities-not-object
+  - no-protocolVersion
+  - no-preferredTransport
+  - nonstandard-supportedInterfaces
+card:
+  name: Agentcard
+  description: Issue virtual Visa cards for AI agents. Fund a card with a fixed USD budget, hand the credentials
+    to an agent via MCP, and spend anywhere Visa is accepted. Single-use by design — the blast radius
+    of any misstep is capped at the card balance.
+  url: https://www.agentcard.sh
+  version: 1.0.0
+  documentation_url: https://docs.agentcard.sh
+  skills: 8
+  file: agentcard-agent-card.json
+x-evidence:
+  fetched: '2026-07-28'
+  url: https://www.agentcard.sh/.well-known/agent-card.json
+  http_status: 200
+  content_type: application/json
+  note: Verbatim body saved alongside this manifest. No field inferred.
