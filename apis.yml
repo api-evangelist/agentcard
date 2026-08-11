@@ -108,6 +108,8 @@ apis:
   - type: OpenAPI
     url: openapi/agentcard-withdrawals-api-openapi.yml
 common:
+- type: Overlay
+  url: overlays/agentcard-v2-overlay.yaml
 - type: AgentCard
   url: a2a/agentcard-a2a.yml
   name: A2A Agent Card
