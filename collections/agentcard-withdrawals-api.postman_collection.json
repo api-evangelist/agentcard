@@ -1,0 +1,1151 @@
+{
+  "item": [
+    {
+      "id": "c6f343e9-68f3-420b-8868-afe5dc5d9ecb",
+      "name": "Withdrawals",
+      "description": {
+        "content": "Move money out of a connected user's wallet — to a saved bank account or a crypto address on Base. Transfers are processed manually by the Agentcard team, usually within 1-3 business days.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "59013f5e-7ba1-4b1e-a290-858e4fe25da3",
+          "name": "Save a bank destination",
+          "request": {
+            "name": "Save a bank destination",
+            "description": {
+              "content": "Saves a bank account the user can withdraw to. `ach` needs `routing_number`, `account_number`, and `account_type`; `international_wire` needs `iban` and `swift_code`. Some countries need extra fields via `country_specific` (for example `ifsc`, `clabe`, `bsb`); the validation error names any missing key. A user can hold up to 25 active destinations.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v2",
+                "wallet",
+                "withdrawal-recipients"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": \"<string>\",\n  \"type\": \"<string>\",\n  \"beneficiary_name\": \"<string>\",\n  \"country_code\": \"<string>\",\n  \"nickname\": \"<string>\",\n  \"email\": \"<email>\",\n  \"routing_number\": \"<string>\",\n  \"account_number\": \"<string>\",\n  \"account_type\": \"<string>\",\n  \"iban\": \"<string>\",\n  \"swift_code\": \"<string>\",\n  \"bank_name\": \"<string>\",\n  \"address_line1\": \"<string>\",\n  \"address_line2\": \"<string>\",\n  \"city\": \"<string>\",\n  \"region\": \"<string>\",\n  \"postal_code\": \"<string>\",\n  \"country_specific\": {\n    \"key_0\": 9413,\n    \"key_1\": 8388.925674432001\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "bfcb40b3-daa4-4a1c-9fef-d34a3c509dac",
+              "name": "The saved destination, masked.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "wallet",
+                    "withdrawal-recipients"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"user_id\": \"usr_123\",\n  \"type\": \"international_wire\",\n  \"beneficiary_name\": \"Alex Example\",\n  \"country_code\": \"DE\",\n  \"iban\": \"DE89 3704 0044 0532 0130 00\",\n  \"swift_code\": \"DEUTDEFF\",\n  \"bank_name\": \"Deutsche Bank\",\n  \"nickname\": \"Main account\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"object\": \"withdrawal_recipient\",\n  \"user_id\": \"usr_123\",\n  \"id\": \"wrec_9f2c1a\",\n  \"type\": \"international_wire\",\n  \"nickname\": \"Main account\",\n  \"beneficiary_name\": \"Alex Example\",\n  \"country_code\": \"DE\",\n  \"currency\": null,\n  \"bank_name\": \"Deutsche Bank\",\n  \"account_number_last4\": null,\n  \"routing_number\": null,\n  \"account_type\": null,\n  \"iban_last4\": \"••••3000\",\n  \"swift_code\": \"DEUTDEFF\",\n  \"created_at\": \"2026-07-16T00:00:00.000Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "351c1be1-bd2f-4a7e-9896-6e243b687cf2",
+              "name": "Malformed request body.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "wallet",
+                    "withdrawal-recipients"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"user_id\": \"usr_123\",\n  \"type\": \"international_wire\",\n  \"beneficiary_name\": \"Alex Example\",\n  \"country_code\": \"DE\",\n  \"iban\": \"DE89 3704 0044 0532 0130 00\",\n  \"swift_code\": \"DEUTDEFF\",\n  \"bank_name\": \"Deutsche Bank\",\n  \"nickname\": \"Main account\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\",\n    \"docs\": \"string\",\n    \"field_errors\": {\n      \"key_0\": \"string\"\n    },\n    \"warnings\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "424c5acc-b42b-415f-ac1b-d43551009aeb",
+              "name": "`withdrawals_disabled` — your organization has switched user withdrawals off.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "wallet",
+                    "withdrawal-recipients"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"user_id\": \"usr_123\",\n  \"type\": \"international_wire\",\n  \"beneficiary_name\": \"Alex Example\",\n  \"country_code\": \"DE\",\n  \"iban\": \"DE89 3704 0044 0532 0130 00\",\n  \"swift_code\": \"DEUTDEFF\",\n  \"bank_name\": \"Deutsche Bank\",\n  \"nickname\": \"Main account\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\",\n    \"docs\": \"string\",\n    \"field_errors\": {\n      \"key_0\": \"string\"\n    },\n    \"warnings\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "efc1a729-3c44-427b-9b96-f78f6a393e4c",
+              "name": "`connection_not_found` — that user is not connected under your client.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "wallet",
+                    "withdrawal-recipients"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"user_id\": \"usr_123\",\n  \"type\": \"international_wire\",\n  \"beneficiary_name\": \"Alex Example\",\n  \"country_code\": \"DE\",\n  \"iban\": \"DE89 3704 0044 0532 0130 00\",\n  \"swift_code\": \"DEUTDEFF\",\n  \"bank_name\": \"Deutsche Bank\",\n  \"nickname\": \"Main account\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\",\n    \"docs\": \"string\",\n    \"field_errors\": {\n      \"key_0\": \"string\"\n    },\n    \"warnings\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2707935f-0dbd-4868-b6c1-ff41fbdadd5a",
+              "name": "`recipient_fields_invalid` — a field failed validation (the message names it), or the 25-destination cap was reached.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "wallet",
+                    "withdrawal-recipients"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"user_id\": \"usr_123\",\n  \"type\": \"international_wire\",\n  \"beneficiary_name\": \"Alex Example\",\n  \"country_code\": \"DE\",\n  \"iban\": \"DE89 3704 0044 0532 0130 00\",\n  \"swift_code\": \"DEUTDEFF\",\n  \"bank_name\": \"Deutsche Bank\",\n  \"nickname\": \"Main account\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\",\n    \"docs\": \"string\",\n    \"field_errors\": {\n      \"key_0\": \"string\"\n    },\n    \"warnings\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "c170cc66-a6ee-44b5-8068-e08b863391c1",
+          "name": "List saved bank destinations",
+          "request": {
+            "name": "List saved bank destinations",
+            "description": {
+              "content": "The user's active bank destinations, masked. Removed destinations never appear.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v2",
+                "wallet",
+                "withdrawal-recipients"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "user_id",
+                  "value": "<string>",
+                  "description": "(Required) The connected user's id."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "b702c990-f304-4473-80e8-c6a6a4e60410",
+              "name": "The list.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "wallet",
+                    "withdrawal-recipients"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "user_id",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"object\": \"withdrawal_recipient\",\n      \"user_id\": \"usr_123\",\n      \"id\": \"wrec_9f2c1a\",\n      \"type\": \"international_wire\",\n      \"nickname\": \"Main account\",\n      \"beneficiary_name\": \"Alex Example\",\n      \"country_code\": \"DE\",\n      \"currency\": null,\n      \"bank_name\": \"Deutsche Bank\",\n      \"account_number_last4\": null,\n      \"routing_number\": null,\n      \"account_type\": null,\n      \"iban_last4\": \"••••3000\",\n      \"swift_code\": \"DEUTDEFF\",\n      \"created_at\": \"2026-07-16T00:00:00.000Z\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c9e35aa8-9b59-4dd4-822b-6f9120b2807b",
+              "name": "`connection_not_found`.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "wallet",
+                    "withdrawal-recipients"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "user_id",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\",\n    \"docs\": \"string\",\n    \"field_errors\": {\n      \"key_0\": \"string\"\n    },\n    \"warnings\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "06cfd85c-9f9c-4dcc-a4dd-4f2ca08e5b6e",
+          "name": "Remove a bank destination",
+          "request": {
+            "name": "Remove a bank destination",
+            "description": {
+              "content": "Soft-removes a saved destination. Withdrawals already requested against it are unaffected.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v2",
+                "wallet",
+                "withdrawal-recipients",
+                ":recipient_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "user_id",
+                  "value": "<string>",
+                  "description": "(Required) The connected user's id."
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "recipient_id",
+                  "description": "(Required) The recipient id (`wrec_...`)."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "28e4b54d-3e62-4dc4-8aee-0ad456a02e37",
+              "name": "Removed.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "wallet",
+                    "withdrawal-recipients",
+                    ":recipient_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "user_id",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "recipient_id",
+                      "description": "(Required) The recipient id (`wrec_...`)."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"removed\": true\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "90d16432-2bc7-4dce-b99e-c3d09be7da95",
+              "name": "`not_found` — no active recipient with that id for this user, or `connection_not_found`.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "wallet",
+                    "withdrawal-recipients",
+                    ":recipient_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "user_id",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "recipient_id",
+                      "description": "(Required) The recipient id (`wrec_...`)."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\",\n    \"docs\": \"string\",\n    \"field_errors\": {\n      \"key_0\": \"string\"\n    },\n    \"warnings\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "ac5de79e-12cb-44b5-845a-ba483d1151d7",
+          "name": "Request a withdrawal",
+          "request": {
+            "name": "Request a withdrawal",
+            "description": {
+              "content": "Requests a withdrawal from the user's spendable balance. Two rails: `bank` (default) pays a saved destination by wire; `address` sends USDC on Base to `destination_address`. Both are processed manually by the Agentcard team, usually within 1-3 business days; the user is emailed when the request is received and again when it is sent. Open (not yet completed or rejected) requests count against the balance, so a user cannot over-request. Amounts range from $2.00 to $10,000.00.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v2",
+                "wallet",
+                "withdrawals"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": \"<string>\",\n  \"amount_cents\": \"<integer>\",\n  \"rail\": \"bank\",\n  \"recipient_id\": \"<string>\",\n  \"destination_address\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "e04b1bff-d2af-4edd-86e4-eb9370a080f1",
+              "name": "The withdrawal, in `requested`.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "wallet",
+                    "withdrawals"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"user_id\": \"usr_123\",\n  \"amount_cents\": 2500,\n  \"rail\": \"bank\",\n  \"recipient_id\": \"wrec_9f2c1a\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"object\": \"withdrawal\",\n  \"id\": \"wd_4b1d22\",\n  \"user_id\": \"usr_123\",\n  \"status\": \"requested\",\n  \"rail\": \"bank\",\n  \"amount_cents\": 2500,\n  \"destination_address\": null,\n  \"created_at\": \"2026-07-16T00:00:00.000Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "364871f0-ee13-4238-84d0-863e33f598cc",
+              "name": "Malformed request body.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "wallet",
+                    "withdrawals"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"user_id\": \"usr_123\",\n  \"amount_cents\": 2500,\n  \"rail\": \"bank\",\n  \"recipient_id\": \"wrec_9f2c1a\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\",\n    \"docs\": \"string\",\n    \"field_errors\": {\n      \"key_0\": \"string\"\n    },\n    \"warnings\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c228a423-24ae-4a26-a44f-85bb95e74b87",
+              "name": "`withdrawals_disabled` — your organization has switched user withdrawals off.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "wallet",
+                    "withdrawals"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"user_id\": \"usr_123\",\n  \"amount_cents\": 2500,\n  \"rail\": \"bank\",\n  \"recipient_id\": \"wrec_9f2c1a\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\",\n    \"docs\": \"string\",\n    \"field_errors\": {\n      \"key_0\": \"string\"\n    },\n    \"warnings\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "71aeb67d-5e34-4fde-84d8-4aff8d42e55c",
+              "name": "`connection_not_found`.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "wallet",
+                    "withdrawals"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"user_id\": \"usr_123\",\n  \"amount_cents\": 2500,\n  \"rail\": \"bank\",\n  \"recipient_id\": \"wrec_9f2c1a\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\",\n    \"docs\": \"string\",\n    \"field_errors\": {\n      \"key_0\": \"string\"\n    },\n    \"warnings\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ec494c42-f9f1-49ba-b67f-742de82c616d",
+              "name": "`insufficient_funds` (details carry `available_cents` and `requested_cents`), `amount_out_of_range`, `recipient_not_found`, `invalid_destination`, or `internal_destination`.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "wallet",
+                    "withdrawals"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"user_id\": \"usr_123\",\n  \"amount_cents\": 2500,\n  \"rail\": \"bank\",\n  \"recipient_id\": \"wrec_9f2c1a\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\",\n    \"docs\": \"string\",\n    \"field_errors\": {\n      \"key_0\": \"string\"\n    },\n    \"warnings\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "72dfd967-1e24-48a0-8de0-0cb163142666",
+          "name": "List withdrawals",
+          "request": {
+            "name": "List withdrawals",
+            "description": {
+              "content": "The user's most recent withdrawals (up to 20), newest first, across every rail. Poll this to reflect status changes in your UI; `completed` and `rejected` are terminal and also emailed to the user.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v2",
+                "wallet",
+                "withdrawals"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "user_id",
+                  "value": "<string>",
+                  "description": "(Required) The connected user's id."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "b01ea16a-b5af-4256-85ff-c5adae57d728",
+              "name": "The list.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "wallet",
+                    "withdrawals"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "user_id",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"object\": \"withdrawal\",\n      \"id\": \"wd_4b1d22\",\n      \"user_id\": \"usr_123\",\n      \"status\": \"requested\",\n      \"rail\": \"bank\",\n      \"amount_cents\": 2500,\n      \"destination_address\": null,\n      \"created_at\": \"2026-07-16T00:00:00.000Z\",\n      \"failure_code\": null,\n      \"completed_at\": null,\n      \"recipient\": {\n        \"object\": \"withdrawal_recipient\",\n        \"user_id\": \"usr_123\",\n        \"id\": \"wrec_9f2c1a\",\n        \"type\": \"international_wire\",\n        \"nickname\": \"Main account\",\n        \"beneficiary_name\": \"Alex Example\",\n        \"country_code\": \"DE\",\n        \"currency\": null,\n        \"bank_name\": \"Deutsche Bank\",\n        \"account_number_last4\": null,\n        \"routing_number\": null,\n        \"account_type\": null,\n        \"iban_last4\": \"••••3000\",\n        \"swift_code\": \"DEUTDEFF\",\n        \"created_at\": \"2026-07-16T00:00:00.000Z\"\n      }\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "0da02782-064e-4a8d-b27e-e560f9b3fee1",
+              "name": "`connection_not_found`.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "wallet",
+                    "withdrawals"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "user_id",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\",\n    \"docs\": \"string\",\n    \"field_errors\": {\n      \"key_0\": \"string\"\n    },\n    \"warnings\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.agentcard.sh",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "1d66e81c-3044-4ab7-b535-179bdc05b683",
+    "name": "Agentcard Authentication Withdrawals API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The Agentcard v2 API — connect your users and verify their identity from your own backend. Every call is authenticated with a platform access token minted from your `client_id` + `client_secret`.",
+      "type": "text/plain"
+    }
+  }
+}

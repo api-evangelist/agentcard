@@ -1,0 +1,106 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Agentcard Authentication Wallet funding API",
+    "version": "2.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Wallet funding",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get the user's wallet",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.agentcard.sh/api/v2/wallet",
+            "params": [
+              {
+                "name": "user_id",
+                "value": "",
+                "type": "query",
+                "description": "The connected user's id."
+              }
+            ]
+          },
+          "docs": "The connected user's wallet and current balance — render it in your own wallet UI. Provisions the wallet on first read."
+        },
+        {
+          "info": {
+            "name": "Create a funding session",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.agentcard.sh/api/v2/wallet/fund",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Returns an Apple Pay / Google Pay payment link for the amount you specify. Show it in your UI; when the user completes the payment the funds land in their wallet. The link is single-use and expires after 30 minutes. Requires a phone verification fresh within 60 days — see `POST /api/v2/wallet/phone/start`."
+        },
+        {
+          "info": {
+            "name": "Get a funding session",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.agentcard.sh/api/v2/wallet/fund/:session_id",
+            "params": [
+              {
+                "name": "session_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Poll a funding session until it is `completed` — the payment status is refreshed from the provider on every read."
+        },
+        {
+          "info": {
+            "name": "Start phone verification",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.agentcard.sh/api/v2/wallet/phone/start",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Sends the user a one-time code. Relay it through your UI — the user reads it back to you, same pattern as the connect code. A verification stays fresh for 60 days. Provide `phone_number` only when the user has no phone on file (US numbers only)."
+        },
+        {
+          "info": {
+            "name": "Verify the phone code",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.agentcard.sh/api/v2/wallet/phone/verify",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Checks the code the user read back. On success the verification stays fresh for 60 days and funding sessions can be created."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

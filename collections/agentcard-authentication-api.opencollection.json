@@ -1,0 +1,63 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Agentcard Authentication API",
+    "version": "2.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Authentication",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Create an access token",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.agentcard.sh/api/v2/oauth/token",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "grant_type",
+                  "value": ""
+                },
+                {
+                  "name": "client_id",
+                  "value": ""
+                },
+                {
+                  "name": "client_secret",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Exchanges your `client_id` + `client_secret` for a platform access token (OAuth2 client credentials, RFC 6749 §4.4). The token lives one hour — when it expires, exchange again; there are no refresh tokens on this grant.\n\nGet your credentials in the Agentcard dashboard under **Organization → Developer → Credentials**. A sandbox client mints tokens that act in sandbox; a production client acts in production.\n\nYou can also send the credentials as HTTP Basic (`Authorization: Basic base64(client_id:c"
+        },
+        {
+          "info": {
+            "name": "Introspect credential",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.agentcard.sh/api/v2"
+          },
+          "docs": "Returns the organization and mode your token acts as. Useful as a health check and to confirm you're pointed at the right credential."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

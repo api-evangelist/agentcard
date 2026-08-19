@@ -1,0 +1,103 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Agentcard Authentication Identity verification API",
+    "version": "2.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Identity verification",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Upload the front of the ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.agentcard.sh/api/v2/kyc/documents/front",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Uploads the front of the user's identity document as a base64-encoded image. This step acknowledges receipt; the next step (`back`) tells you what comes next.\n\nAny upload response may include a `warnings` array with actionable feedback (for example, that the other side of the document is still needed)."
+        },
+        {
+          "info": {
+            "name": "Upload the back of the ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.agentcard.sh/api/v2/kyc/documents/back",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Uploads the back of the document. The response tells you what to do next — this is the branch point of the flow:\n\n- `needs_information` → collect exactly the `required_fields` and post them to `/kyc/information`.\n- `requires_verification` → show the user the `iframe_url` for the face scan.\n- `rejected` → the document couldn't be verified."
+        },
+        {
+          "info": {
+            "name": "Submit information",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.agentcard.sh/api/v2/kyc/information",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Submits the extra fields requested by a `needs_information` response. Send only the fields listed in `required_fields`. On success, the response returns the `iframe_url` for the face scan."
+        },
+        {
+          "info": {
+            "name": "Get verification status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.agentcard.sh/api/v2/kyc",
+            "params": [
+              {
+                "name": "user_id",
+                "value": "",
+                "type": "query",
+                "description": "The connected user's id."
+              }
+            ]
+          },
+          "docs": "Polls the current verification status — the alternative to the `identity.verification.updated` webhook."
+        },
+        {
+          "info": {
+            "name": "Simulate an outcome (test mode)",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.agentcard.sh/api/v2/kyc/simulate",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "**Test mode only.** Drives a test-mode verification to a chosen terminal outcome instantly — test verifications never complete on their own. The simulated verdict flows through the same status contract and fires the same `identity.verification.updated` webhook a real review produces, so your status handling and webhook consumer are exercised end to end. Requires a test-mode client credential; live tokens get `403 sandbox_only`."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

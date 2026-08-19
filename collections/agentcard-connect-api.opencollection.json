@@ -1,0 +1,84 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Agentcard Authentication Connect API",
+    "version": "2.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Connect",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Send a code",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.agentcard.sh/api/v2/connect/start",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Sends a one-time code to the user by email or phone. Provide **exactly one** of `email` or `phone`. Codes are valid for 10 minutes.\n\nIf you've designed a connect email in your dashboard, we send that branded email; otherwise we send a default one."
+        },
+        {
+          "info": {
+            "name": "Verify the code",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.agentcard.sh/api/v2/connect/verify",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Checks the code the user entered and, on success, connects the user and returns the token pair to store. Completing the code **is** the authorization — there is no separate approval screen.\n\nThe returned `access_token` is the **user's connection token**: it acts on behalf of this user (send it as the bearer token to the MCP server to create cards, check balances, and shop as them). It is not the platform token — the endpoints in this reference keep using your platform access token and name the u"
+        },
+        {
+          "info": {
+            "name": "Record consent",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.agentcard.sh/api/v2/connect/consent",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Records that the user authorized your platform to act on their behalf. Safe to retry — it's idempotent per user, so a repeat call updates the same record instead of creating a duplicate."
+        },
+        {
+          "info": {
+            "name": "Refresh the connection",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.agentcard.sh/api/v2/connect/refresh",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Connection access tokens expire after one hour. Exchange the refresh token for a new pair before then.\n\nEach refresh returns a **new** refresh token and invalidates the old one — replace the stored token every time."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
