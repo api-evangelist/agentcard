@@ -45,6 +45,17 @@ tags:
 - Agentic Commerce
 - MCP
 - Fintech
+- Wallets
+- Visa
+tags_raw:
+- Company
+- Payments
+- Virtual Cards
+- Card Issuing
+- AI Agents
+- Agentic Commerce
+- MCP
+- Fintech
 - Wallet
 - Visa
 apis:
@@ -79,6 +90,8 @@ apis:
   humanURL: https://docs.agentcard.sh/companies/api/overview
   baseURL: https://api.agentcard.sh
   tags:
+  - Identity Verification
+  tags_raw:
   - Identity verification
   properties:
   - type: OpenAPI
