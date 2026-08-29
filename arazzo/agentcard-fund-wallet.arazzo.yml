@@ -4,8 +4,8 @@ info:
   version: 1.0.0
   summary: Verify a user's phone, create an Apple/Google Pay funding session, and poll it to completion.
 sourceDescriptions:
-- name: agentcard
-  url: ../openapi/agentcard-openapi-original.json
+- name: walletFundingApi
+  url: ../openapi/agentcard-wallet-funding-api-openapi.yml
   type: openapi
 workflows:
 - workflowId: verifyPhoneAndFundWallet

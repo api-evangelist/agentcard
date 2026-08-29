@@ -4,8 +4,14 @@ info:
   version: 1.0.0
   summary: Connect an end user, record consent, and run identity verification (KYC) end to end.
 sourceDescriptions:
-- name: agentcard
-  url: ../openapi/agentcard-openapi-original.json
+- name: authenticationApi
+  url: ../openapi/agentcard-authentication-api-openapi.yml
+  type: openapi
+- name: connectApi
+  url: ../openapi/agentcard-connect-api-openapi.yml
+  type: openapi
+- name: identityVerificationApi
+  url: ../openapi/agentcard-identity-verification-api-openapi.yml
   type: openapi
 workflows:
 - workflowId: connectAndVerifyIdentity
