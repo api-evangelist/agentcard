@@ -1,0 +1,33 @@
+# Front Door AI Index — agentcard — 2026-09-17
+# AI vocabulary counted on the provider's root page. Generated; do not edit.
+# `score` is null unless ownership is `own` — see front_door_ai.py.
+front_door_ai:
+  slug: agentcard
+  lexicon_version: '1.0'
+  probed_at: '2026-09-17'
+  host: www.agentcard.sh
+  final_host: www.agentcard.sh
+  ownership: own
+  owner: agentcard
+  shares_host_with: null
+  inherited_from: null
+  verdict: scored
+  score: 18
+  host_score: 18
+  density: 8.87
+  words: 2029
+  tiers:
+    agentic: 10
+    core: 7
+    model: 1
+  ambiguous: 49
+  top_terms:
+    agent: 46
+    AI: 6
+    AI agent: 5
+    agentic: 4
+    smart: 2
+    Claude: 1
+    LLMs: 1
+    MCP: 1
+    automation: 1

@@ -1,6 +1,6 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Agentcard Authentication Wallet funding API
+  title: Agentcard Wallet funding API
   version: 2.0.0
   description: The Agentcard v2 API — connect your users and verify their identity from your own backend. Every call is authenticated with a platform access token minted from your `client_id` + `client_secret`.
 servers:
@@ -305,8 +305,8 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   responses:
-    UserConflict:
-      description: '`user_conflict` — the email on file in your organization belongs to a different account. Contact support.'
+    ConnectionNotFound:
+      description: '`connection_not_found` — no connection exists for that user under your client.'
       content:
         application/json:
           schema:
@@ -317,8 +317,8 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    ConnectionNotFound:
-      description: '`connection_not_found` — no connection exists for that user under your client.'
+    UserConflict:
+      description: '`user_conflict` — the email on file in your organization belongs to a different account. Contact support.'
       content:
         application/json:
           schema:
@@ -348,32 +348,6 @@ components:
         expires_in_seconds:
           type: integer
           description: How long the code stays valid (status `sent` only).
-    Error:
-      type: object
-      description: Every v2 error uses the same envelope.
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              description: A stable, machine-readable string (snake_case). Branch on this.
-            message:
-              type: string
-              description: A human-readable explanation, safe to log.
-            docs:
-              type: string
-              description: A link back to the reference.
-            field_errors:
-              type: object
-              additionalProperties:
-                type: string
-              description: Only on `invalid_fields` — names each field to fix.
-            warnings:
-              type: array
-              items:
-                type: string
-              description: Only on document upload errors — actionable feedback safe to show the user.
     FundingSession:
       type: object
       properties:
@@ -435,6 +409,32 @@ components:
           - integer
           - 'null'
           description: Provider fee included in amount_cents, in USD cents. Returned only on the create response of embedded sessions (the order is priced at create time); absent on hosted sessions and on the poll endpoint.
+    Error:
+      type: object
+      description: Every v2 error uses the same envelope.
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: A stable, machine-readable string (snake_case). Branch on this.
+            message:
+              type: string
+              description: A human-readable explanation, safe to log.
+            docs:
+              type: string
+              description: A link back to the reference.
+            field_errors:
+              type: object
+              additionalProperties:
+                type: string
+              description: Only on `invalid_fields` — names each field to fix.
+            warnings:
+              type: array
+              items:
+                type: string
+              description: Only on document upload errors — actionable feedback safe to show the user.
     Wallet:
       type: object
       properties:

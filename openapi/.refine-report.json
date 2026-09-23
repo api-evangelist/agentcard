@@ -1,11 +1,7 @@
 {
   "provider": "agentcard",
   "sources": [
-    "agentcard-authentication-api-openapi.yml",
-    "agentcard-connect-api-openapi.yml",
-    "agentcard-identity-verification-api-openapi.yml",
-    "agentcard-wallet-funding-api-openapi.yml",
-    "agentcard-withdrawals-api-openapi.yml"
+    "_original/agentcard-openapi-original.json"
   ],
   "outputs": [
     "agentcard-authentication-api-openapi.yml",
@@ -17,6 +13,16 @@
   "archived": [],
   "errors": [],
   "warnings": [],
-  "notes": [],
-  "skipped": []
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "agentcard-openapi-original.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "agentcard-authentication-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "agentcard-connect-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "agentcard-identity-verification-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "agentcard-wallet-funding-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "agentcard-withdrawals-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }
