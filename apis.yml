@@ -62,6 +62,7 @@ tags:
 - Fintech
 - Wallets
 - Visa
+- A2A
 tags_raw:
 - Company
 - Payments
@@ -73,6 +74,7 @@ tags_raw:
 - Fintech
 - Wallet
 - Visa
+- A2A
 apis:
 - aid: agentcard:agentcard-authentication-api
   name: Agentcard Authentication API

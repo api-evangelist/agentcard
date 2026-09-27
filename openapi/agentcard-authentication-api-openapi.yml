@@ -126,6 +126,33 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   schemas:
+    OAuthError:
+      type: object
+      description: RFC 6749 §5.2 error shape — only the token endpoint uses it.
+      properties:
+        error:
+          type: string
+          description: A stable, machine-readable code.
+        error_description:
+          type: string
+          description: A human-readable explanation.
+    TokenResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+          description: 'The platform access token. Send it as `Authorization: Bearer <access_token>` on every other endpoint.'
+        token_type:
+          type: string
+          enum:
+          - Bearer
+        expires_in:
+          type: integer
+          description: Seconds until the token expires (3600 = one hour).
+        scope:
+          type: string
+          enum:
+          - api
     Error:
       type: object
       description: Every v2 error uses the same envelope.
@@ -152,33 +179,6 @@ components:
               items:
                 type: string
               description: Only on document upload errors — actionable feedback safe to show the user.
-    TokenResponse:
-      type: object
-      properties:
-        access_token:
-          type: string
-          description: 'The platform access token. Send it as `Authorization: Bearer <access_token>` on every other endpoint.'
-        token_type:
-          type: string
-          enum:
-          - Bearer
-        expires_in:
-          type: integer
-          description: Seconds until the token expires (3600 = one hour).
-        scope:
-          type: string
-          enum:
-          - api
-    OAuthError:
-      type: object
-      description: RFC 6749 §5.2 error shape — only the token endpoint uses it.
-      properties:
-        error:
-          type: string
-          description: A stable, machine-readable code.
-        error_description:
-          type: string
-          description: A human-readable explanation.
   responses:
     Unauthorized:
       description: '`unauthorized` — the platform access token is missing or expired. Exchange your client credentials for a fresh one.'

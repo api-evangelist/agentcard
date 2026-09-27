@@ -248,34 +248,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 components:
-  responses:
-    Unauthorized:
-      description: '`unauthorized` — the platform access token is missing or expired. Exchange your client credentials for a fresh one.'
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
-    ConnectAttempt:
-      type: object
-      properties:
-        object:
-          type: string
-          enum:
-          - connect_attempt
-        id:
-          type: string
-          description: The attempt id. Pass it back as `connect_id` when you verify.
-        channel:
-          type: string
-          enum:
-          - email
-          - phone
-          description: The channel the code was sent on.
-        expires_at:
-          type: string
-          format: date-time
-          description: When the attempt expires (ISO 8601). Codes are valid for 10 minutes.
     Connection:
       type: object
       properties:
@@ -312,6 +285,26 @@ components:
               - string
               - 'null'
               description: Set when the user connected by phone, otherwise `null`.
+    ConnectAttempt:
+      type: object
+      properties:
+        object:
+          type: string
+          enum:
+          - connect_attempt
+        id:
+          type: string
+          description: The attempt id. Pass it back as `connect_id` when you verify.
+        channel:
+          type: string
+          enum:
+          - email
+          - phone
+          description: The channel the code was sent on.
+        expires_at:
+          type: string
+          format: date-time
+          description: When the attempt expires (ISO 8601). Codes are valid for 10 minutes.
     Error:
       type: object
       description: Every v2 error uses the same envelope.
@@ -376,6 +369,13 @@ components:
         created_at:
           type: string
           format: date-time
+  responses:
+    Unauthorized:
+      description: '`unauthorized` — the platform access token is missing or expired. Exchange your client credentials for a fresh one.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     platformToken:
       type: http
