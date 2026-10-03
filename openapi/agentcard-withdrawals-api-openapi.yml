@@ -377,6 +377,53 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
+    Withdrawal:
+      type: object
+      description: 'A withdrawal request. Both rails are processed manually: the status walks `requested` → `processing` → `completed` (or `rejected`), and the user is emailed at each step.'
+      properties:
+        object:
+          type: string
+          enum:
+          - withdrawal
+        id:
+          type: string
+          description: Withdrawal id (`wd_...`).
+        user_id:
+          type: string
+        status:
+          type: string
+          enum:
+          - requested
+          - processing
+          - completed
+          - rejected
+        rail:
+          type: string
+          enum:
+          - bank
+          - address
+          description: '`bank` pays a saved recipient by wire; `address` sends USDC on Base to the supplied address.'
+        amount_cents:
+          type: integer
+        destination_address:
+          type: string
+          nullable: true
+          description: 'Set on the `address` rail: the Base address receiving USDC.'
+        failure_code:
+          type: string
+          nullable: true
+          description: Set when rejected, e.g. `rejected_by_ops`.
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        recipient:
+          $ref: '#/components/schemas/WithdrawalRecipient'
+          nullable: true
+          description: The saved bank destination, when the rail is `bank`.
     WithdrawalRecipient:
       type: object
       description: A saved bank destination. Account and IBAN numbers are always masked to their last four digits in responses.
@@ -435,53 +482,6 @@ components:
         created_at:
           type: string
           format: date-time
-    Withdrawal:
-      type: object
-      description: 'A withdrawal request. Both rails are processed manually: the status walks `requested` → `processing` → `completed` (or `rejected`), and the user is emailed at each step.'
-      properties:
-        object:
-          type: string
-          enum:
-          - withdrawal
-        id:
-          type: string
-          description: Withdrawal id (`wd_...`).
-        user_id:
-          type: string
-        status:
-          type: string
-          enum:
-          - requested
-          - processing
-          - completed
-          - rejected
-        rail:
-          type: string
-          enum:
-          - bank
-          - address
-          description: '`bank` pays a saved recipient by wire; `address` sends USDC on Base to the supplied address.'
-        amount_cents:
-          type: integer
-        destination_address:
-          type: string
-          nullable: true
-          description: 'Set on the `address` rail: the Base address receiving USDC.'
-        failure_code:
-          type: string
-          nullable: true
-          description: Set when rejected, e.g. `rejected_by_ops`.
-        completed_at:
-          type: string
-          format: date-time
-          nullable: true
-        created_at:
-          type: string
-          format: date-time
-        recipient:
-          $ref: '#/components/schemas/WithdrawalRecipient'
-          nullable: true
-          description: The saved bank destination, when the rail is `bank`.
     Error:
       type: object
       description: Every v2 error uses the same envelope.

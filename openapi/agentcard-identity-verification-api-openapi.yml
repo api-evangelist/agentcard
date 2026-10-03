@@ -295,8 +295,32 @@ paths:
           $ref: '#/components/responses/VerificationError'
 components:
   responses:
+    VerificationError:
+      description: '`verification_error` — the step failed downstream. Try again.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    KycDocumentBadRequest:
+      description: '`invalid_request` — missing `user_id` or `image`, or an unrecognized `document_type` / `issuing_country`. `invalid_image` — `image` isn''t valid base64. `client_credentials_required` — the token wasn''t minted from client credentials.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
     ConnectionNotFound:
       description: '`connection_not_found` — no connection exists for that user under your client.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: '`unauthorized` — the platform access token is missing or expired. Exchange your client credentials for a fresh one.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UserConflict:
+      description: '`user_conflict` — the email on file in your organization belongs to a different account. Contact support.'
       content:
         application/json:
           schema:
@@ -313,57 +337,7 @@ components:
               message: The document image could not be processed — ask the user for a new, clear photo.
               warnings:
               - The verification provider still needs the back of the document — ask the user for the other side.
-    VerificationError:
-      description: '`verification_error` — the step failed downstream. Try again.'
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    UserConflict:
-      description: '`user_conflict` — the email on file in your organization belongs to a different account. Contact support.'
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: '`unauthorized` — the platform access token is missing or expired. Exchange your client credentials for a fresh one.'
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    KycDocumentBadRequest:
-      description: '`invalid_request` — missing `user_id` or `image`, or an unrecognized `document_type` / `issuing_country`. `invalid_image` — `image` isn''t valid base64. `client_credentials_required` — the token wasn''t minted from client credentials.'
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
-    Error:
-      type: object
-      description: Every v2 error uses the same envelope.
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              description: A stable, machine-readable string (snake_case). Branch on this.
-            message:
-              type: string
-              description: A human-readable explanation, safe to log.
-            docs:
-              type: string
-              description: A link back to the reference.
-            field_errors:
-              type: object
-              additionalProperties:
-                type: string
-              description: Only on `invalid_fields` — names each field to fix.
-            warnings:
-              type: array
-              items:
-                type: string
-              description: Only on document upload errors — actionable feedback safe to show the user.
     KycState:
       type: object
       description: The single status contract every KYC response carries.
@@ -398,6 +372,32 @@ components:
         reason:
           type: string
           description: Optional, on `needs_information`, `awaiting_documents`, `requires_verification`, and `rejected` — a short, end-user-safe explanation of what the review asked for (for example, “Enter your full name exactly as it appears on your identity document.”). Safe to show the user verbatim.
+    Error:
+      type: object
+      description: Every v2 error uses the same envelope.
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: A stable, machine-readable string (snake_case). Branch on this.
+            message:
+              type: string
+              description: A human-readable explanation, safe to log.
+            docs:
+              type: string
+              description: A link back to the reference.
+            field_errors:
+              type: object
+              additionalProperties:
+                type: string
+              description: Only on `invalid_fields` — names each field to fix.
+            warnings:
+              type: array
+              items:
+                type: string
+              description: Only on document upload errors — actionable feedback safe to show the user.
   requestBodies:
     KycDocument:
       required: true
