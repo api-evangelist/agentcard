@@ -249,42 +249,26 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    Connection:
+    ConnectAttempt:
       type: object
       properties:
         object:
           type: string
           enum:
-          - connection
-        access_token:
+          - connect_attempt
+        id:
           type: string
-          description: The user's connection token — store it to act on their behalf. Send it as the bearer token to the MCP server; never in the `Authorization` header of these endpoints.
-        refresh_token:
-          type: string
-          description: Use it with `/connect/refresh` to get a new pair before the access token expires.
-        token_type:
+          description: The attempt id. Pass it back as `connect_id` when you verify.
+        channel:
           type: string
           enum:
-          - Bearer
-        expires_in:
-          type: integer
-          description: Seconds until the access token expires (3600 = one hour).
-        user:
-          type: object
-          description: The connected user. Store `id` — every KYC call names the user by it.
-          properties:
-            id:
-              type: string
-            email:
-              type:
-              - string
-              - 'null'
-              description: Set when the user connected by email, otherwise `null`.
-            phone:
-              type:
-              - string
-              - 'null'
-              description: Set when the user connected by phone, otherwise `null`.
+          - email
+          - phone
+          description: The channel the code was sent on.
+        expires_at:
+          type: string
+          format: date-time
+          description: When the attempt expires (ISO 8601). Codes are valid for 10 minutes.
     Error:
       type: object
       description: Every v2 error uses the same envelope.
@@ -311,26 +295,6 @@ components:
               items:
                 type: string
               description: Only on document upload errors — actionable feedback safe to show the user.
-    ConnectAttempt:
-      type: object
-      properties:
-        object:
-          type: string
-          enum:
-          - connect_attempt
-        id:
-          type: string
-          description: The attempt id. Pass it back as `connect_id` when you verify.
-        channel:
-          type: string
-          enum:
-          - email
-          - phone
-          description: The channel the code was sent on.
-        expires_at:
-          type: string
-          format: date-time
-          description: When the attempt expires (ISO 8601). Codes are valid for 10 minutes.
     Consent:
       type: object
       properties:
@@ -369,6 +333,42 @@ components:
         expires_in:
           type: integer
           description: Seconds until the access token expires (3600 = one hour).
+    Connection:
+      type: object
+      properties:
+        object:
+          type: string
+          enum:
+          - connection
+        access_token:
+          type: string
+          description: The user's connection token — store it to act on their behalf. Send it as the bearer token to the MCP server; never in the `Authorization` header of these endpoints.
+        refresh_token:
+          type: string
+          description: Use it with `/connect/refresh` to get a new pair before the access token expires.
+        token_type:
+          type: string
+          enum:
+          - Bearer
+        expires_in:
+          type: integer
+          description: Seconds until the access token expires (3600 = one hour).
+        user:
+          type: object
+          description: The connected user. Store `id` — every KYC call names the user by it.
+          properties:
+            id:
+              type: string
+            email:
+              type:
+              - string
+              - 'null'
+              description: Set when the user connected by email, otherwise `null`.
+            phone:
+              type:
+              - string
+              - 'null'
+              description: Set when the user connected by phone, otherwise `null`.
   responses:
     Unauthorized:
       description: '`unauthorized` — the platform access token is missing or expired. Exchange your client credentials for a fresh one.'

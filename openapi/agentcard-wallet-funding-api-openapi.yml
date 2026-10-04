@@ -305,75 +305,6 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    Wallet:
-      type: object
-      properties:
-        object:
-          type: string
-          const: wallet
-        user_id:
-          type: string
-        address:
-          type: string
-          description: The wallet's on-chain address.
-        balance_usdc:
-          type: string
-          description: Current balance in USD, as a decimal string.
-        balance_unavailable:
-          type: boolean
-          description: Present and true when the balance could not be read right now — distinguish "no funds" from "couldn't read".
-        status:
-          type: string
-    Error:
-      type: object
-      description: Every v2 error uses the same envelope.
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              description: A stable, machine-readable string (snake_case). Branch on this.
-            message:
-              type: string
-              description: A human-readable explanation, safe to log.
-            docs:
-              type: string
-              description: A link back to the reference.
-            field_errors:
-              type: object
-              additionalProperties:
-                type: string
-              description: Only on `invalid_fields` — names each field to fix.
-            warnings:
-              type: array
-              items:
-                type: string
-              description: Only on document upload errors — actionable feedback safe to show the user.
-    PhoneVerification:
-      type: object
-      properties:
-        object:
-          type: string
-          const: phone_verification
-        status:
-          type: string
-          enum:
-          - sent
-          - already_verified
-          - verified
-        channel:
-          type: string
-          enum:
-          - sms
-          - email
-          description: Where the code was sent (status `sent` only).
-        phone:
-          type: string
-          description: The masked destination number (status `sent` only).
-        expires_in_seconds:
-          type: integer
-          description: How long the code stays valid (status `sent` only).
     FundingSession:
       type: object
       properties:
@@ -435,6 +366,75 @@ components:
           - integer
           - 'null'
           description: Provider fee included in amount_cents, in USD cents. Returned only on the create response of embedded sessions (the order is priced at create time); absent on hosted sessions and on the poll endpoint.
+    Error:
+      type: object
+      description: Every v2 error uses the same envelope.
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: A stable, machine-readable string (snake_case). Branch on this.
+            message:
+              type: string
+              description: A human-readable explanation, safe to log.
+            docs:
+              type: string
+              description: A link back to the reference.
+            field_errors:
+              type: object
+              additionalProperties:
+                type: string
+              description: Only on `invalid_fields` — names each field to fix.
+            warnings:
+              type: array
+              items:
+                type: string
+              description: Only on document upload errors — actionable feedback safe to show the user.
+    PhoneVerification:
+      type: object
+      properties:
+        object:
+          type: string
+          const: phone_verification
+        status:
+          type: string
+          enum:
+          - sent
+          - already_verified
+          - verified
+        channel:
+          type: string
+          enum:
+          - sms
+          - email
+          description: Where the code was sent (status `sent` only).
+        phone:
+          type: string
+          description: The masked destination number (status `sent` only).
+        expires_in_seconds:
+          type: integer
+          description: How long the code stays valid (status `sent` only).
+    Wallet:
+      type: object
+      properties:
+        object:
+          type: string
+          const: wallet
+        user_id:
+          type: string
+        address:
+          type: string
+          description: The wallet's on-chain address.
+        balance_usdc:
+          type: string
+          description: Current balance in USD, as a decimal string.
+        balance_unavailable:
+          type: boolean
+          description: Present and true when the balance could not be read right now — distinguish "no funds" from "couldn't read".
+        status:
+          type: string
   responses:
     ConnectionNotFound:
       description: '`connection_not_found` — no connection exists for that user under your client.'
@@ -442,14 +442,14 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: '`unauthorized` — the platform access token is missing or expired. Exchange your client credentials for a fresh one.'
+    UserConflict:
+      description: '`user_conflict` — the email on file in your organization belongs to a different account. Contact support.'
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    UserConflict:
-      description: '`user_conflict` — the email on file in your organization belongs to a different account. Contact support.'
+    Unauthorized:
+      description: '`unauthorized` — the platform access token is missing or expired. Exchange your client credentials for a fresh one.'
       content:
         application/json:
           schema:
