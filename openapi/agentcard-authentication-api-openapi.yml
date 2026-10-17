@@ -133,23 +133,6 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
   schemas:
-    TokenResponse:
-      type: object
-      properties:
-        access_token:
-          type: string
-          description: 'The platform access token. Send it as `Authorization: Bearer <access_token>` on every other endpoint.'
-        token_type:
-          type: string
-          enum:
-          - Bearer
-        expires_in:
-          type: integer
-          description: Seconds until the token expires (3600 = one hour).
-        scope:
-          type: string
-          enum:
-          - api
     Error:
       type: object
       description: Every v2 error uses the same envelope.
@@ -186,6 +169,23 @@ components:
         error_description:
           type: string
           description: A human-readable explanation.
+    TokenResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+          description: 'The platform access token. Send it as `Authorization: Bearer <access_token>` on every other endpoint.'
+        token_type:
+          type: string
+          enum:
+          - Bearer
+        expires_in:
+          type: integer
+          description: Seconds until the token expires (3600 = one hour).
+        scope:
+          type: string
+          enum:
+          - api
   securitySchemes:
     platformToken:
       type: http

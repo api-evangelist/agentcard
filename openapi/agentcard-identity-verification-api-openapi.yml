@@ -295,14 +295,26 @@ paths:
           $ref: '#/components/responses/VerificationError'
 components:
   responses:
-    KycDocumentBadRequest:
-      description: '`invalid_request` — missing `user_id` or `image`, or an unrecognized `document_type` / `issuing_country`. `invalid_image` — `image` isn''t valid base64. `client_credentials_required` — the token wasn''t minted from client credentials.'
+    UserConflict:
+      description: '`user_conflict` — the email on file in your organization belongs to a different account. Contact support.'
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
     VerificationError:
       description: '`verification_error` — the step failed downstream. Try again.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: '`unauthorized` — the platform access token is missing or expired. Exchange your client credentials for a fresh one.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ConnectionNotFound:
+      description: '`connection_not_found` — no connection exists for that user under your client.'
       content:
         application/json:
           schema:
@@ -319,20 +331,8 @@ components:
               message: The document image could not be processed — ask the user for a new, clear photo.
               warnings:
               - The verification provider still needs the back of the document — ask the user for the other side.
-    ConnectionNotFound:
-      description: '`connection_not_found` — no connection exists for that user under your client.'
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    UserConflict:
-      description: '`user_conflict` — the email on file in your organization belongs to a different account. Contact support.'
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: '`unauthorized` — the platform access token is missing or expired. Exchange your client credentials for a fresh one.'
+    KycDocumentBadRequest:
+      description: '`invalid_request` — missing `user_id` or `image`, or an unrecognized `document_type` / `issuing_country`. `invalid_image` — `image` isn''t valid base64. `client_credentials_required` — the token wasn''t minted from client credentials.'
       content:
         application/json:
           schema:

@@ -377,6 +377,32 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
+    Error:
+      type: object
+      description: Every v2 error uses the same envelope.
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: A stable, machine-readable string (snake_case). Branch on this.
+            message:
+              type: string
+              description: A human-readable explanation, safe to log.
+            docs:
+              type: string
+              description: A link back to the reference.
+            field_errors:
+              type: object
+              additionalProperties:
+                type: string
+              description: Only on `invalid_fields` — names each field to fix.
+            warnings:
+              type: array
+              items:
+                type: string
+              description: Only on document upload errors — actionable feedback safe to show the user.
     Withdrawal:
       type: object
       description: 'A withdrawal request. Both rails are processed manually: the status walks `requested` → `processing` → `completed` (or `rejected`), and the user is emailed at each step.'
@@ -482,32 +508,6 @@ components:
         created_at:
           type: string
           format: date-time
-    Error:
-      type: object
-      description: Every v2 error uses the same envelope.
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              description: A stable, machine-readable string (snake_case). Branch on this.
-            message:
-              type: string
-              description: A human-readable explanation, safe to log.
-            docs:
-              type: string
-              description: A link back to the reference.
-            field_errors:
-              type: object
-              additionalProperties:
-                type: string
-              description: Only on `invalid_fields` — names each field to fix.
-            warnings:
-              type: array
-              items:
-                type: string
-              description: Only on document upload errors — actionable feedback safe to show the user.
   securitySchemes:
     platformToken:
       type: http

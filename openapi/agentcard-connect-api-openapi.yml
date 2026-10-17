@@ -249,26 +249,26 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    ConnectAttempt:
+    ConnectionRefreshed:
       type: object
       properties:
         object:
           type: string
           enum:
-          - connect_attempt
-        id:
+          - connection
+        access_token:
           type: string
-          description: The attempt id. Pass it back as `connect_id` when you verify.
-        channel:
+          description: The new connection access token.
+        refresh_token:
+          type: string
+          description: The new refresh token. The old one is now invalid — replace the stored token every time.
+        token_type:
           type: string
           enum:
-          - email
-          - phone
-          description: The channel the code was sent on.
-        expires_at:
-          type: string
-          format: date-time
-          description: When the attempt expires (ISO 8601). Codes are valid for 10 minutes.
+          - Bearer
+        expires_in:
+          type: integer
+          description: Seconds until the access token expires (3600 = one hour).
     Error:
       type: object
       description: Every v2 error uses the same envelope.
@@ -295,44 +295,26 @@ components:
               items:
                 type: string
               description: Only on document upload errors — actionable feedback safe to show the user.
-    Consent:
+    ConnectAttempt:
       type: object
       properties:
         object:
           type: string
           enum:
-          - consent
+          - connect_attempt
         id:
           type: string
-        user_id:
+          description: The attempt id. Pass it back as `connect_id` when you verify.
+        channel:
           type: string
-        terms_version:
-          type:
-          - string
-          - 'null'
-        created_at:
+          enum:
+          - email
+          - phone
+          description: The channel the code was sent on.
+        expires_at:
           type: string
           format: date-time
-    ConnectionRefreshed:
-      type: object
-      properties:
-        object:
-          type: string
-          enum:
-          - connection
-        access_token:
-          type: string
-          description: The new connection access token.
-        refresh_token:
-          type: string
-          description: The new refresh token. The old one is now invalid — replace the stored token every time.
-        token_type:
-          type: string
-          enum:
-          - Bearer
-        expires_in:
-          type: integer
-          description: Seconds until the access token expires (3600 = one hour).
+          description: When the attempt expires (ISO 8601). Codes are valid for 10 minutes.
     Connection:
       type: object
       properties:
@@ -369,6 +351,24 @@ components:
               - string
               - 'null'
               description: Set when the user connected by phone, otherwise `null`.
+    Consent:
+      type: object
+      properties:
+        object:
+          type: string
+          enum:
+          - consent
+        id:
+          type: string
+        user_id:
+          type: string
+        terms_version:
+          type:
+          - string
+          - 'null'
+        created_at:
+          type: string
+          format: date-time
   responses:
     Unauthorized:
       description: '`unauthorized` — the platform access token is missing or expired. Exchange your client credentials for a fresh one.'
