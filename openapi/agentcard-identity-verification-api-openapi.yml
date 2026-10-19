@@ -21,7 +21,10 @@ paths:
       description: 'Uploads the front of the user''s identity document as a base64-encoded image. This step acknowledges receipt; the next step (`back`) tells you what comes next.
 
 
-        Any upload response may include a `warnings` array with actionable feedback (for example, that the other side of the document is still needed).'
+        Any upload response may include a `warnings` array with actionable feedback (for example, that the other side of the document is still needed).
+
+
+        The response''s `extracted` object carries what the document reader pulled off the image — use it to prefill your details form so the user confirms instead of typing.'
       requestBody:
         $ref: '#/components/requestBodies/KycDocument'
       responses:
@@ -34,6 +37,12 @@ paths:
               example:
                 object: kyc
                 status: awaiting_documents
+                extracted:
+                  document_type: drivers_license
+                  issuing_country: US
+                  first_name: Jane
+                  last_name: Doe
+                  date_of_birth: '1990-05-14'
         '400':
           $ref: '#/components/responses/KycDocumentBadRequest'
         '401':
@@ -78,11 +87,18 @@ paths:
                     required_fields:
                     - national_id_number
                     - phone_number
-                    - address_line1
-                    - address_city
-                    - address_region
-                    - address_postal_code
-                    - address_country
+                    extracted:
+                      document_type: drivers_license
+                      issuing_country: US
+                      document_number: D1234567
+                      first_name: Jane
+                      last_name: Doe
+                      date_of_birth: '1990-05-14'
+                      address_line1: 123 Market St
+                      address_city: San Francisco
+                      address_region: CA
+                      address_postal_code: '94105'
+                      address_country: US
                 requires_verification:
                   summary: Ready for face scan
                   value:
@@ -107,7 +123,7 @@ paths:
       - Identity Verification
       summary: Submit information
       operationId: kycSubmitInformation
-      description: Submits the extra fields requested by a `needs_information` response. Send only the fields listed in `required_fields`. On success, the response returns the `iframe_url` for the face scan.
+      description: 'Submits the extra fields requested by a `needs_information` response. Send only the fields listed in `required_fields`; values are trimmed, and a blank value counts as not provided. For a fresh verification, the response returns the `iframe_url` for the face scan. For an imported verification (Reusable KYC), the submit that completes the residential address returns `pending` and files the card issuer application right after it, in the background, so the response never waits on the issuer; the verification then moves to `approved` or `rejected` through the status poll or the `identity.verification.updated` webhook. Repeating the request is safe: it returns the current status.'
       requestBody:
         required: true
         content:
@@ -129,7 +145,7 @@ paths:
                   description: ISO 8601 date, `YYYY-MM-DD`.
                 national_id_number:
                   type: string
-                  description: The user's national identification number.
+                  description: The user's national ID or tax identification number for the country that issued their document — for US documents this is the SSN; for any other country it is the national ID / tax number printed on (or associated with) the document. Forwarded to the verification provider only; never stored by Agentcard.
                 phone_number:
                   type: string
                   description: E.164 format with country code (e.g. `+15551234567`).
@@ -147,8 +163,11 @@ paths:
                 address_country:
                   type: string
                   description: ISO 3166-1 alpha-2 country code (e.g. `US`).
+                user_ip:
+                  type: string
+                  description: 'The end user''s IP address as your frontend saw it (public IPv4 or IPv6; private or reserved addresses are rejected). Strongly recommended: identity screening checks the applicant''s IP, and an IP belonging to a datacenter (such as your backend''s) can fail an otherwise valid verification. Pass the address your user connected to you from; without it, your server''s own address may be recorded as a last resort and can fail that screening.'
             example:
-              user_id: user_7g8h9i
+              user_id: usr_7g8h9i
               national_id_number: '123456789'
               address_line1: 123 Main St
               address_city: San Francisco
@@ -157,7 +176,7 @@ paths:
               address_country: US
       responses:
         '200':
-          description: The next step — usually `requires_verification` with the `iframe_url`.
+          description: 'The next step: `requires_verification` with the `iframe_url` for a fresh verification, or `pending` when the submit completed an imported verification (the card issuer application is filed right after the response).'
           content:
             application/json:
               schema:
@@ -167,7 +186,7 @@ paths:
                 status: requires_verification
                 iframe_url: https://in.sumsub.com/websdk/p/…
         '400':
-          description: '`invalid_request` — missing `user_id`. `invalid_fields` — a value didn''t check out; the error adds a `field_errors` object naming each field to fix.'
+          description: '`invalid_request` — missing `user_id`, or a `user_ip` that is not a public IPv4/IPv6 address. `invalid_fields` — a value didn''t check out; the error adds a `field_errors` object naming each field to fix.'
           content:
             application/json:
               schema:
@@ -254,7 +273,7 @@ paths:
                   maxLength: 300
                   description: Optional end-user-safe explanation carried on non-approved outcomes — it appears as `reason` in statuses and webhook events, exactly like a real review's. It must not name internal providers or identifiers (rejected with `400 invalid_reason`), since it is shown to end users verbatim.
             example:
-              user_id: user_7g8h9i
+              user_id: usr_7g8h9i
               outcome: rejected
               reason: The name on the document does not match the application.
       responses:
@@ -293,6 +312,77 @@ paths:
           $ref: '#/components/responses/UserConflict'
         '502':
           $ref: '#/components/responses/VerificationError'
+  /api/v2/kyc/import:
+    post:
+      tags:
+      - Identity Verification
+      summary: Import a verification (Sumsub share token)
+      operationId: kycImport
+      description: 'Import a verification you already ran on your **own Sumsub account** (Reusable KYC). Generate a single-use share token for the Agentcard client id, send it here, and the user skips document capture and the face scan. A successful import drops into the exact same status contract as a fresh verification: poll `GET /api/v2/kyc` or listen for `identity.verification.updated`. Requires one-time partner pairing between your Sumsub account and Agentcard''s (per environment) — ask your Agentcard contact to enable it. Share tokens are single-use with a short TTL, so generate one fresh per import attempt.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - user_id
+              - share_token
+              properties:
+                user_id:
+                  type: string
+                  description: The connected user's id.
+                share_token:
+                  type: string
+                  description: A Sumsub share token generated by your account for the Agentcard client id (`POST /resources/accessTokens/shareToken` with `forClientId`). Single-use; expires after its `ttlInSecs`.
+                user_ip:
+                  type: string
+                  description: 'The end user''s IP address as your frontend saw it (public IPv4 or IPv6; private or reserved addresses are rejected). Strongly recommended: identity screening checks the applicant''s IP, and an IP belonging to a datacenter (such as your backend''s) can fail an otherwise valid verification. Pass the address your user connected to you from; without it, your server''s own address may be recorded as a last resort and can fail that screening.'
+            example:
+              user_id: usr_7g8h9i
+              share_token: _act-jwt-eyJhbGciOiJub25lIn0...
+      responses:
+        '200':
+          description: 'The verification''s state after the import, exactly as `GET /api/v2/kyc` now reports it. A complete applicant lands on `pending` while checks run (then `approved`). An applicant whose shared verification carried no residential address lands on `needs_information` with the exact `required_fields`: submit them via `POST /api/v2/kyc/information` right away (import first, then information), and the card issuer application is filed as soon as the address lands.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KycState'
+              example:
+                object: kyc
+                status: pending
+        '400':
+          description: '`invalid_request` — missing `user_id` or `share_token`, or a `user_ip` that is not a public IPv4/IPv6 address. `invalid_share_token` — the token is invalid, expired, or already used; generate a fresh one and retry. `sharing_not_configured` — test mode has no sharing tenant configured; use `POST /api/v2/kyc/simulate` instead.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          description: '`sharing_not_enabled` — your Sumsub account and Agentcard''s are not paired in this environment. Complete partner pairing first.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: '`connection_not_found` — the user has no active connection under this client.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: '`verification_in_progress` — a verification is already in flight for this user. Drive it to completion with the status flow instead of importing.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: '`verification_not_compatible` — the shared verification does not include everything the card program requires (an identity document and a selfie check). Share applicants from a level that includes both, or let the user run the standard flow.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   responses:
     UserConflict:
@@ -307,14 +397,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: '`unauthorized` — the platform access token is missing or expired. Exchange your client credentials for a fresh one.'
+    ConnectionNotFound:
+      description: '`connection_not_found` — no connection exists for that user under your client.'
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    ConnectionNotFound:
-      description: '`connection_not_found` — no connection exists for that user under your client.'
+    KycDocumentBadRequest:
+      description: '`invalid_request` — missing `user_id` or `image`, an unrecognized `document_type` / `issuing_country`, or a `user_ip` that is not a public IPv4/IPv6 address. `invalid_image` — `image` isn''t valid base64. `client_credentials_required` — the token wasn''t minted from client credentials.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: '`unauthorized` — the platform access token is missing or expired. Exchange your client credentials for a fresh one.'
       content:
         application/json:
           schema:
@@ -331,73 +427,6 @@ components:
               message: The document image could not be processed — ask the user for a new, clear photo.
               warnings:
               - The verification provider still needs the back of the document — ask the user for the other side.
-    KycDocumentBadRequest:
-      description: '`invalid_request` — missing `user_id` or `image`, or an unrecognized `document_type` / `issuing_country`. `invalid_image` — `image` isn''t valid base64. `client_credentials_required` — the token wasn''t minted from client credentials.'
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-  schemas:
-    Error:
-      type: object
-      description: Every v2 error uses the same envelope.
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              description: A stable, machine-readable string (snake_case). Branch on this.
-            message:
-              type: string
-              description: A human-readable explanation, safe to log.
-            docs:
-              type: string
-              description: A link back to the reference.
-            field_errors:
-              type: object
-              additionalProperties:
-                type: string
-              description: Only on `invalid_fields` — names each field to fix.
-            warnings:
-              type: array
-              items:
-                type: string
-              description: Only on document upload errors — actionable feedback safe to show the user.
-    KycState:
-      type: object
-      description: The single status contract every KYC response carries.
-      properties:
-        object:
-          type: string
-          enum:
-          - kyc
-        status:
-          type: string
-          enum:
-          - awaiting_documents
-          - needs_information
-          - requires_verification
-          - pending
-          - approved
-          - rejected
-          description: '`awaiting_documents` — upload the front and back. `needs_information` — collect the `required_fields` and submit them. `requires_verification` — show the user the `iframe_url`. `pending` — under review, no action needed. `approved` — verified, done. `rejected` — the user did not pass. Statuses are not one-way: a review can send a user back — `pending` may return to `needs_information` (a detail didn''t match the document; re-collect the listed fields and resubmit, the check re-runs automatically) or to `awaiting_documents` (the images were unusable; upload both sides again). Always branch on the current status.'
-        required_fields:
-          type: array
-          items:
-            type: string
-          description: Only on `needs_information` — exactly the fields to collect and post to `/kyc/information`.
-        iframe_url:
-          type: string
-          description: 'Only on `requires_verification` — the URL to show the user for the face scan. Embed it in an iframe with `allow="camera; microphone"`. Short-lived: always use the most recent one from a poll or webhook, never a stored copy.'
-        warnings:
-          type: array
-          items:
-            type: string
-          description: Optional, on document uploads — actionable feedback safe to show the user (for example, that the other side of the document is still needed).
-        reason:
-          type: string
-          description: Optional, on `needs_information`, `awaiting_documents`, `requires_verification`, and `rejected` — a short, end-user-safe explanation of what the review asked for (for example, “Enter your full name exactly as it appears on your identity document.”). Safe to show the user verbatim.
   requestBodies:
     KycDocument:
       required: true
@@ -429,12 +458,85 @@ components:
               issuing_country:
                 type: string
                 description: Optional ISO 3166-1 country code (alpha-2 or alpha-3) of the country that issued the document. Defaults to US when the document doesn't reveal it — always send it for non-US documents (e.g. `DE` for a German national ID).
+              user_ip:
+                type: string
+                description: 'The end user''s IP address as your frontend saw it (public IPv4 or IPv6; private or reserved addresses are rejected). Strongly recommended: identity screening checks the applicant''s IP, and an IP belonging to a datacenter (such as your backend''s) can fail an otherwise valid verification. Pass the address your user connected to you from; without it, your server''s own address may be recorded as a last resort and can fail that screening.'
           example:
-            user_id: user_7g8h9i
+            user_id: usr_7g8h9i
             image: <base64>
             mime_type: image/jpeg
+  schemas:
+    KycState:
+      type: object
+      description: The single status contract every KYC response carries.
+      properties:
+        object:
+          type: string
+          enum:
+          - kyc
+        status:
+          type: string
+          enum:
+          - awaiting_documents
+          - needs_information
+          - requires_verification
+          - pending
+          - approved
+          - rejected
+          description: '`awaiting_documents` — upload the front and back. `needs_information` — collect the `required_fields` and submit them. `requires_verification` — show the user the `iframe_url`. `pending` — under review, no action needed. `approved` — verified, done. `rejected` — the user did not pass. Statuses are not one-way: a review can send a user back — `pending` may return to `needs_information` (a detail didn''t match the document; re-collect the listed fields and resubmit, the check re-runs automatically) or to `awaiting_documents` (the images were unusable; upload both sides again). Always branch on the current status.'
+        required_fields:
+          type: array
+          items:
+            type: string
+          description: Only on `needs_information` — exactly the fields to collect and post to `/kyc/information`.
+        iframe_url:
+          type: string
+          description: 'On every actionable status (`awaiting_documents`, `needs_information`, `requires_verification`): the hosted page that collects whatever the verification still needs, and the face scan at `requires_verification`. Embed it in an iframe with `allow="camera; microphone"`. Short-lived: always use the most recent one from a poll or webhook, never a stored copy.'
+        warnings:
+          type: array
+          items:
+            type: string
+          description: Optional, on document uploads — actionable feedback safe to show the user (for example, that the other side of the document is still needed).
+        extracted:
+          type: object
+          description: 'Optional, on document uploads — what the document reader pulled off the uploaded image(s), so you can prefill your details form instead of asking the user to re-type what the ID already says. Keys match the `/kyc/information` request fields (`first_name`, `last_name`, `date_of_birth`, `address_line1`, `address_city`, `address_region`, `address_postal_code`, `address_country`) plus `document_type`, `issuing_country`, and `document_number` (the number printed on the document — for US documents this is NOT the SSN, so never prefill it into `national_id_number` when `issuing_country` is `US`). Fields appear as they become readable: the front usually carries the name and date of birth; a US back adds the barcode address. Always let the user confirm or correct prefilled values.'
+          additionalProperties:
+            type: string
+        reason:
+          type: string
+          description: Optional, on `needs_information`, `awaiting_documents`, `requires_verification`, and `rejected` — a short, end-user-safe explanation of what the review asked for (for example, “Enter your full name exactly as it appears on your identity document.”). Safe to show the user verbatim.
+    Error:
+      type: object
+      description: Every v2 error uses the same envelope.
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: A stable, machine-readable string (snake_case). Branch on this.
+            message:
+              type: string
+              description: A human-readable explanation, safe to log.
+            docs:
+              type: string
+              description: A link back to the reference.
+            field_errors:
+              type: object
+              additionalProperties:
+                type: string
+              description: Only on `invalid_fields` — names each field to fix.
+            warnings:
+              type: array
+              items:
+                type: string
+              description: Only on document upload errors — actionable feedback safe to show the user.
   securitySchemes:
     platformToken:
       type: http
       scheme: bearer
       description: 'A platform access token. Get one on the **Create an access token** endpoint by exchanging your `client_id` + `client_secret`, then send it as `Authorization: Bearer <token>`. Tokens live one hour.'
+    userAccessToken:
+      type: http
+      scheme: bearer
+      description: The user's connection access_token (user authentication), or an org-minted buy_token for org-owned accounts.

@@ -124,7 +124,7 @@ paths:
                 token_type: Bearer
                 expires_in: 3600
                 user:
-                  id: user_7g8h9i
+                  id: usr_7g8h9i
                   email: user@example.com
                   phone: null
         '400':
@@ -169,7 +169,7 @@ paths:
                   maxLength: 64
                   description: Optional. The version of your terms the user accepted, stored for your audit trail.
             example:
-              user_id: user_7g8h9i
+              user_id: usr_7g8h9i
               terms_version: '2026-07-01'
       responses:
         '201':
@@ -181,7 +181,7 @@ paths:
               example:
                 object: consent
                 id: cns_1a2b3c
-                user_id: user_7g8h9i
+                user_id: usr_7g8h9i
                 terms_version: '2026-07-01'
                 created_at: '2026-07-12T20:30:00.000Z'
         '400':
@@ -247,6 +247,72 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /api/v2/vault_users/{user_id}/connection:
+    delete:
+      tags:
+      - Connect
+      summary: Disconnect a user
+      operationId: vaultUserConnectionDelete
+      description: 'Ends your app''s connection to a user. Every token your app holds for the user stops working, Vault session links they have not opened stop opening, and their cards stay in their Vault. Idempotent: a second call answers `200` with every count at `0`.'
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        description: The user's id, as your app stored it when they connected.
+        schema:
+          type: string
+          maxLength: 64
+      responses:
+        '200':
+          description: The user is disconnected from your app.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object:
+                    type: string
+                    enum:
+                    - vault_user_connection
+                  user_id:
+                    type: string
+                  connected:
+                    type: boolean
+                    enum:
+                    - false
+                  revoked_tokens:
+                    type: integer
+                    description: Tokens your app held for the user that stopped working on this call.
+                  revoked_wallet_links:
+                    type: integer
+                    description: Wallet links your app sent the user that stopped working on this call.
+                  revoked_sessions:
+                    type: integer
+                    description: Vault session links the user had not opened yet. A disconnected user who taps one gets nothing.
+                  test_mode:
+                    type: boolean
+              example:
+                object: vault_user_connection
+                user_id: usr_8f3k2m
+                connected: false
+                revoked_tokens: 2
+                revoked_wallet_links: 0
+                revoked_sessions: 1
+                test_mode: false
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: '`connection_not_found`: your app holds no connection to that user in this mode.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: '`partner_disconnect_pending`: the tokens are off, and the user''s auto-approval for your app is not yet. Call again until it answers `200`.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   schemas:
     ConnectionRefreshed:
@@ -269,52 +335,6 @@ components:
         expires_in:
           type: integer
           description: Seconds until the access token expires (3600 = one hour).
-    Error:
-      type: object
-      description: Every v2 error uses the same envelope.
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              description: A stable, machine-readable string (snake_case). Branch on this.
-            message:
-              type: string
-              description: A human-readable explanation, safe to log.
-            docs:
-              type: string
-              description: A link back to the reference.
-            field_errors:
-              type: object
-              additionalProperties:
-                type: string
-              description: Only on `invalid_fields` — names each field to fix.
-            warnings:
-              type: array
-              items:
-                type: string
-              description: Only on document upload errors — actionable feedback safe to show the user.
-    ConnectAttempt:
-      type: object
-      properties:
-        object:
-          type: string
-          enum:
-          - connect_attempt
-        id:
-          type: string
-          description: The attempt id. Pass it back as `connect_id` when you verify.
-        channel:
-          type: string
-          enum:
-          - email
-          - phone
-          description: The channel the code was sent on.
-        expires_at:
-          type: string
-          format: date-time
-          description: When the attempt expires (ISO 8601). Codes are valid for 10 minutes.
     Connection:
       type: object
       properties:
@@ -369,6 +389,52 @@ components:
         created_at:
           type: string
           format: date-time
+    ConnectAttempt:
+      type: object
+      properties:
+        object:
+          type: string
+          enum:
+          - connect_attempt
+        id:
+          type: string
+          description: The attempt id. Pass it back as `connect_id` when you verify.
+        channel:
+          type: string
+          enum:
+          - email
+          - phone
+          description: The channel the code was sent on.
+        expires_at:
+          type: string
+          format: date-time
+          description: When the attempt expires (ISO 8601). Codes are valid for 10 minutes.
+    Error:
+      type: object
+      description: Every v2 error uses the same envelope.
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: A stable, machine-readable string (snake_case). Branch on this.
+            message:
+              type: string
+              description: A human-readable explanation, safe to log.
+            docs:
+              type: string
+              description: A link back to the reference.
+            field_errors:
+              type: object
+              additionalProperties:
+                type: string
+              description: Only on `invalid_fields` — names each field to fix.
+            warnings:
+              type: array
+              items:
+                type: string
+              description: Only on document upload errors — actionable feedback safe to show the user.
   responses:
     Unauthorized:
       description: '`unauthorized` — the platform access token is missing or expired. Exchange your client credentials for a fresh one.'
@@ -381,3 +447,7 @@ components:
       type: http
       scheme: bearer
       description: 'A platform access token. Get one on the **Create an access token** endpoint by exchanging your `client_id` + `client_secret`, then send it as `Authorization: Bearer <token>`. Tokens live one hour.'
+    userAccessToken:
+      type: http
+      scheme: bearer
+      description: The user's connection access_token (user authentication), or an org-minted buy_token for org-owned accounts.

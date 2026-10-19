@@ -112,26 +112,28 @@ paths:
                   organization_id:
                     type: string
                     description: The organization the token belongs to.
+                  test_mode:
+                    type: boolean
+                    description: '`true` when the token acts in test mode, `false` in production. Decided by the client the token was minted from. Prefer this over the deprecated `mode` field.'
                   mode:
                     type: string
                     enum:
                     - sandbox
                     - production
-                    description: Decided by the client the token was minted from.
+                    deprecated: true
+                    description: Deprecated — `sandbox` is the legacy wire name for test mode; read `test_mode` instead. Kept unchanged so existing integrations never break.
+                required:
+                - object
+                - organization_id
+                - test_mode
               example:
                 object: api_v2
                 organization_id: org_a1b2c3
                 mode: sandbox
+                test_mode: true
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
-  responses:
-    Unauthorized:
-      description: '`unauthorized` — the platform access token is missing or expired. Exchange your client credentials for a fresh one.'
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
     Error:
       type: object
@@ -159,16 +161,6 @@ components:
               items:
                 type: string
               description: Only on document upload errors — actionable feedback safe to show the user.
-    OAuthError:
-      type: object
-      description: RFC 6749 §5.2 error shape — only the token endpoint uses it.
-      properties:
-        error:
-          type: string
-          description: A stable, machine-readable code.
-        error_description:
-          type: string
-          description: A human-readable explanation.
     TokenResponse:
       type: object
       properties:
@@ -186,8 +178,29 @@ components:
           type: string
           enum:
           - api
+    OAuthError:
+      type: object
+      description: RFC 6749 §5.2 error shape — only the token endpoint uses it.
+      properties:
+        error:
+          type: string
+          description: A stable, machine-readable code.
+        error_description:
+          type: string
+          description: A human-readable explanation.
+  responses:
+    Unauthorized:
+      description: '`unauthorized` — the platform access token is missing or expired. Exchange your client credentials for a fresh one.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     platformToken:
       type: http
       scheme: bearer
       description: 'A platform access token. Get one on the **Create an access token** endpoint by exchanging your `client_id` + `client_secret`, then send it as `Authorization: Bearer <token>`. Tokens live one hour.'
+    userAccessToken:
+      type: http
+      scheme: bearer
+      description: The user's connection access_token (user authentication), or an org-minted buy_token for org-owned accounts.

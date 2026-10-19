@@ -1,0 +1,418 @@
+openapi: 3.2.0
+info:
+  title: Agentcard Member cards API
+  version: 2.0.0
+  description: The Agentcard v2 API — connect your users and verify their identity from your own backend. Every call is authenticated with a platform access token minted from your `client_id` + `client_secret`.
+servers:
+- url: https://api.agentcard.sh
+  description: There is one base URL. Sandbox vs production is decided by the client credential you use, never by the host.
+security:
+- platformToken: []
+tags:
+- name: Member cards
+paths:
+  /api/v2/flow_status:
+    get:
+      tags:
+      - Member cards
+      summary: Get the member flow status
+      operationId: memberFlowStatus
+      security:
+      - userAccessToken: []
+      description: 'One read that answers "what should happen next for this member": add a card, create a card, share an approval link, or fetch the open card. Authenticated with the member''s connection token from Verify the code.'
+      responses:
+        '200':
+          description: The flow status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FlowStatus'
+              example:
+                object: flow_status
+                status: ready
+                next_action:
+                  type: create_card
+                attached_cards:
+                - id: cc_123
+                  status: active
+                  network: visa
+                  brand: Visa
+                  last4: '7318'
+                  art_url: null
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /api/v2/cards:
+    get:
+      tags:
+      - Member cards
+      summary: List the member's cards
+      operationId: memberCardsList
+      security:
+      - userAccessToken: []
+      description: 'The member''s cards as this connection sees it: added cards (attachments, pending included) and the cards created against them.'
+      responses:
+        '200':
+          description: Added cards and created cards.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  attached_cards:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AttachedCard'
+                  cards:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MemberCard'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      tags:
+      - Member cards
+      summary: Create a card
+      operationId: memberCardCreate
+      security:
+      - userAccessToken: []
+      description: Create a one-time virtual card against the member's added card, then key its credentials into your checkout and close it when you're done. Sandbox answers `201` with an open test card. Production answers `202 approval_pending` with an `approval_url` the member confirms with a passkey; retry with the SAME `Idempotency-Key` (or watch flow status) until the card is `open`, then read it once on Get a card. Credentials stay valid for about an hour, so create the card right before checkout.
+      parameters:
+      - name: Idempotency-Key
+        in: header
+        required: true
+        schema:
+          type: string
+        description: Stable key for THIS card intent (your order id). Retries with the same key resume the same card; they never create a second one.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - amount_cents
+              properties:
+                amount_cents:
+                  type: integer
+                  minimum: 100
+                  maximum: 2000000
+                  description: Exact amount in cents the card can spend, e.g. 2500 = $25.00.
+                currency:
+                  type: string
+                  enum:
+                  - usd
+                connected_card_id:
+                  type: string
+                  description: Draw on a specific added card. Omit to use the newest active one.
+                merchant:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    url:
+                      type: string
+                description:
+                  type: string
+                  maxLength: 200
+                metadata:
+                  type: object
+            example:
+              amount_cents: 2500
+              currency: usd
+              description: 'Order #1042'
+      responses:
+        '201':
+          description: The card is open (sandbox, and frictionless production mints).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberCard'
+        '202':
+          description: '`approval_pending`: share `approval_url` with the member, then retry with the same `Idempotency-Key`.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberCard'
+        '400':
+          description: '`invalid_request`, `idempotency_key_required`, or `multi_use_connected_unsupported`.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '402':
+          description: '`subscription_required`: production needs an active Agentcard subscription.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: '`attach_required`: no active added card (start one on Add a card), or `request_in_flight`: the same key is still processing; retry in a few seconds.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: '`byoc_unavailable`: the card network is briefly unavailable. Retry with the same `Idempotency-Key`.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v2/cards/{card_id}:
+    get:
+      tags:
+      - Member cards
+      summary: Get a card
+      operationId: memberCardGet
+      security:
+      - userAccessToken: []
+      description: Authoritative card state. While the card is `open` it carries `credentials` (number, expiry, CVC) to key into the checkout. Each read of an open card notifies the member that the credentials were accessed, so fetch once when you are ready to pay rather than polling; poll flow status instead.
+      parameters:
+      - name: card_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The card.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberCard'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: '`card_not_found`: no such card for this connection.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v2/cards/{card_id}/close:
+    post:
+      tags:
+      - Member cards
+      summary: Close a card
+      operationId: memberCardClose
+      security:
+      - userAccessToken: []
+      description: 'Close a card after checkout. Idempotent: closing a closed card answers `200`. One-time cards also close themselves after their first approved charge.'
+      parameters:
+      - name: card_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Closed.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object:
+                    type: string
+                    example: card
+                  id:
+                    type: string
+                  status:
+                    type: string
+                    example: closed
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: '`card_not_found`: no such card for this connection.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: '`rewards_card_protected`: this card class cannot be closed.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    FlowStatus:
+      type: object
+      description: Where this member is in the add-a-card -> create-a-card flow, with the one next action.
+      properties:
+        object:
+          type: string
+          example: flow_status
+        status:
+          type: string
+          enum:
+          - no_card_attached
+          - attach_pending
+          - attach_failed
+          - ready
+          - approval_pending
+          - card_ready
+        next_action:
+          type: object
+          nullable: true
+          properties:
+            type:
+              type: string
+              enum:
+              - attach_card
+              - create_card
+              - share_approval_url
+              - get_card
+            id:
+              type: string
+            url:
+              type: string
+              description: The link to hand the member (add-a-card page, or the approval page).
+            expires_at:
+              type: string
+              format: date-time
+        attached_cards:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttachedCard'
+        card:
+          $ref: '#/components/schemas/MemberCard'
+        reason:
+          type: string
+          description: 'Only on `attach_failed`: the ineligible reason.'
+        message:
+          type: string
+          description: 'Only on `attach_failed`: human-readable copy for the member.'
+    AttachedCard:
+      type: object
+      description: A card the member added to their wallet (an attachment).
+      properties:
+        id:
+          type: string
+          description: The attachment id.
+        status:
+          type: string
+          enum:
+          - pending
+          - active
+          - ineligible
+          - revoked
+        network:
+          type: string
+          nullable: true
+          example: visa
+        brand:
+          type: string
+          nullable: true
+        last4:
+          type: string
+          nullable: true
+        art_url:
+          type: string
+          nullable: true
+          description: The issuing bank's card art, when the network provides it.
+    MemberCard:
+      type: object
+      description: A one-time virtual card created against the member's added card.
+      properties:
+        object:
+          type: string
+          example: card
+        id:
+          type: string
+        status:
+          type: string
+          enum:
+          - approval_pending
+          - open
+          - in_use
+          - paused
+          - pausing
+          - closing
+          - closed
+          description: 'Envelope status. `open` carries credentials; `approval_pending` carries `approval_url`. `pausing`: a charge paused the card and the card network has not confirmed the pause yet; it becomes `paused` on its own. `closing`: a charge spent the card and the card network has not confirmed the close yet; it becomes `closed` on its own.'
+        spend_limit_cents:
+          type: integer
+        balance_cents:
+          type: integer
+        connected_card_id:
+          type: string
+          nullable: true
+          description: The attachment this card draws on.
+        last4:
+          type: string
+        expiry:
+          type: string
+          example: 12/30
+        created_at:
+          type: string
+          format: date-time
+        approval_url:
+          type: string
+          description: 'Only while `approval_pending`: the page where the member approves this purchase with a passkey.'
+        expires_at:
+          type: string
+          format: date-time
+          description: 'Only while `approval_pending`: when the approval window closes.'
+        closed_reason:
+          type: string
+          description: 'Only when `closed`: `used`, `canceled`, `expired`, or `declined`.'
+        credentials:
+          type: object
+          description: 'Only on an `open` card: the one-time credential to key into a checkout. Never persist it.'
+          properties:
+            number:
+              type: string
+            exp_month:
+              type: integer
+              nullable: true
+            exp_year:
+              type: integer
+              nullable: true
+            cvc:
+              type: string
+        credentials_status:
+          type: string
+          description: '`protected` when the member requires an approval per reveal; `retry` when the credential read should be retried.'
+    Error:
+      type: object
+      description: Every v2 error uses the same envelope.
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: A stable, machine-readable string (snake_case). Branch on this.
+            message:
+              type: string
+              description: A human-readable explanation, safe to log.
+            docs:
+              type: string
+              description: A link back to the reference.
+            field_errors:
+              type: object
+              additionalProperties:
+                type: string
+              description: Only on `invalid_fields` — names each field to fix.
+            warnings:
+              type: array
+              items:
+                type: string
+              description: Only on document upload errors — actionable feedback safe to show the user.
+  responses:
+    Unauthorized:
+      description: '`unauthorized` — the platform access token is missing or expired. Exchange your client credentials for a fresh one.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    platformToken:
+      type: http
+      scheme: bearer
+      description: 'A platform access token. Get one on the **Create an access token** endpoint by exchanging your `client_id` + `client_secret`, then send it as `Authorization: Bearer <token>`. Tokens live one hour.'
+    userAccessToken:
+      type: http
+      scheme: bearer
+      description: The user's connection access_token (user authentication), or an org-minted buy_token for org-owned accounts.

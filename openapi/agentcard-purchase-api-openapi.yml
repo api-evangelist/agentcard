@@ -1,0 +1,1066 @@
+openapi: 3.2.0
+info:
+  title: Agentcard Purchase API
+  version: 2.0.0
+  description: The Agentcard v2 API — connect your users and verify their identity from your own backend. Every call is authenticated with a platform access token minted from your `client_id` + `client_secret`.
+servers:
+- url: https://api.agentcard.sh
+  description: There is one base URL. Sandbox vs production is decided by the client credential you use, never by the host.
+security:
+- platformToken: []
+tags:
+- name: Purchase
+paths:
+  /buy:
+    post:
+      tags:
+      - Purchase
+      summary: Buy
+      operationId: buy
+      security:
+      - userAccessToken: []
+      description: One conversational endpoint that places real orders. Send the user's request as plain text in `ask`; thread follow-ups with `conversation_id`; place a shown cart by echoing its `hash` in `confirm` (or an array of hashes for several carts). Money only moves on a confirm, and only for exactly the cart the hash describes.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ask:
+                  type: string
+                  description: What the user wants, in plain language. Required unless the call is a confirm.
+                  minLength: 1
+                  pattern: \S
+                conversation_id:
+                  type: string
+                  description: The thread to continue. A confirm always requires it.
+                  minLength: 1
+                confirm:
+                  description: A cart hash from a previous response (16 hex characters), or an array of hashes to place several carts. An array confirm cannot carry an ask in the same call.
+                  oneOf:
+                  - type: string
+                    pattern: ^[0-9a-f]{16}$
+                  - type: array
+                    items:
+                      type: string
+                      pattern: ^[0-9a-f]{16}$
+                    minItems: 1
+                    maxItems: 8
+                payment_source:
+                  type: string
+                  enum:
+                  - vault
+                  description: 'Pay the confirmed cart(s) with the user''s own vaulted card, whatever the user''s wording: the confirm pauses with decline_code vault_approval_required and an approval_url, the user approves on their device, and the same confirm places the order. Confirm-only. Omit it and the loop keeps its default source.'
+                delivery_address:
+                  type: object
+                  description: The delivery address for this conversation, when your app manages the user's addresses. The agent ships to exactly these values, never asks the user to confirm or correct them, and does not read or update the wallet's saved default address for the conversation. Send it on any turn (the first is fine); it holds for the whole conversation, and a later turn's value replaces it. A malformed address is refused with 400 invalid_delivery_address before any turn runs.
+                  required:
+                  - street
+                  - city
+                  - state
+                  - zip
+                  properties:
+                    street:
+                      type: string
+                      description: Street address, e.g. "1900 Jefferson St".
+                    address2:
+                      type: string
+                      description: Apartment, suite or floor.
+                    city:
+                      type: string
+                    state:
+                      type: string
+                      description: Two-letter state or province code, e.g. "CA" or "BC".
+                    zip:
+                      type: string
+                      description: US ZIP (or ZIP+4) or Canadian postal code, e.g. "94123" or "V6B 5A1".
+                    phone:
+                      type: string
+                      description: Recipient phone number. Retail shipping requires one.
+                    name:
+                      type: string
+                      description: Recipient full name for the shipping label.
+                    can_leave_at_door:
+                      type: boolean
+                      description: Whether the courier may leave the order at the door (merchant-dependent).
+                    country:
+                      type: string
+                      description: ISO 3166-1 alpha-2 country code, e.g. "US" or "CA". Inferred from the postal code when omitted.
+              anyOf:
+              - required:
+                - ask
+              - required:
+                - confirm
+              dependentRequired:
+                confirm:
+                - conversation_id
+                payment_source:
+                - confirm
+              not:
+                required:
+                - ask
+                - confirm
+                properties:
+                  confirm:
+                    type: array
+            examples:
+              ask:
+                summary: Start a purchase
+                value:
+                  ask: a 16 oz bag of Colombian ground coffee from Amazon, ship it to 1900 Jefferson St, San Francisco
+              confirm:
+                summary: Place a shown cart
+                value:
+                  conversation_id: conv_9a8b7c6d5e4f3a2b1c0d9e8f
+                  confirm: 9f2c4a1b8e3d5f07
+              multiCartConfirm:
+                summary: Place several carts
+                value:
+                  conversation_id: conv_9a8b7c6d5e4f3a2b1c0d9e8f
+                  confirm:
+                  - 9f2c4a1b8e3d5f07
+                  - 31d8a6e0c47b92f5
+      responses:
+        '200':
+          description: One turn of the purchase conversation, in the fixed envelope.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: The fixed response envelope. Every field is present on every response, null when empty.
+                properties:
+                  conversation_id:
+                    type: string
+                    description: Thread it back on every follow-up. Returned on the first call too.
+                  status:
+                    type: string
+                    enum:
+                    - needs_input
+                    - order_placed
+                    - partially_placed
+                    - declined
+                    description: 'needs_input is progress, not failure: the reply is a question or a cart waiting on confirmation.'
+                  reply:
+                    type: string
+                    description: The assistant's turn as prose, ready to show a human.
+                  messages:
+                    type: array
+                    items:
+                      type: string
+                    description: The same turn split into ordered bubbles for chat surfaces.
+                  message_id:
+                    type: string
+                  cart:
+                    type:
+                    - object
+                    - 'null'
+                    description: The most recently shown cart. Null when no cart is on the table.
+                    properties:
+                      merchant:
+                        type: string
+                        description: Public merchant id, e.g. retail, doordash, goodeggs.
+                      merchant_name:
+                        type: string
+                        description: Display name for the merchant, or the store when one is selected (Amazon, Walmart).
+                      items:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            qty:
+                              type: integer
+                            priceCents:
+                              type: integer
+                            product_id:
+                              type:
+                              - string
+                              - 'null'
+                              description: The merchant's id for the line; tells two same-name lines apart. Null on carts shown before it was captured.
+                          required:
+                          - name
+                          - qty
+                          - product_id
+                      serviceFeesCents:
+                        type: integer
+                        description: All fees combined, including the Agentcard service fee.
+                      tipCents:
+                        type: integer
+                      totalCents:
+                        type: integer
+                        description: 'The all-in amount a confirm authorizes: merchandise, fees, and tip.'
+                      hash:
+                        type: string
+                        description: Identity of exactly this cart. Echo it back as confirm to place the order.
+                    required:
+                    - merchant
+                    - merchant_name
+                    - items
+                    - serviceFeesCents
+                    - tipCents
+                    - totalCents
+                    - hash
+                  carts:
+                    type: array
+                    items:
+                      type: object
+                      description: The most recently shown cart. Null when no cart is on the table.
+                      properties:
+                        merchant:
+                          type: string
+                          description: Public merchant id, e.g. retail, doordash, goodeggs.
+                        merchant_name:
+                          type: string
+                          description: Display name for the merchant, or the store when one is selected (Amazon, Walmart).
+                        items:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                              qty:
+                                type: integer
+                              priceCents:
+                                type: integer
+                              product_id:
+                                type:
+                                - string
+                                - 'null'
+                                description: The merchant's id for the line; tells two same-name lines apart. Null on carts shown before it was captured.
+                            required:
+                            - name
+                            - qty
+                            - product_id
+                        serviceFeesCents:
+                          type: integer
+                          description: All fees combined, including the Agentcard service fee.
+                        tipCents:
+                          type: integer
+                        totalCents:
+                          type: integer
+                          description: 'The all-in amount a confirm authorizes: merchandise, fees, and tip.'
+                        hash:
+                          type: string
+                          description: Identity of exactly this cart. Echo it back as confirm to place the order.
+                      required:
+                      - merchant
+                      - merchant_name
+                      - items
+                      - serviceFeesCents
+                      - tipCents
+                      - totalCents
+                      - hash
+                    description: Every open cart in the conversation, oldest first. A conversation can hold carts at several merchants.
+                  placements:
+                    type:
+                    - array
+                    - 'null'
+                    description: Per-cart outcomes of a multi-cart confirm; null on every other call. Partial success is representable here.
+                    items:
+                      type: object
+                      properties:
+                        merchant:
+                          type: string
+                        merchant_name:
+                          type: string
+                        status:
+                          type: string
+                          enum:
+                          - needs_input
+                          - order_placed
+                          - partially_placed
+                          - declined
+                        reply:
+                          type: string
+                        error_code:
+                          type:
+                          - string
+                          - 'null'
+                        order_id:
+                          type:
+                          - string
+                          - 'null'
+                          description: This cart's order id when it placed.
+                        payment_source:
+                          $ref: '#/components/schemas/PaymentSource'
+                        decline_code:
+                          type:
+                          - string
+                          - 'null'
+                        approval_url:
+                          type:
+                          - string
+                          - 'null'
+                        charge_status:
+                          type:
+                          - string
+                          - 'null'
+                          enum:
+                          - none
+                          - confirming
+                          - settled
+                          - unknown
+                          - null
+                        merchant_total_cents:
+                          type:
+                          - integer
+                          - 'null'
+                          description: 'For a cart the merchant priced outside US dollars: the merchant''s own total in that currency''s smallest unit, the same figure order.placed and order.failed carry. Null for a US dollar cart and when no checkout ran.'
+                        merchant_currency:
+                          type:
+                          - string
+                          - 'null'
+                          description: The merchant's currency as a lower-case ISO code (cad) when the cart was priced outside US dollars. Null for a US dollar cart and when no checkout ran.
+                      required:
+                      - merchant
+                      - merchant_name
+                      - status
+                      - reply
+                      - order_id
+                      - payment_source
+                      - decline_code
+                      - approval_url
+                      - charge_status
+                      - merchant_total_cents
+                      - merchant_currency
+                  catalog:
+                    type:
+                    - object
+                    - 'null'
+                    description: The last product search as data, with a freshness stamp. Null when nothing fresh was searched.
+                    properties:
+                      merchant:
+                        type: string
+                      merchant_name:
+                        type: string
+                      store:
+                        type:
+                        - object
+                        - 'null'
+                        properties:
+                          id:
+                            type: string
+                          name:
+                            type: string
+                          eta_minutes:
+                            type:
+                            - integer
+                            - 'null'
+                            description: A delivery store's estimate in minutes when the search ran, null when it showed none. Absent for other merchants.
+                        description: 'The store searched: its id and, when known, its name. Null when the search covered several stores.'
+                      items:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            name:
+                              type: string
+                            priceCents:
+                              type: integer
+                            image_url:
+                              type: string
+                              format: uri
+                              description: The product photo, when the merchant provides one. Absolute https URL.
+                          required:
+                          - id
+                      as_of:
+                        type: string
+                        format: date-time
+                  error_code:
+                    type:
+                    - string
+                    - 'null'
+                    description: Machine-readable failure code when something went wrong.
+                  order_id:
+                    type:
+                    - string
+                    - 'null'
+                    description: 'Set when this call placed an order: the merchant''s order id, or Agentcard''s when the merchant returns none. The same key as order.orderId in GET /cards/transactions/by-payment-method and order_id on order.placed. Null on a multi-cart confirm (see placements).'
+                  payment_source:
+                    $ref: '#/components/schemas/PaymentSource'
+                  decline_code:
+                    type:
+                    - string
+                    - 'null'
+                    description: 'The machine code behind a declined: a gate reason (byoc_approval_required, vault_approval_required, sandbox_mode, per_txn_max_exceeded, card_limit_reached, ...) or a merchant code (items_unavailable, pos_cart_validation). in_progress means another attempt holds this checkout (Agentcard places a vault order itself when the approval lands): wait and read GET /buy/conversations/{id} instead of confirming again. Null on success and on recoverable errors.'
+                  approval_url:
+                    type:
+                    - string
+                    - 'null'
+                    description: The link to send the user when the attempt paused for their bank's or Vault's approval. Send the same confirm again once they approve.
+                  next_action:
+                    type:
+                    - string
+                    - 'null'
+                    enum:
+                    - shipping_details
+                    - guest_details
+                    - add_card
+                    - confirm
+                    - verification_code
+                    - approve
+                    - null
+                    description: 'The one step the user takes next. approve with status declined and decline_code vault_approval_required is a pause, not a refusal: nothing was charged, and the user approves at approval_url before you send the same confirm again. Null when nothing waits on the user, including a placed order and a refusal with no step to take.'
+                  charge_status:
+                    type:
+                    - string
+                    - 'null'
+                    enum:
+                    - none
+                    - confirming
+                    - settled
+                    - unknown
+                    - null
+                    description: 'Whether money moved on this call''s checkout: none (nothing charged, nothing pending: every decline, approval pause and refusal answered before money moved), confirming (placed, charge still confirming), settled, or unknown (the attempt may have moved money and Agentcard cannot yet say; do not retry, read the conversation''s orders, then support). Null when no checkout ran.'
+                  merchant_total_cents:
+                    type:
+                    - integer
+                    - 'null'
+                    description: 'For a cart the merchant priced outside US dollars: the merchant''s own total in that currency''s smallest unit, the same figure order.placed and order.failed carry. Null for a US dollar cart and when no checkout ran.'
+                  merchant_currency:
+                    type:
+                    - string
+                    - 'null'
+                    description: The merchant's currency as a lower-case ISO code (cad) when the cart was priced outside US dollars. Null for a US dollar cart and when no checkout ran.
+                  unmatched:
+                    type: array
+                    description: Asks that did not make it into a cart, cumulative for the conversation, with machine-derived reasons and the moment each happened. An entry leaves only when the same line later lands in a cart; placing an order does not clear it. Never inferred from the reply. Always an array.
+                    items:
+                      type: object
+                      properties:
+                        merchant:
+                          type: string
+                        requested:
+                          type: string
+                          description: The query or line name that was asked for.
+                        reason:
+                          type: string
+                          enum:
+                          - not_found
+                          - unavailable
+                        detail:
+                          type:
+                          - string
+                          - 'null'
+                          description: The merchant's own words when it refused, dropped, or delisted the line.
+                        at:
+                          type: string
+                          format: date-time
+                          description: When it happened; identifies the turn it came from.
+                      required:
+                      - merchant
+                      - requested
+                      - reason
+                      - detail
+                      - at
+                required:
+                - conversation_id
+                - status
+                - reply
+                - messages
+                - message_id
+                - cart
+                - carts
+                - placements
+                - catalog
+                - error_code
+                - order_id
+                - payment_source
+                - decline_code
+                - approval_url
+                - charge_status
+                - merchant_total_cents
+                - merchant_currency
+                - unmatched
+        '400':
+          description: Invalid request body.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  hint:
+                    type: string
+        '404':
+          description: conversation_id not found for this user and connection.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '409':
+          description: 'The call could not run: the cart changed since that hash was issued (the body carries the fresh carts), nothing has been shown to confirm yet, the conversation is closed, or another turn is still running on this conversation (code turn_in_progress: wait for GET /buy/conversations/:id to report turn_in_progress false, then send again). Never a charge.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  code:
+                    type: string
+                    description: 'Present on the turn conflict: turn_in_progress.'
+                  conversation_id:
+                    type: string
+                  cart:
+                    type:
+                    - object
+                    - 'null'
+                    description: The most recently shown cart. Null when no cart is on the table.
+                    properties:
+                      merchant:
+                        type: string
+                        description: Public merchant id, e.g. retail, doordash, goodeggs.
+                      merchant_name:
+                        type: string
+                        description: Display name for the merchant, or the store when one is selected (Amazon, Walmart).
+                      items:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            qty:
+                              type: integer
+                            priceCents:
+                              type: integer
+                            product_id:
+                              type:
+                              - string
+                              - 'null'
+                              description: The merchant's id for the line; tells two same-name lines apart. Null on carts shown before it was captured.
+                          required:
+                          - name
+                          - qty
+                          - product_id
+                      serviceFeesCents:
+                        type: integer
+                        description: All fees combined, including the Agentcard service fee.
+                      tipCents:
+                        type: integer
+                      totalCents:
+                        type: integer
+                        description: 'The all-in amount a confirm authorizes: merchandise, fees, and tip.'
+                      hash:
+                        type: string
+                        description: Identity of exactly this cart. Echo it back as confirm to place the order.
+                    required:
+                    - merchant
+                    - merchant_name
+                    - items
+                    - serviceFeesCents
+                    - tipCents
+                    - totalCents
+                    - hash
+                  carts:
+                    type: array
+                    items:
+                      type: object
+                      description: The most recently shown cart. Null when no cart is on the table.
+                      properties:
+                        merchant:
+                          type: string
+                          description: Public merchant id, e.g. retail, doordash, goodeggs.
+                        merchant_name:
+                          type: string
+                          description: Display name for the merchant, or the store when one is selected (Amazon, Walmart).
+                        items:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                              qty:
+                                type: integer
+                              priceCents:
+                                type: integer
+                              product_id:
+                                type:
+                                - string
+                                - 'null'
+                                description: The merchant's id for the line; tells two same-name lines apart. Null on carts shown before it was captured.
+                            required:
+                            - name
+                            - qty
+                            - product_id
+                        serviceFeesCents:
+                          type: integer
+                          description: All fees combined, including the Agentcard service fee.
+                        tipCents:
+                          type: integer
+                        totalCents:
+                          type: integer
+                          description: 'The all-in amount a confirm authorizes: merchandise, fees, and tip.'
+                        hash:
+                          type: string
+                          description: Identity of exactly this cart. Echo it back as confirm to place the order.
+                      required:
+                      - merchant
+                      - merchant_name
+                      - items
+                      - serviceFeesCents
+                      - tipCents
+                      - totalCents
+                      - hash
+              example:
+                error: cart changed since that hash was issued — verify the current carts and confirm their hashes
+                conversation_id: conv_9a8b7c6d5e4f3a2b1c0d9e8f
+                cart:
+                  merchant: retail
+                  merchant_name: Amazon
+                  items:
+                  - name: Cafe Mesa de los Santos Colombian Ground Coffee, 16 oz
+                    qty: 1
+                    priceCents: 2450
+                  serviceFeesCents: 61
+                  tipCents: 0
+                  totalCents: 2511
+                  hash: 31d8a6e0c47b92f5
+                carts:
+                - merchant: retail
+                  merchant_name: Amazon
+                  items:
+                  - name: Cafe Mesa de los Santos Colombian Ground Coffee, 16 oz
+                    qty: 1
+                    priceCents: 2450
+                  serviceFeesCents: 61
+                  tipCents: 0
+                  totalCents: 2511
+                  hash: 31d8a6e0c47b92f5
+        '503':
+          description: 'Agentcard could not take the per-conversation turn lock (an infrastructure fault, not contention). Nothing ran; retry in a few seconds. Body: { error, code: "turn_lock_unavailable", conversation_id }.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  code:
+                    type: string
+                    enum:
+                    - turn_lock_unavailable
+                  conversation_id:
+                    type: string
+        '502':
+          description: The shopping agent could not complete this turn. On a multi-cart confirm the body still carries placements for the orders that already went through.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  conversation_id:
+                    type: string
+                  placements:
+                    type:
+                    - array
+                    - 'null'
+                    items:
+                      type: object
+                  error_code:
+                    type:
+                    - string
+                    - 'null'
+  /buy/merchants:
+    get:
+      tags:
+      - Purchase
+      summary: List the merchants /buy can place at
+      operationId: listBuyMerchants
+      security:
+      - userAccessToken: []
+      description: 'The live catalogue for rail selection: every merchant id /buy accepts, its display name, and whether this user still needs to link an account there. Same bearer scoping as POST /buy. Merchant ids are the public ids /buy uses in `placements[].merchant` and `unmatched[].merchant` (`retail` covers Amazon, Walmart, Target, Best Buy, Home Depot, Lowe''s, Macy''s, Wayfair, Staples, Kohl''s and B&H Photo).'
+      responses:
+        '200':
+          description: The catalogue.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - merchants
+                properties:
+                  merchants:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - slug
+                      - name
+                      - link_status
+                      properties:
+                        slug:
+                          type: string
+                          description: The merchant id /buy uses (for example retail, doordash, goodeggs, locale, flights).
+                        name:
+                          type: string
+                          description: Display name.
+                        tier:
+                          type: string
+                          description: How the merchant is integrated.
+                        money_path:
+                          type: string
+                          description: How the merchant is paid.
+                        link_status:
+                          type: string
+                          enum:
+                          - ready
+                          - linked
+                          - pending
+                          - error
+                          - unlinked
+                          description: 'Whether this user can shop there now. ready: the merchant needs no account link (retail, flights). linked: the user''s account is linked; shop now. pending: a link was started and not finished; /buy resumes it. error: the last link attempt failed; /buy links it again. unlinked: no link yet; /buy walks the user through it. Only ready and linked place orders without a link step first.'
+                        capabilities:
+                          type: array
+                          items:
+                            type: string
+                          description: What the merchant supports (search, cart, scheduling, pickup, ...).
+                        description:
+                          type: string
+                        unavailable:
+                          type: object
+                          description: Present when checkout is temporarily unavailable at this merchant, with the reason under `checkout`.
+                          properties:
+                            checkout:
+                              type: string
+        '401':
+          description: Missing or invalid bearer.
+  /buy/conversations/{id}:
+    get:
+      tags:
+      - Purchase
+      summary: Read a purchase conversation
+      operationId: getBuyConversation
+      security:
+      - userAccessToken: []
+      description: 'The server''s view of a /buy conversation, for a confirm whose response never arrived: whether a turn is still running, the last checkout attempt (any outcome, with its code and approval link), and every order the conversation placed, read from the ledger. Same bearer scoping as POST /buy.'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The conversation_id returned by POST /buy.
+      responses:
+        '200':
+          description: The conversation.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  conversation_id:
+                    type: string
+                  status:
+                    type: string
+                    enum:
+                    - open
+                    - closed
+                  turn_in_progress:
+                    type: boolean
+                    description: True while a POST /buy call is still running on this conversation. Poll until it clears, then read orders and last_checkout.
+                  last_checkout:
+                    type:
+                    - object
+                    - 'null'
+                    description: The most recent checkout attempt, whatever its outcome. Cleared when a new turn starts.
+                    properties:
+                      at:
+                        type: string
+                        format: date-time
+                      merchant:
+                        type: string
+                      merchant_name:
+                        type: string
+                      status:
+                        type: string
+                        enum:
+                        - placed
+                        - pending
+                        - denied
+                        - needs_approval
+                        - error
+                      code:
+                        type:
+                        - string
+                        - 'null'
+                      message:
+                        type:
+                        - string
+                        - 'null'
+                      order_id:
+                        type:
+                        - string
+                        - 'null'
+                      payment_source:
+                        $ref: '#/components/schemas/PaymentSource'
+                      decline_code:
+                        type:
+                        - string
+                        - 'null'
+                      approval_url:
+                        type:
+                        - string
+                        - 'null'
+                      charge_status:
+                        type: string
+                        enum:
+                        - none
+                        - confirming
+                        - settled
+                        - unknown
+                      total_cents:
+                        type:
+                        - integer
+                        - 'null'
+                      merchant_total_cents:
+                        type:
+                        - integer
+                        - 'null'
+                        description: 'For a cart the merchant priced outside US dollars: the merchant''s own total in that currency''s smallest unit, the same figure order.placed and order.failed carry. Null for a US dollar cart and when no checkout ran.'
+                      merchant_currency:
+                        type:
+                        - string
+                        - 'null'
+                        description: The merchant's currency as a lower-case ISO code (cad) when the cart was priced outside US dollars. Null for a US dollar cart and when no checkout ran.
+                      items:
+                        type:
+                        - array
+                        - 'null'
+                        items:
+                          type: string
+                        description: Delisted lines on an items_unavailable refusal.
+                  orders:
+                    type: array
+                    description: Every order this conversation placed, from the ledger, oldest first.
+                    items:
+                      type: object
+                      properties:
+                        order_id:
+                          type: string
+                        merchant:
+                          type: string
+                        merchant_name:
+                          type: string
+                        status:
+                          type: string
+                          enum:
+                          - settled
+                          - confirming
+                          - cancelled
+                          - failed
+                          description: settled = charged; confirming = placed, charge still confirming; cancelled = the merchant cancelled after settlement and the budget was refunded; failed = placed but the funding never confirmed and the reservation was released.
+                        total_cents:
+                          type: integer
+                          description: The all-in amount, fees included.
+                        payment_source:
+                          $ref: '#/components/schemas/PaymentSource'
+                        placed_at:
+                          type:
+                          - string
+                          - 'null'
+                          format: date-time
+                        merchant_total_cents:
+                          type:
+                          - integer
+                          - 'null'
+                          description: 'For a cart the merchant priced outside US dollars: the merchant''s own total in that currency''s smallest unit, the same figure order.placed carries. Null for a US dollar cart and for an order placed before Agentcard kept it.'
+                        merchant_currency:
+                          type:
+                          - string
+                          - 'null'
+                          description: The merchant's currency as a lower-case ISO code (cad) when the cart was priced outside US dollars. Null for a US dollar cart and for an order placed before Agentcard kept it.
+                      required:
+                      - order_id
+                      - merchant
+                      - merchant_name
+                      - status
+                      - total_cents
+                      - payment_source
+                      - placed_at
+                      - merchant_total_cents
+                      - merchant_currency
+                  carts:
+                    type: array
+                    description: Every cart still on the table, each with its hash (the same shape as carts on POST /buy).
+                    items:
+                      type: object
+                  unmatched:
+                    type: array
+                    description: Asks that did not reach a cart, cumulative for the conversation (the same shape and rules as unmatched on POST /buy).
+                    items:
+                      type: object
+                  created_at:
+                    type: string
+                    format: date-time
+                  updated_at:
+                    type: string
+                    format: date-time
+                required:
+                - conversation_id
+                - status
+                - turn_in_progress
+                - last_checkout
+                - orders
+                - carts
+                - unmatched
+        '404':
+          description: No such conversation for this bearer.
+  /buy/orders/{order_id}:
+    get:
+      tags:
+      - Purchase
+      summary: Read where an order is
+      operationId: getBuyOrder
+      security:
+      - userAccessToken: []
+      description: 'Where one placed order is now: its delivery stage, the arrival estimate and whether Agentcard is still following it. Agentcard reads a DoorDash order about once a minute until it is delivered or canceled, and sends order.updated on every stage change; this read answers from the last stage it read and never calls the merchant. For a merchant Agentcard cannot follow, status is placed, confirmed or canceled from what the merchant told checkout. Same bearer scoping as POST /buy: a user token (a connection access_token or a cardholder buy_token) reads that user''s own order, and a platform access token reads the order of a connected person named by user_id.'
+      parameters:
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The order_id from order.placed, or from an order in GET /buy/conversations/{id}.
+      - name: user_id
+        in: query
+        required: false
+        schema:
+          type: string
+        description: 'The connected person whose order this is. Required with a platform access token: a read that leaves it out is refused with 400 user_id_required. Leave it out with a user token, which names the person itself.'
+      responses:
+        '200':
+          description: The order.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order_id:
+                    type: string
+                  merchant:
+                    type: string
+                  merchant_name:
+                    type: string
+                  conversation_id:
+                    type:
+                    - string
+                    - 'null'
+                  status:
+                    type: string
+                    enum:
+                    - placed
+                    - confirmed
+                    - courier_assigned
+                    - courier_at_store
+                    - ready_for_pickup
+                    - picked_up
+                    - arriving
+                    - delivered
+                    - canceled
+                    description: The delivery stage, in Agentcard's words for every merchant.
+                  status_updated_at:
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                    description: When the order reached this stage.
+                  estimated_arrival:
+                    type:
+                    - object
+                    - 'null'
+                    description: The arrival window the merchant quotes, or null when it quotes none.
+                    properties:
+                      earliest:
+                        type:
+                        - string
+                        - 'null'
+                        format: date-time
+                      latest:
+                        type:
+                        - string
+                        - 'null'
+                        format: date-time
+                  tracking:
+                    type: string
+                    enum:
+                    - live
+                    - ended
+                    - not_available
+                    description: live while Agentcard follows the order, ended once it stopped (delivered, canceled, past six hours, or gone from the merchant more than two hours after it was placed), not_available for a merchant it cannot follow.
+                  checked_at:
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                    description: When Agentcard last tried to read the order from the merchant. A try that read nothing moves this time too, so read status_updated_at for how old the stage itself is.
+                  placed_at:
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+              example:
+                order_id: 9632435a-4d4d-48bb-869d-5d0e3bd1410b
+                merchant: doordash
+                merchant_name: DoorDash
+                conversation_id: conv_9a8b7c6d5e4f3a2b1c0d9e8f
+                status: arriving
+                status_updated_at: '2026-10-06T00:53:54.000Z'
+                estimated_arrival:
+                  earliest: '2026-10-06T00:53:20.000Z'
+                  latest: '2026-10-06T00:55:20.000Z'
+                tracking: live
+                checked_at: '2026-10-06T00:54:30.000Z'
+                placed_at: '2026-10-06T00:28:58.000Z'
+        '404':
+          description: No such placed order for this bearer.
+components:
+  schemas:
+    PaymentSource:
+      type:
+      - object
+      - 'null'
+      description: What paid, or what would have paid. brand and last4 are the user's own card for added_card, vault and stored_payment_method; null for balance and company_balance, where no card of theirs is in the flow. Null when no checkout ran or it refused before resolving the source.
+      properties:
+        source:
+          type: string
+          enum:
+          - balance
+          - added_card
+          - vault
+          - company_balance
+          - stored_payment_method
+        brand:
+          type:
+          - string
+          - 'null'
+        last4:
+          type:
+          - string
+          - 'null'
+      required:
+      - source
+      - brand
+      - last4
+  securitySchemes:
+    platformToken:
+      type: http
+      scheme: bearer
+      description: 'A platform access token. Get one on the **Create an access token** endpoint by exchanging your `client_id` + `client_secret`, then send it as `Authorization: Bearer <token>`. Tokens live one hour.'
+    userAccessToken:
+      type: http
+      scheme: bearer
+      description: The user's connection access_token (user authentication), or an org-minted buy_token for org-owned accounts.
