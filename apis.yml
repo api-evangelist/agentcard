@@ -134,6 +134,8 @@ apis:
   - type: OpenAPI
     url: openapi/agentcard-purchase-api-openapi.yml
 common:
+- type: PostmanWorkspace
+  url: https://www.postman.com/kinlaneapi/agentcard/overview
 - type: Overlay
   url: overlays/agentcard-v2-overlay.yaml
 - type: AgentCard
