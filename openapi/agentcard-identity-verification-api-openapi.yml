@@ -540,3 +540,9 @@ components:
       type: http
       scheme: bearer
       description: The user's connection access_token (user authentication), or an org-minted buy_token for org-owned accounts.
+x-provenance:
+  method: harvested
+  publisher: Agentcard
+  source: https://docs.agentcard.sh/openapi.json
+  note: split by refine-openapis from the provider's own published document, verified by fetch (openapi/_original/*.fetch.json);
+    stamped by stamp-openapi-provenance.py (roadmap#793)
