@@ -1,0 +1,895 @@
+{
+  "info": {
+    "_postman_id": "a9014e2d-7d5a-44fd-b644-ada6f2552666",
+    "name": "Agentcard Purchase API",
+    "description": "The Agentcard v2 API \u2014 connect your users and verify their identity from your own backend. Every call is authenticated with a platform access token minted from your `client_id` + `client_secret`.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-10-22T01:37:07.000Z",
+    "updatedAt": "2026-10-22T01:37:07.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-a9014e2d-7d5a-44fd-b644-ada6f2552666"
+  },
+  "item": [
+    {
+      "name": "buy",
+      "item": [
+        {
+          "name": "merchants",
+          "item": [
+            {
+              "name": "List the merchants /buy can place at",
+              "id": "a21a6140-74d3-4459-9efb-3bb71ba96da1",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{bearerToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/buy/merchants",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "buy",
+                    "merchants"
+                  ]
+                },
+                "description": "The live catalogue for rail selection: every merchant id /buy accepts, its display name, and whether this user still needs to link an account there. Same bearer scoping as POST /buy. Merchant ids are the public ids /buy uses in `placements[].merchant` and `unmatched[].merchant` (`retail` covers Amazon, Walmart, Target, Best Buy, Home Depot, Lowe's, Macy's, Wayfair, Staples, Kohl's and B&H Photo)."
+              },
+              "response": [
+                {
+                  "id": "b9a381c5-cdf1-418f-a233-26b74dd32e22",
+                  "name": "The catalogue.",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: bearer",
+                        "key": "Authorization",
+                        "value": "Bearer <token>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/buy/merchants",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "buy",
+                        "merchants"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"merchants\": [\n    {\n      \"slug\": \"<string>\",\n      \"name\": \"<string>\",\n      \"link_status\": \"ready\",\n      \"tier\": \"<string>\",\n      \"money_path\": \"<string>\",\n      \"capabilities\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"description\": \"<string>\",\n      \"unavailable\": {\n        \"checkout\": \"<string>\"\n      }\n    },\n    {\n      \"slug\": \"<string>\",\n      \"name\": \"<string>\",\n      \"link_status\": \"unlinked\",\n      \"tier\": \"<string>\",\n      \"money_path\": \"<string>\",\n      \"capabilities\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"description\": \"<string>\",\n      \"unavailable\": {\n        \"checkout\": \"<string>\"\n      }\n    }\n  ]\n}",
+                  "createdAt": "2026-10-22T01:37:08.000Z",
+                  "updatedAt": "2026-10-22T01:37:08.000Z",
+                  "uid": "35240-b9a381c5-cdf1-418f-a233-26b74dd32e22"
+                },
+                {
+                  "id": "6eb9f7b4-5757-46cf-b48f-fc57fd881daa",
+                  "name": "Missing or invalid bearer.",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "description": "Added as a part of security scheme: bearer",
+                        "key": "Authorization",
+                        "value": "Bearer <token>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/buy/merchants",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "buy",
+                        "merchants"
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "text",
+                  "header": [],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": null,
+                  "createdAt": "2026-10-22T01:37:08.000Z",
+                  "updatedAt": "2026-10-22T01:37:08.000Z",
+                  "uid": "35240-6eb9f7b4-5757-46cf-b48f-fc57fd881daa"
+                }
+              ],
+              "createdAt": "2026-10-22T01:37:07.000Z",
+              "updatedAt": "2026-10-22T01:37:07.000Z",
+              "uid": "35240-a21a6140-74d3-4459-9efb-3bb71ba96da1"
+            }
+          ],
+          "id": "64610e73-35eb-44a1-bbe3-2abd8306b942",
+          "createdAt": "2026-10-22T01:37:07.000Z",
+          "updatedAt": "2026-10-22T01:37:07.000Z",
+          "uid": "35240-64610e73-35eb-44a1-bbe3-2abd8306b942"
+        },
+        {
+          "name": "conversations",
+          "item": [
+            {
+              "name": "{id}",
+              "item": [
+                {
+                  "name": "Read a purchase conversation",
+                  "id": "d8795df9-f49e-4991-b8bb-cfabf02dfbcb",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{bearerToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/buy/conversations/:id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "buy",
+                        "conversations",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "id": "b0037a99-a607-43a4-adb1-004ccb47c161",
+                          "key": "id",
+                          "value": "<string>",
+                          "description": "(Required) The conversation_id returned by POST /buy."
+                        }
+                      ]
+                    },
+                    "description": "The server's view of a /buy conversation, for a confirm whose response never arrived: whether a turn is still running, the last checkout attempt (any outcome, with its code and approval link), and every order the conversation placed, read from the ledger. Same bearer scoping as POST /buy."
+                  },
+                  "response": [
+                    {
+                      "id": "2668f9e0-d4ce-4494-966f-3a309cbe4c6f",
+                      "name": "The conversation.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/buy/conversations/:id",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "buy",
+                            "conversations",
+                            ":id"
+                          ],
+                          "variable": [
+                            {
+                              "key": "id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"conversation_id\": \"<string>\",\n  \"status\": \"closed\",\n  \"turn_in_progress\": \"<boolean>\",\n  \"last_checkout\": null,\n  \"orders\": [\n    {\n      \"order_id\": \"<string>\",\n      \"merchant\": \"<string>\",\n      \"merchant_name\": \"<string>\",\n      \"status\": \"settled\",\n      \"total_cents\": \"<integer>\",\n      \"payment_source\": null,\n      \"placed_at\": \"<string,null-date-time>\",\n      \"merchant_total_cents\": \"<integer,null>\",\n      \"merchant_currency\": \"<string,null>\"\n    },\n    {\n      \"order_id\": \"<string>\",\n      \"merchant\": \"<string>\",\n      \"merchant_name\": \"<string>\",\n      \"status\": \"confirming\",\n      \"total_cents\": \"<integer>\",\n      \"payment_source\": {\n        \"source\": \"balance\",\n        \"brand\": \"<string,null>\",\n        \"last4\": \"<string,null>\"\n      },\n      \"placed_at\": \"<string,null-date-time>\",\n      \"merchant_total_cents\": \"<integer,null>\",\n      \"merchant_currency\": \"<string,null>\"\n    }\n  ],\n  \"carts\": [],\n  \"unmatched\": [],\n  \"created_at\": \"<dateTime>\",\n  \"updated_at\": \"<dateTime>\"\n}",
+                      "createdAt": "2026-10-22T01:37:08.000Z",
+                      "updatedAt": "2026-10-22T01:37:08.000Z",
+                      "uid": "35240-2668f9e0-d4ce-4494-966f-3a309cbe4c6f"
+                    },
+                    {
+                      "id": "a3af3039-c794-4b44-812a-c6e63ff56b64",
+                      "name": "No such conversation for this bearer.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/buy/conversations/:id",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "buy",
+                            "conversations",
+                            ":id"
+                          ],
+                          "variable": [
+                            {
+                              "key": "id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Not Found",
+                      "code": 404,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-10-22T01:37:08.000Z",
+                      "updatedAt": "2026-10-22T01:37:08.000Z",
+                      "uid": "35240-a3af3039-c794-4b44-812a-c6e63ff56b64"
+                    }
+                  ],
+                  "createdAt": "2026-10-22T01:37:07.000Z",
+                  "updatedAt": "2026-10-22T01:37:07.000Z",
+                  "uid": "35240-d8795df9-f49e-4991-b8bb-cfabf02dfbcb"
+                }
+              ],
+              "id": "1b65ca5b-3292-40b4-b840-c2e613fc334d",
+              "createdAt": "2026-10-22T01:37:07.000Z",
+              "updatedAt": "2026-10-22T01:37:07.000Z",
+              "uid": "35240-1b65ca5b-3292-40b4-b840-c2e613fc334d"
+            }
+          ],
+          "id": "b3ab86e3-66f7-4901-bffc-034d74ce196c",
+          "createdAt": "2026-10-22T01:37:07.000Z",
+          "updatedAt": "2026-10-22T01:37:07.000Z",
+          "uid": "35240-b3ab86e3-66f7-4901-bffc-034d74ce196c"
+        },
+        {
+          "name": "orders",
+          "item": [
+            {
+              "name": "{order_id}",
+              "item": [
+                {
+                  "name": "Read where an order is",
+                  "id": "aa846e90-a7be-468b-b660-7cf8be117d2a",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{bearerToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/buy/orders/:order_id?user_id=<string>",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "buy",
+                        "orders",
+                        ":order_id"
+                      ],
+                      "query": [
+                        {
+                          "description": "The connected person whose order this is. Required with a platform access token: a read that leaves it out is refused with 400 user_id_required. Leave it out with a user token, which names the person itself.",
+                          "key": "user_id",
+                          "value": "<string>"
+                        }
+                      ],
+                      "variable": [
+                        {
+                          "id": "1c4d3813-880d-44fa-aa6b-3163aa34f001",
+                          "key": "order_id",
+                          "value": "<string>",
+                          "description": "(Required) The order_id from order.placed, or from an order in GET /buy/conversations/{id}."
+                        }
+                      ]
+                    },
+                    "description": "Where one placed order is now: its delivery stage, the arrival estimate and whether Agentcard is still following it. Agentcard reads a DoorDash order about once a minute until it is delivered or canceled, and sends order.updated on every stage change; this read answers from the last stage it read and never calls the merchant. For a merchant Agentcard cannot follow, status is placed, confirmed or canceled from what the merchant told checkout. Same bearer scoping as POST /buy: a user token (a connection access_token or a cardholder buy_token) reads that user's own order, and a platform access token reads the order of a connected person named by user_id."
+                  },
+                  "response": [
+                    {
+                      "id": "873f9bc6-5e68-406b-bcc6-9071c1e3602a",
+                      "name": "The order.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/buy/orders/:order_id?user_id=<string>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "buy",
+                            "orders",
+                            ":order_id"
+                          ],
+                          "query": [
+                            {
+                              "description": "The connected person whose order this is. Required with a platform access token: a read that leaves it out is refused with 400 user_id_required. Leave it out with a user token, which names the person itself.",
+                              "key": "user_id",
+                              "value": "<string>"
+                            }
+                          ],
+                          "variable": [
+                            {
+                              "key": "order_id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"order_id\": \"<string>\",\n  \"merchant\": \"<string>\",\n  \"merchant_name\": \"<string>\",\n  \"conversation_id\": \"<string,null>\",\n  \"status\": \"picked_up\",\n  \"status_updated_at\": \"<string,null-date-time>\",\n  \"estimated_arrival\": null,\n  \"tracking\": \"ended\",\n  \"checked_at\": \"<string,null-date-time>\",\n  \"placed_at\": \"<string,null-date-time>\"\n}",
+                      "createdAt": "2026-10-22T01:37:08.000Z",
+                      "updatedAt": "2026-10-22T01:37:08.000Z",
+                      "uid": "35240-873f9bc6-5e68-406b-bcc6-9071c1e3602a"
+                    },
+                    {
+                      "id": "fecca9bf-6947-44bf-b6ba-3def691c407d",
+                      "name": "No such placed order for this bearer.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/buy/orders/:order_id?user_id=<string>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "buy",
+                            "orders",
+                            ":order_id"
+                          ],
+                          "query": [
+                            {
+                              "description": "The connected person whose order this is. Required with a platform access token: a read that leaves it out is refused with 400 user_id_required. Leave it out with a user token, which names the person itself.",
+                              "key": "user_id",
+                              "value": "<string>"
+                            }
+                          ],
+                          "variable": [
+                            {
+                              "key": "order_id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Not Found",
+                      "code": 404,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-10-22T01:37:08.000Z",
+                      "updatedAt": "2026-10-22T01:37:08.000Z",
+                      "uid": "35240-fecca9bf-6947-44bf-b6ba-3def691c407d"
+                    }
+                  ],
+                  "createdAt": "2026-10-22T01:37:07.000Z",
+                  "updatedAt": "2026-10-22T01:37:07.000Z",
+                  "uid": "35240-aa846e90-a7be-468b-b660-7cf8be117d2a"
+                }
+              ],
+              "id": "3e645a2b-de33-4c31-821c-e21230ed3a92",
+              "createdAt": "2026-10-22T01:37:07.000Z",
+              "updatedAt": "2026-10-22T01:37:07.000Z",
+              "uid": "35240-3e645a2b-de33-4c31-821c-e21230ed3a92"
+            }
+          ],
+          "id": "0a62033e-5746-41f3-aaff-2da5ee24588d",
+          "createdAt": "2026-10-22T01:37:07.000Z",
+          "updatedAt": "2026-10-22T01:37:07.000Z",
+          "uid": "35240-0a62033e-5746-41f3-aaff-2da5ee24588d"
+        },
+        {
+          "name": "Buy",
+          "id": "3549a527-6937-48a4-88d0-ca16139f5bdf",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ask\": false\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/buy",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "buy"
+              ]
+            },
+            "description": "One conversational endpoint that places real orders. Send the user's request as plain text in `ask`; thread follow-ups with `conversation_id`; place a shown cart by echoing its `hash` in `confirm` (or an array of hashes for several carts). Money only moves on a confirm, and only for exactly the cart the hash describes."
+          },
+          "response": [
+            {
+              "id": "d50ae6a8-9e51-4afd-a44a-72756573ad1a",
+              "name": "One turn of the purchase conversation, in the fixed envelope.",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ask\": false\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/buy",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "buy"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"conversation_id\": \"<string>\",\n  \"status\": \"declined\",\n  \"reply\": \"<string>\",\n  \"messages\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"message_id\": \"<string>\",\n  \"cart\": {\n    \"merchant\": \"<string>\",\n    \"merchant_name\": \"<string>\",\n    \"items\": [\n      {\n        \"name\": \"<string>\",\n        \"qty\": \"<integer>\",\n        \"product_id\": \"<string,null>\",\n        \"priceCents\": \"<integer>\"\n      },\n      {\n        \"name\": \"<string>\",\n        \"qty\": \"<integer>\",\n        \"product_id\": \"<string,null>\",\n        \"priceCents\": \"<integer>\"\n      }\n    ],\n    \"serviceFeesCents\": \"<integer>\",\n    \"tipCents\": \"<integer>\",\n    \"totalCents\": \"<integer>\",\n    \"hash\": \"<string>\"\n  },\n  \"carts\": [\n    {\n      \"merchant\": \"<string>\",\n      \"merchant_name\": \"<string>\",\n      \"items\": [\n        {\n          \"name\": \"<string>\",\n          \"qty\": \"<integer>\",\n          \"product_id\": \"<string,null>\",\n          \"priceCents\": \"<integer>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"qty\": \"<integer>\",\n          \"product_id\": \"<string,null>\",\n          \"priceCents\": \"<integer>\"\n        }\n      ],\n      \"serviceFeesCents\": \"<integer>\",\n      \"tipCents\": \"<integer>\",\n      \"totalCents\": \"<integer>\",\n      \"hash\": \"<string>\"\n    },\n    {\n      \"merchant\": \"<string>\",\n      \"merchant_name\": \"<string>\",\n      \"items\": [\n        {\n          \"name\": \"<string>\",\n          \"qty\": \"<integer>\",\n          \"product_id\": \"<string,null>\",\n          \"priceCents\": \"<integer>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"qty\": \"<integer>\",\n          \"product_id\": \"<string,null>\",\n          \"priceCents\": \"<integer>\"\n        }\n      ],\n      \"serviceFeesCents\": \"<integer>\",\n      \"tipCents\": \"<integer>\",\n      \"totalCents\": \"<integer>\",\n      \"hash\": \"<string>\"\n    }\n  ],\n  \"placements\": \"<array,null>\",\n  \"catalog\": null,\n  \"error_code\": \"<string,null>\",\n  \"order_id\": \"<string,null>\",\n  \"payment_source\": {\n    \"source\": \"balance\",\n    \"brand\": \"<string,null>\",\n    \"last4\": \"<string,null>\"\n  },\n  \"decline_code\": \"<string,null>\",\n  \"approval_url\": \"<string,null>\",\n  \"charge_status\": \"none\",\n  \"merchant_total_cents\": \"<integer,null>\",\n  \"merchant_currency\": \"<string,null>\",\n  \"unmatched\": [\n    {\n      \"merchant\": \"<string>\",\n      \"requested\": \"<string>\",\n      \"reason\": \"unavailable\",\n      \"detail\": \"<string,null>\",\n      \"at\": \"<dateTime>\"\n    },\n    {\n      \"merchant\": \"<string>\",\n      \"requested\": \"<string>\",\n      \"reason\": \"not_found\",\n      \"detail\": \"<string,null>\",\n      \"at\": \"<dateTime>\"\n    }\n  ],\n  \"next_action\": \"approve\"\n}",
+              "createdAt": "2026-10-22T01:37:08.000Z",
+              "updatedAt": "2026-10-22T01:37:08.000Z",
+              "uid": "35240-d50ae6a8-9e51-4afd-a44a-72756573ad1a"
+            },
+            {
+              "id": "ceab3bf9-4314-42dc-9901-582bd8df7294",
+              "name": "Invalid request body.",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ask\": false\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/buy",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "buy"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"error\": \"<string>\",\n  \"hint\": \"<string>\"\n}",
+              "createdAt": "2026-10-22T01:37:08.000Z",
+              "updatedAt": "2026-10-22T01:37:08.000Z",
+              "uid": "35240-ceab3bf9-4314-42dc-9901-582bd8df7294"
+            },
+            {
+              "id": "f4548db0-03f0-4327-bb6d-3dc55d2cc3d8",
+              "name": "conversation_id not found for this user and connection.",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ask\": false\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/buy",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "buy"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"error\": \"<string>\"\n}",
+              "createdAt": "2026-10-22T01:37:08.000Z",
+              "updatedAt": "2026-10-22T01:37:08.000Z",
+              "uid": "35240-f4548db0-03f0-4327-bb6d-3dc55d2cc3d8"
+            },
+            {
+              "id": "dc56341d-2349-4209-a402-f3cf65baebbb",
+              "name": "The call could not run: the cart changed since that hash was issued (the body carries the fresh carts), nothing has been shown to confirm yet, the conversation is closed, or another turn is still running on this conversation (code turn_in_progress: wait f",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ask\": false\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/buy",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "buy"
+                  ]
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"error\": \"<string>\",\n  \"code\": \"<string>\",\n  \"conversation_id\": \"<string>\",\n  \"cart\": null,\n  \"carts\": [\n    {\n      \"merchant\": \"<string>\",\n      \"merchant_name\": \"<string>\",\n      \"items\": [\n        {\n          \"name\": \"<string>\",\n          \"qty\": \"<integer>\",\n          \"product_id\": \"<string,null>\",\n          \"priceCents\": \"<integer>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"qty\": \"<integer>\",\n          \"product_id\": \"<string,null>\",\n          \"priceCents\": \"<integer>\"\n        }\n      ],\n      \"serviceFeesCents\": \"<integer>\",\n      \"tipCents\": \"<integer>\",\n      \"totalCents\": \"<integer>\",\n      \"hash\": \"<string>\"\n    },\n    {\n      \"merchant\": \"<string>\",\n      \"merchant_name\": \"<string>\",\n      \"items\": [\n        {\n          \"name\": \"<string>\",\n          \"qty\": \"<integer>\",\n          \"product_id\": \"<string,null>\",\n          \"priceCents\": \"<integer>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"qty\": \"<integer>\",\n          \"product_id\": \"<string,null>\",\n          \"priceCents\": \"<integer>\"\n        }\n      ],\n      \"serviceFeesCents\": \"<integer>\",\n      \"tipCents\": \"<integer>\",\n      \"totalCents\": \"<integer>\",\n      \"hash\": \"<string>\"\n    }\n  ]\n}",
+              "createdAt": "2026-10-22T01:37:08.000Z",
+              "updatedAt": "2026-10-22T01:37:08.000Z",
+              "uid": "35240-dc56341d-2349-4209-a402-f3cf65baebbb"
+            },
+            {
+              "id": "679769f5-4275-4a5b-b3fb-de583e4b5970",
+              "name": "The shopping agent could not complete this turn. On a multi-cart confirm the body still carries placements for the orders that already went through.",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ask\": false\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/buy",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "buy"
+                  ]
+                }
+              },
+              "status": "Bad Gateway",
+              "code": 502,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"error\": \"<string>\",\n  \"conversation_id\": \"<string>\",\n  \"placements\": \"<array,null>\",\n  \"error_code\": \"<string,null>\"\n}",
+              "createdAt": "2026-10-22T01:37:08.000Z",
+              "updatedAt": "2026-10-22T01:37:08.000Z",
+              "uid": "35240-679769f5-4275-4a5b-b3fb-de583e4b5970"
+            },
+            {
+              "id": "e23bde36-cccf-498d-aa25-89e47bb4dc68",
+              "name": "Agentcard could not take the per-conversation turn lock (an infrastructure fault, not contention). Nothing ran; retry in a few seconds. Body: { error, code: \"turn_lock_unavailable\", conversation_id }.",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ask\": false\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/buy",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "buy"
+                  ]
+                }
+              },
+              "status": "Service Unavailable",
+              "code": 503,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"error\": \"<string>\",\n  \"code\": \"turn_lock_unavailable\",\n  \"conversation_id\": \"<string>\"\n}",
+              "createdAt": "2026-10-22T01:37:08.000Z",
+              "updatedAt": "2026-10-22T01:37:08.000Z",
+              "uid": "35240-e23bde36-cccf-498d-aa25-89e47bb4dc68"
+            }
+          ],
+          "createdAt": "2026-10-22T01:37:07.000Z",
+          "updatedAt": "2026-10-22T01:37:07.000Z",
+          "uid": "35240-3549a527-6937-48a4-88d0-ca16139f5bdf"
+        }
+      ],
+      "id": "ad9d5013-5da1-40c3-9428-b2adc5720982",
+      "createdAt": "2026-10-22T01:37:07.000Z",
+      "updatedAt": "2026-10-22T01:37:07.000Z",
+      "uid": "35240-ad9d5013-5da1-40c3-9428-b2adc5720982"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.agentcard.sh"
+    }
+  ]
+}

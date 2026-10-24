@@ -1,0 +1,1308 @@
+{
+  "info": {
+    "_postman_id": "a0d68d1a-3c6c-48e0-b122-9b5c02ebb3fa",
+    "name": "Agentcard Member cards API",
+    "description": "The Agentcard v2 API \u2014 connect your users and verify their identity from your own backend. Every call is authenticated with a platform access token minted from your `client_id` + `client_secret`.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-10-22T01:37:01.000Z",
+    "updatedAt": "2026-10-22T01:37:01.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-a0d68d1a-3c6c-48e0-b122-9b5c02ebb3fa"
+  },
+  "item": [
+    {
+      "name": "api",
+      "item": [
+        {
+          "name": "v2",
+          "item": [
+            {
+              "name": "flow_status",
+              "item": [
+                {
+                  "name": "Get the member flow status",
+                  "id": "a506e88c-aef9-4e07-8295-7126184f5223",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{bearerToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/v2/flow_status",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v2",
+                        "flow_status"
+                      ]
+                    },
+                    "description": "One read that answers \"what should happen next for this member\": add a card, create a card, share an approval link, or fetch the open card. Authenticated with the member's connection token from Verify the code."
+                  },
+                  "response": [
+                    {
+                      "id": "ad120a93-3942-4b8d-bf0d-9419d2396566",
+                      "name": "The flow status.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v2/flow_status",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v2",
+                            "flow_status"
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"object\": \"<string>\",\n  \"status\": \"approval_pending\",\n  \"next_action\": {\n    \"type\": \"create_card\",\n    \"id\": \"<string>\",\n    \"url\": \"<string>\",\n    \"expires_at\": \"<dateTime>\"\n  },\n  \"attached_cards\": [\n    {\n      \"id\": \"<string>\",\n      \"status\": \"ineligible\",\n      \"network\": \"<string>\",\n      \"brand\": \"<string>\",\n      \"last4\": \"<string>\",\n      \"art_url\": \"<string>\"\n    },\n    {\n      \"id\": \"<string>\",\n      \"status\": \"active\",\n      \"network\": \"<string>\",\n      \"brand\": \"<string>\",\n      \"last4\": \"<string>\",\n      \"art_url\": \"<string>\"\n    }\n  ],\n  \"card\": {\n    \"object\": \"<string>\",\n    \"id\": \"<string>\",\n    \"status\": \"in_use\",\n    \"spend_limit_cents\": \"<integer>\",\n    \"balance_cents\": \"<integer>\",\n    \"connected_card_id\": \"<string>\",\n    \"last4\": \"<string>\",\n    \"expiry\": \"<string>\",\n    \"created_at\": \"<dateTime>\",\n    \"approval_url\": \"<string>\",\n    \"expires_at\": \"<dateTime>\",\n    \"closed_reason\": \"<string>\",\n    \"credentials\": {\n      \"number\": \"<string>\",\n      \"exp_month\": \"<integer>\",\n      \"exp_year\": \"<integer>\",\n      \"cvc\": \"<string>\"\n    },\n    \"credentials_status\": \"<string>\"\n  },\n  \"reason\": \"<string>\",\n  \"message\": \"<string>\"\n}",
+                      "createdAt": "2026-10-22T01:37:01.000Z",
+                      "updatedAt": "2026-10-22T01:37:01.000Z",
+                      "uid": "35240-ad120a93-3942-4b8d-bf0d-9419d2396566"
+                    },
+                    {
+                      "id": "e3e3c2a7-9192-4978-bf20-3dd54693dd6c",
+                      "name": "`unauthorized` \u2014 the platform access token is missing or expired. Exchange your client credentials for a fresh one.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v2/flow_status",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v2",
+                            "flow_status"
+                          ]
+                        }
+                      },
+                      "status": "Unauthorized",
+                      "code": 401,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"docs\": \"<string>\",\n    \"field_errors\": {\n      \"sunt_3e\": \"<string>\"\n    },\n    \"warnings\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+                      "createdAt": "2026-10-22T01:37:01.000Z",
+                      "updatedAt": "2026-10-22T01:37:01.000Z",
+                      "uid": "35240-e3e3c2a7-9192-4978-bf20-3dd54693dd6c"
+                    }
+                  ],
+                  "createdAt": "2026-10-22T01:37:01.000Z",
+                  "updatedAt": "2026-10-22T01:37:01.000Z",
+                  "uid": "35240-a506e88c-aef9-4e07-8295-7126184f5223"
+                }
+              ],
+              "id": "fd2e4bdd-c61d-4578-9449-cf17f2bc9d9e",
+              "createdAt": "2026-10-22T01:37:01.000Z",
+              "updatedAt": "2026-10-22T01:37:01.000Z",
+              "uid": "35240-fd2e4bdd-c61d-4578-9449-cf17f2bc9d9e"
+            },
+            {
+              "name": "cards",
+              "item": [
+                {
+                  "name": "{card_id}",
+                  "item": [
+                    {
+                      "name": "close",
+                      "item": [
+                        {
+                          "name": "Close a card",
+                          "id": "c1a13836-ce0f-4bfc-9b6b-32d292eef889",
+                          "protocolProfileBehavior": {
+                            "disableBodyPruning": true
+                          },
+                          "request": {
+                            "auth": {
+                              "type": "bearer",
+                              "bearer": [
+                                {
+                                  "key": "token",
+                                  "value": "{{bearerToken}}",
+                                  "type": "string"
+                                }
+                              ]
+                            },
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/api/v2/cards/:card_id/close",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "v2",
+                                "cards",
+                                ":card_id",
+                                "close"
+                              ],
+                              "variable": [
+                                {
+                                  "id": "7a43aa70-391c-450d-bb77-0c99bd44da22",
+                                  "key": "card_id",
+                                  "value": "<string>",
+                                  "description": "(Required) "
+                                }
+                              ]
+                            },
+                            "description": "Close a card after checkout. Idempotent: closing a closed card answers `200`. One-time cards also close themselves after their first approved charge."
+                          },
+                          "response": [
+                            {
+                              "id": "da44518b-35aa-481f-9f28-81ba20f7e91a",
+                              "name": "Closed.",
+                              "originalRequest": {
+                                "method": "POST",
+                                "header": [
+                                  {
+                                    "key": "Accept",
+                                    "value": "application/json"
+                                  },
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/api/v2/cards/:card_id/close",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "api",
+                                    "v2",
+                                    "cards",
+                                    ":card_id",
+                                    "close"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "card_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "OK",
+                              "code": 200,
+                              "_postman_previewlanguage": "json",
+                              "header": [
+                                {
+                                  "key": "Content-Type",
+                                  "value": "application/json"
+                                }
+                              ],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": "{\n  \"object\": \"<string>\",\n  \"id\": \"<string>\",\n  \"status\": \"<string>\"\n}",
+                              "createdAt": "2026-10-22T01:37:01.000Z",
+                              "updatedAt": "2026-10-22T01:37:01.000Z",
+                              "uid": "35240-da44518b-35aa-481f-9f28-81ba20f7e91a"
+                            },
+                            {
+                              "id": "c3f5e4f4-2e3b-486f-8952-3fbfe3d99b43",
+                              "name": "`unauthorized` \u2014 the platform access token is missing or expired. Exchange your client credentials for a fresh one.",
+                              "originalRequest": {
+                                "method": "POST",
+                                "header": [
+                                  {
+                                    "key": "Accept",
+                                    "value": "application/json"
+                                  },
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/api/v2/cards/:card_id/close",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "api",
+                                    "v2",
+                                    "cards",
+                                    ":card_id",
+                                    "close"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "card_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Unauthorized",
+                              "code": 401,
+                              "_postman_previewlanguage": "json",
+                              "header": [
+                                {
+                                  "key": "Content-Type",
+                                  "value": "application/json"
+                                }
+                              ],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"docs\": \"<string>\",\n    \"field_errors\": {\n      \"sunt_3e\": \"<string>\"\n    },\n    \"warnings\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+                              "createdAt": "2026-10-22T01:37:01.000Z",
+                              "updatedAt": "2026-10-22T01:37:01.000Z",
+                              "uid": "35240-c3f5e4f4-2e3b-486f-8952-3fbfe3d99b43"
+                            },
+                            {
+                              "id": "8ba4b32c-a96c-48aa-b1c9-e6206fdfe828",
+                              "name": "`card_not_found`: no such card for this connection.",
+                              "originalRequest": {
+                                "method": "POST",
+                                "header": [
+                                  {
+                                    "key": "Accept",
+                                    "value": "application/json"
+                                  },
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/api/v2/cards/:card_id/close",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "api",
+                                    "v2",
+                                    "cards",
+                                    ":card_id",
+                                    "close"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "card_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Not Found",
+                              "code": 404,
+                              "_postman_previewlanguage": "json",
+                              "header": [
+                                {
+                                  "key": "Content-Type",
+                                  "value": "application/json"
+                                }
+                              ],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"docs\": \"<string>\",\n    \"field_errors\": {\n      \"sunt_3e\": \"<string>\"\n    },\n    \"warnings\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+                              "createdAt": "2026-10-22T01:37:01.000Z",
+                              "updatedAt": "2026-10-22T01:37:01.000Z",
+                              "uid": "35240-8ba4b32c-a96c-48aa-b1c9-e6206fdfe828"
+                            },
+                            {
+                              "id": "cc908d93-beaa-407a-83e4-9e3778b8b607",
+                              "name": "`rewards_card_protected`: this card class cannot be closed.",
+                              "originalRequest": {
+                                "method": "POST",
+                                "header": [
+                                  {
+                                    "key": "Accept",
+                                    "value": "application/json"
+                                  },
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/api/v2/cards/:card_id/close",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "api",
+                                    "v2",
+                                    "cards",
+                                    ":card_id",
+                                    "close"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "card_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Conflict",
+                              "code": 409,
+                              "_postman_previewlanguage": "json",
+                              "header": [
+                                {
+                                  "key": "Content-Type",
+                                  "value": "application/json"
+                                }
+                              ],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"docs\": \"<string>\",\n    \"field_errors\": {\n      \"sunt_3e\": \"<string>\"\n    },\n    \"warnings\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+                              "createdAt": "2026-10-22T01:37:01.000Z",
+                              "updatedAt": "2026-10-22T01:37:01.000Z",
+                              "uid": "35240-cc908d93-beaa-407a-83e4-9e3778b8b607"
+                            }
+                          ],
+                          "createdAt": "2026-10-22T01:37:01.000Z",
+                          "updatedAt": "2026-10-22T01:37:01.000Z",
+                          "uid": "35240-c1a13836-ce0f-4bfc-9b6b-32d292eef889"
+                        }
+                      ],
+                      "id": "83bdef4d-d3d0-4649-98bc-b9a99320b4ff",
+                      "createdAt": "2026-10-22T01:37:01.000Z",
+                      "updatedAt": "2026-10-22T01:37:01.000Z",
+                      "uid": "35240-83bdef4d-d3d0-4649-98bc-b9a99320b4ff"
+                    },
+                    {
+                      "name": "Get a card",
+                      "id": "b67f9cac-6bf8-4b90-a786-69d920e33bed",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "auth": {
+                          "type": "bearer",
+                          "bearer": [
+                            {
+                              "key": "token",
+                              "value": "{{bearerToken}}",
+                              "type": "string"
+                            }
+                          ]
+                        },
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v2/cards/:card_id",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v2",
+                            "cards",
+                            ":card_id"
+                          ],
+                          "variable": [
+                            {
+                              "id": "ad0e7452-18ff-4d4a-82f5-df3ef86de130",
+                              "key": "card_id",
+                              "value": "<string>",
+                              "description": "(Required) "
+                            }
+                          ]
+                        },
+                        "description": "Authoritative card state. While the card is `open` it carries `credentials` (number, expiry, CVC) to key into the checkout. Each read of an open card notifies the member that the credentials were accessed, so fetch once when you are ready to pay rather than polling; poll flow status instead."
+                      },
+                      "response": [
+                        {
+                          "id": "9f4c987d-058d-4968-904a-c51842c03f5d",
+                          "name": "The card.",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/api/v2/cards/:card_id",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "v2",
+                                "cards",
+                                ":card_id"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "card_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"object\": \"<string>\",\n  \"id\": \"<string>\",\n  \"status\": \"open\",\n  \"spend_limit_cents\": \"<integer>\",\n  \"balance_cents\": \"<integer>\",\n  \"connected_card_id\": \"<string>\",\n  \"last4\": \"<string>\",\n  \"expiry\": \"<string>\",\n  \"created_at\": \"<dateTime>\",\n  \"approval_url\": \"<string>\",\n  \"expires_at\": \"<dateTime>\",\n  \"closed_reason\": \"<string>\",\n  \"credentials\": {\n    \"number\": \"<string>\",\n    \"exp_month\": \"<integer>\",\n    \"exp_year\": \"<integer>\",\n    \"cvc\": \"<string>\"\n  },\n  \"credentials_status\": \"<string>\"\n}",
+                          "createdAt": "2026-10-22T01:37:01.000Z",
+                          "updatedAt": "2026-10-22T01:37:01.000Z",
+                          "uid": "35240-9f4c987d-058d-4968-904a-c51842c03f5d"
+                        },
+                        {
+                          "id": "534e0484-cef5-44ff-8d8e-0ccfe99eb365",
+                          "name": "`unauthorized` \u2014 the platform access token is missing or expired. Exchange your client credentials for a fresh one.",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/api/v2/cards/:card_id",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "v2",
+                                "cards",
+                                ":card_id"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "card_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"docs\": \"<string>\",\n    \"field_errors\": {\n      \"sunt_3e\": \"<string>\"\n    },\n    \"warnings\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+                          "createdAt": "2026-10-22T01:37:01.000Z",
+                          "updatedAt": "2026-10-22T01:37:01.000Z",
+                          "uid": "35240-534e0484-cef5-44ff-8d8e-0ccfe99eb365"
+                        },
+                        {
+                          "id": "3bc7a7d0-504a-47d2-b86a-bd001298104d",
+                          "name": "`card_not_found`: no such card for this connection.",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/api/v2/cards/:card_id",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "v2",
+                                "cards",
+                                ":card_id"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "card_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Not Found",
+                          "code": 404,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"docs\": \"<string>\",\n    \"field_errors\": {\n      \"sunt_3e\": \"<string>\"\n    },\n    \"warnings\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+                          "createdAt": "2026-10-22T01:37:01.000Z",
+                          "updatedAt": "2026-10-22T01:37:01.000Z",
+                          "uid": "35240-3bc7a7d0-504a-47d2-b86a-bd001298104d"
+                        }
+                      ],
+                      "createdAt": "2026-10-22T01:37:01.000Z",
+                      "updatedAt": "2026-10-22T01:37:01.000Z",
+                      "uid": "35240-b67f9cac-6bf8-4b90-a786-69d920e33bed"
+                    }
+                  ],
+                  "id": "280e3e51-9275-4f88-99db-698b4484c1c0",
+                  "createdAt": "2026-10-22T01:37:01.000Z",
+                  "updatedAt": "2026-10-22T01:37:01.000Z",
+                  "uid": "35240-280e3e51-9275-4f88-99db-698b4484c1c0"
+                },
+                {
+                  "name": "List the member's cards",
+                  "id": "a86d523a-8421-4351-aec9-0199d35fa1bc",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{bearerToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/v2/cards",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v2",
+                        "cards"
+                      ]
+                    },
+                    "description": "The member's cards as this connection sees it: added cards (attachments, pending included) and the cards created against them."
+                  },
+                  "response": [
+                    {
+                      "id": "430dfff0-591d-4c0d-bbbc-2a436b73ece8",
+                      "name": "Added cards and created cards.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v2/cards",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v2",
+                            "cards"
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"attached_cards\": [\n    {\n      \"id\": \"<string>\",\n      \"status\": \"active\",\n      \"network\": \"<string>\",\n      \"brand\": \"<string>\",\n      \"last4\": \"<string>\",\n      \"art_url\": \"<string>\"\n    },\n    {\n      \"id\": \"<string>\",\n      \"status\": \"pending\",\n      \"network\": \"<string>\",\n      \"brand\": \"<string>\",\n      \"last4\": \"<string>\",\n      \"art_url\": \"<string>\"\n    }\n  ],\n  \"cards\": [\n    {\n      \"object\": \"<string>\",\n      \"id\": \"<string>\",\n      \"status\": \"approval_pending\",\n      \"spend_limit_cents\": \"<integer>\",\n      \"balance_cents\": \"<integer>\",\n      \"connected_card_id\": \"<string>\",\n      \"last4\": \"<string>\",\n      \"expiry\": \"<string>\",\n      \"created_at\": \"<dateTime>\",\n      \"approval_url\": \"<string>\",\n      \"expires_at\": \"<dateTime>\",\n      \"closed_reason\": \"<string>\",\n      \"credentials\": {\n        \"number\": \"<string>\",\n        \"exp_month\": \"<integer>\",\n        \"exp_year\": \"<integer>\",\n        \"cvc\": \"<string>\"\n      },\n      \"credentials_status\": \"<string>\"\n    },\n    {\n      \"object\": \"<string>\",\n      \"id\": \"<string>\",\n      \"status\": \"open\",\n      \"spend_limit_cents\": \"<integer>\",\n      \"balance_cents\": \"<integer>\",\n      \"connected_card_id\": \"<string>\",\n      \"last4\": \"<string>\",\n      \"expiry\": \"<string>\",\n      \"created_at\": \"<dateTime>\",\n      \"approval_url\": \"<string>\",\n      \"expires_at\": \"<dateTime>\",\n      \"closed_reason\": \"<string>\",\n      \"credentials\": {\n        \"number\": \"<string>\",\n        \"exp_month\": \"<integer>\",\n        \"exp_year\": \"<integer>\",\n        \"cvc\": \"<string>\"\n      },\n      \"credentials_status\": \"<string>\"\n    }\n  ]\n}",
+                      "createdAt": "2026-10-22T01:37:01.000Z",
+                      "updatedAt": "2026-10-22T01:37:01.000Z",
+                      "uid": "35240-430dfff0-591d-4c0d-bbbc-2a436b73ece8"
+                    },
+                    {
+                      "id": "142f1a6d-0628-489d-8791-f50486d0b8a7",
+                      "name": "`unauthorized` \u2014 the platform access token is missing or expired. Exchange your client credentials for a fresh one.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v2/cards",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v2",
+                            "cards"
+                          ]
+                        }
+                      },
+                      "status": "Unauthorized",
+                      "code": 401,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"docs\": \"<string>\",\n    \"field_errors\": {\n      \"sunt_3e\": \"<string>\"\n    },\n    \"warnings\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+                      "createdAt": "2026-10-22T01:37:01.000Z",
+                      "updatedAt": "2026-10-22T01:37:01.000Z",
+                      "uid": "35240-142f1a6d-0628-489d-8791-f50486d0b8a7"
+                    }
+                  ],
+                  "createdAt": "2026-10-22T01:37:01.000Z",
+                  "updatedAt": "2026-10-22T01:37:01.000Z",
+                  "uid": "35240-a86d523a-8421-4351-aec9-0199d35fa1bc"
+                },
+                {
+                  "name": "Create a card",
+                  "id": "d9a00d56-b058-474f-9c13-a73a3d6d5421",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{bearerToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "description": "(Required) Stable key for THIS card intent (your order id). Retries with the same key resume the same card; they never create a second one.",
+                        "key": "Idempotency-Key",
+                        "value": "<string>"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"amount_cents\": \"<integer>\",\n  \"currency\": \"usd\",\n  \"connected_card_id\": \"<string>\",\n  \"merchant\": {\n    \"name\": \"<string>\",\n    \"url\": \"<string>\"\n  },\n  \"description\": \"<string>\",\n  \"metadata\": {}\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/v2/cards",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v2",
+                        "cards"
+                      ]
+                    },
+                    "description": "Create a one-time virtual card against the member's added card, then key its credentials into your checkout and close it when you're done. Sandbox answers `201` with an open test card. Production answers `202 approval_pending` with an `approval_url` the member confirms with a passkey; retry with the SAME `Idempotency-Key` (or watch flow status) until the card is `open`, then read it once on Get a card. Credentials stay valid for about an hour, so create the card right before checkout."
+                  },
+                  "response": [
+                    {
+                      "id": "b55091b1-f66a-4e81-81c5-556221f47c2d",
+                      "name": "The card is open (sandbox, and frictionless production mints).",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "description": "(Required) Stable key for THIS card intent (your order id). Retries with the same key resume the same card; they never create a second one.",
+                            "key": "Idempotency-Key",
+                            "value": "<string>"
+                          },
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"amount_cents\": \"<integer>\",\n  \"currency\": \"usd\",\n  \"connected_card_id\": \"<string>\",\n  \"merchant\": {\n    \"name\": \"<string>\",\n    \"url\": \"<string>\"\n  },\n  \"description\": \"<string>\",\n  \"metadata\": {}\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v2/cards",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v2",
+                            "cards"
+                          ]
+                        }
+                      },
+                      "status": "Created",
+                      "code": 201,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"object\": \"<string>\",\n  \"id\": \"<string>\",\n  \"status\": \"open\",\n  \"spend_limit_cents\": \"<integer>\",\n  \"balance_cents\": \"<integer>\",\n  \"connected_card_id\": \"<string>\",\n  \"last4\": \"<string>\",\n  \"expiry\": \"<string>\",\n  \"created_at\": \"<dateTime>\",\n  \"approval_url\": \"<string>\",\n  \"expires_at\": \"<dateTime>\",\n  \"closed_reason\": \"<string>\",\n  \"credentials\": {\n    \"number\": \"<string>\",\n    \"exp_month\": \"<integer>\",\n    \"exp_year\": \"<integer>\",\n    \"cvc\": \"<string>\"\n  },\n  \"credentials_status\": \"<string>\"\n}",
+                      "createdAt": "2026-10-22T01:37:01.000Z",
+                      "updatedAt": "2026-10-22T01:37:01.000Z",
+                      "uid": "35240-b55091b1-f66a-4e81-81c5-556221f47c2d"
+                    },
+                    {
+                      "id": "084184f8-eeb7-460c-9da1-b3c4eeef1f78",
+                      "name": "`approval_pending`: share `approval_url` with the member, then retry with the same `Idempotency-Key`.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "description": "(Required) Stable key for THIS card intent (your order id). Retries with the same key resume the same card; they never create a second one.",
+                            "key": "Idempotency-Key",
+                            "value": "<string>"
+                          },
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"amount_cents\": \"<integer>\",\n  \"currency\": \"usd\",\n  \"connected_card_id\": \"<string>\",\n  \"merchant\": {\n    \"name\": \"<string>\",\n    \"url\": \"<string>\"\n  },\n  \"description\": \"<string>\",\n  \"metadata\": {}\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v2/cards",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v2",
+                            "cards"
+                          ]
+                        }
+                      },
+                      "status": "Accepted",
+                      "code": 202,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"object\": \"<string>\",\n  \"id\": \"<string>\",\n  \"status\": \"open\",\n  \"spend_limit_cents\": \"<integer>\",\n  \"balance_cents\": \"<integer>\",\n  \"connected_card_id\": \"<string>\",\n  \"last4\": \"<string>\",\n  \"expiry\": \"<string>\",\n  \"created_at\": \"<dateTime>\",\n  \"approval_url\": \"<string>\",\n  \"expires_at\": \"<dateTime>\",\n  \"closed_reason\": \"<string>\",\n  \"credentials\": {\n    \"number\": \"<string>\",\n    \"exp_month\": \"<integer>\",\n    \"exp_year\": \"<integer>\",\n    \"cvc\": \"<string>\"\n  },\n  \"credentials_status\": \"<string>\"\n}",
+                      "createdAt": "2026-10-22T01:37:01.000Z",
+                      "updatedAt": "2026-10-22T01:37:01.000Z",
+                      "uid": "35240-084184f8-eeb7-460c-9da1-b3c4eeef1f78"
+                    },
+                    {
+                      "id": "2e20bb6d-44fd-4700-9d43-755e9e986345",
+                      "name": "`invalid_request`, `idempotency_key_required`, or `multi_use_connected_unsupported`.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "description": "(Required) Stable key for THIS card intent (your order id). Retries with the same key resume the same card; they never create a second one.",
+                            "key": "Idempotency-Key",
+                            "value": "<string>"
+                          },
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"amount_cents\": \"<integer>\",\n  \"currency\": \"usd\",\n  \"connected_card_id\": \"<string>\",\n  \"merchant\": {\n    \"name\": \"<string>\",\n    \"url\": \"<string>\"\n  },\n  \"description\": \"<string>\",\n  \"metadata\": {}\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v2/cards",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v2",
+                            "cards"
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"docs\": \"<string>\",\n    \"field_errors\": {\n      \"sunt_3e\": \"<string>\"\n    },\n    \"warnings\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+                      "createdAt": "2026-10-22T01:37:01.000Z",
+                      "updatedAt": "2026-10-22T01:37:01.000Z",
+                      "uid": "35240-2e20bb6d-44fd-4700-9d43-755e9e986345"
+                    },
+                    {
+                      "id": "41d3c348-b8bd-4094-88d7-0d031ec9cedb",
+                      "name": "`unauthorized` \u2014 the platform access token is missing or expired. Exchange your client credentials for a fresh one.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "description": "(Required) Stable key for THIS card intent (your order id). Retries with the same key resume the same card; they never create a second one.",
+                            "key": "Idempotency-Key",
+                            "value": "<string>"
+                          },
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"amount_cents\": \"<integer>\",\n  \"currency\": \"usd\",\n  \"connected_card_id\": \"<string>\",\n  \"merchant\": {\n    \"name\": \"<string>\",\n    \"url\": \"<string>\"\n  },\n  \"description\": \"<string>\",\n  \"metadata\": {}\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v2/cards",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v2",
+                            "cards"
+                          ]
+                        }
+                      },
+                      "status": "Unauthorized",
+                      "code": 401,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"docs\": \"<string>\",\n    \"field_errors\": {\n      \"sunt_3e\": \"<string>\"\n    },\n    \"warnings\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+                      "createdAt": "2026-10-22T01:37:01.000Z",
+                      "updatedAt": "2026-10-22T01:37:01.000Z",
+                      "uid": "35240-41d3c348-b8bd-4094-88d7-0d031ec9cedb"
+                    },
+                    {
+                      "id": "786b8bb7-90cb-48d2-9631-6643ee5c2be7",
+                      "name": "`subscription_required`: production needs an active Agentcard subscription.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "description": "(Required) Stable key for THIS card intent (your order id). Retries with the same key resume the same card; they never create a second one.",
+                            "key": "Idempotency-Key",
+                            "value": "<string>"
+                          },
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"amount_cents\": \"<integer>\",\n  \"currency\": \"usd\",\n  \"connected_card_id\": \"<string>\",\n  \"merchant\": {\n    \"name\": \"<string>\",\n    \"url\": \"<string>\"\n  },\n  \"description\": \"<string>\",\n  \"metadata\": {}\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v2/cards",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v2",
+                            "cards"
+                          ]
+                        }
+                      },
+                      "status": "Payment Required",
+                      "code": 402,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"docs\": \"<string>\",\n    \"field_errors\": {\n      \"sunt_3e\": \"<string>\"\n    },\n    \"warnings\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+                      "createdAt": "2026-10-22T01:37:01.000Z",
+                      "updatedAt": "2026-10-22T01:37:01.000Z",
+                      "uid": "35240-786b8bb7-90cb-48d2-9631-6643ee5c2be7"
+                    },
+                    {
+                      "id": "fa52e332-0bff-4e88-bd5e-26f5e30ce823",
+                      "name": "`attach_required`: no active added card (start one on Add a card), or `request_in_flight`: the same key is still processing; retry in a few seconds.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "description": "(Required) Stable key for THIS card intent (your order id). Retries with the same key resume the same card; they never create a second one.",
+                            "key": "Idempotency-Key",
+                            "value": "<string>"
+                          },
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"amount_cents\": \"<integer>\",\n  \"currency\": \"usd\",\n  \"connected_card_id\": \"<string>\",\n  \"merchant\": {\n    \"name\": \"<string>\",\n    \"url\": \"<string>\"\n  },\n  \"description\": \"<string>\",\n  \"metadata\": {}\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v2/cards",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v2",
+                            "cards"
+                          ]
+                        }
+                      },
+                      "status": "Conflict",
+                      "code": 409,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"docs\": \"<string>\",\n    \"field_errors\": {\n      \"sunt_3e\": \"<string>\"\n    },\n    \"warnings\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+                      "createdAt": "2026-10-22T01:37:01.000Z",
+                      "updatedAt": "2026-10-22T01:37:01.000Z",
+                      "uid": "35240-fa52e332-0bff-4e88-bd5e-26f5e30ce823"
+                    },
+                    {
+                      "id": "95137918-4325-407c-b411-a8dd6cd77e68",
+                      "name": "`byoc_unavailable`: the card network is briefly unavailable. Retry with the same `Idempotency-Key`.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "description": "(Required) Stable key for THIS card intent (your order id). Retries with the same key resume the same card; they never create a second one.",
+                            "key": "Idempotency-Key",
+                            "value": "<string>"
+                          },
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"amount_cents\": \"<integer>\",\n  \"currency\": \"usd\",\n  \"connected_card_id\": \"<string>\",\n  \"merchant\": {\n    \"name\": \"<string>\",\n    \"url\": \"<string>\"\n  },\n  \"description\": \"<string>\",\n  \"metadata\": {}\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v2/cards",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v2",
+                            "cards"
+                          ]
+                        }
+                      },
+                      "status": "Service Unavailable",
+                      "code": 503,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"docs\": \"<string>\",\n    \"field_errors\": {\n      \"sunt_3e\": \"<string>\"\n    },\n    \"warnings\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+                      "createdAt": "2026-10-22T01:37:01.000Z",
+                      "updatedAt": "2026-10-22T01:37:01.000Z",
+                      "uid": "35240-95137918-4325-407c-b411-a8dd6cd77e68"
+                    }
+                  ],
+                  "createdAt": "2026-10-22T01:37:01.000Z",
+                  "updatedAt": "2026-10-22T01:37:01.000Z",
+                  "uid": "35240-d9a00d56-b058-474f-9c13-a73a3d6d5421"
+                }
+              ],
+              "id": "9314a704-19d7-42b8-9b4b-4dc03ebc0423",
+              "createdAt": "2026-10-22T01:37:01.000Z",
+              "updatedAt": "2026-10-22T01:37:01.000Z",
+              "uid": "35240-9314a704-19d7-42b8-9b4b-4dc03ebc0423"
+            }
+          ],
+          "id": "c6ae33d3-df26-4478-ac28-2ec78e2a08ae",
+          "createdAt": "2026-10-22T01:37:01.000Z",
+          "updatedAt": "2026-10-22T01:37:01.000Z",
+          "uid": "35240-c6ae33d3-df26-4478-ac28-2ec78e2a08ae"
+        }
+      ],
+      "id": "f2b360cc-ecca-4f47-a104-007669e39db4",
+      "createdAt": "2026-10-22T01:37:01.000Z",
+      "updatedAt": "2026-10-22T01:37:01.000Z",
+      "uid": "35240-f2b360cc-ecca-4f47-a104-007669e39db4"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.agentcard.sh"
+    }
+  ]
+}

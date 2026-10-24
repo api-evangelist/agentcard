@@ -1,1091 +1,1487 @@
 {
+  "info": {
+    "_postman_id": "4b8779d4-e458-4446-adb4-b8ce45bb95b6",
+    "name": "Agentcard Connect API",
+    "description": "The Agentcard v2 API \u2014 connect your users and verify their identity from your own backend. Every call is authenticated with a platform access token minted from your `client_id` + `client_secret`.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-10-22T01:36:47.000Z",
+    "updatedAt": "2026-10-22T01:36:47.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-4b8779d4-e458-4446-adb4-b8ce45bb95b6"
+  },
   "item": [
     {
-      "id": "61edbd00-fc5f-4691-aaa0-ce7db8e7d204",
-      "name": "Connect",
-      "description": {
-        "content": "Connect a user to your platform: send a one-time code, verify it, record consent, and keep the connection alive.",
-        "type": "text/plain"
-      },
+      "name": "api",
       "item": [
         {
-          "id": "ee59d939-8e89-478e-a44f-3078807114a4",
-          "name": "Send a code",
-          "request": {
-            "name": "Send a code",
-            "description": {
-              "content": "Sends a one-time code to the user by email or phone. Provide **exactly one** of `email` or `phone`. Codes are valid for 10 minutes.\n\nIf you've designed a connect email in your dashboard, we send that branded email; otherwise we send a default one.",
-              "type": "text/plain"
-            },
-            "url": {
-              "path": [
-                "api",
-                "v2",
-                "connect",
-                "start"
-              ],
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "query": [],
-              "variable": []
-            },
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "method": "POST",
-            "auth": null,
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"<email>\",\n  \"phone\": \"<string>\",\n  \"external_user_id\": \"<string>\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          },
-          "response": [
+          "name": "v2",
+          "item": [
             {
-              "id": "2368b8a9-aff9-4aa1-910b-9bed434cce3b",
-              "name": "The attempt. Pass its `id` back as `connect_id` when you verify.",
-              "originalRequest": {
-                "url": {
-                  "path": [
-                    "api",
-                    "v2",
-                    "connect",
-                    "start"
-                  ],
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "query": [],
-                  "variable": []
-                },
-                "header": [
-                  {
-                    "description": {
-                      "content": "Added as a part of security scheme: bearer",
-                      "type": "text/plain"
-                    },
-                    "key": "Authorization",
-                    "value": "Bearer <token>"
-                  },
-                  {
-                    "key": "Accept",
-                    "value": "application/json"
-                  }
-                ],
-                "method": "POST",
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"email\": \"user@example.com\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                }
-              },
-              "status": "Created",
-              "code": 201,
-              "header": [
+              "name": "connect",
+              "item": [
                 {
-                  "key": "Content-Type",
-                  "value": "application/json"
+                  "name": "start",
+                  "item": [
+                    {
+                      "name": "Send a code",
+                      "id": "e291ad2f-6574-4f76-8b5d-87124a318916",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"email\": \"<email>\",\n  \"phone\": \"<string>\",\n  \"external_user_id\": \"<string>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v2/connect/start",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v2",
+                            "connect",
+                            "start"
+                          ]
+                        },
+                        "description": "Sends a one-time code to the user by email or phone. Provide **exactly one** of `email` or `phone`. Codes are valid for 10 minutes.\n\nIf you've designed a connect email in your dashboard, we send that branded email; otherwise we send a default one."
+                      },
+                      "response": [
+                        {
+                          "id": "382c8968-8365-4f5d-a082-d6bfe16b2fd1",
+                          "name": "The attempt. Pass its `id` back as `connect_id` when you verify.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"email\": \"<email>\",\n  \"phone\": \"<string>\",\n  \"external_user_id\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/api/v2/connect/start",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "v2",
+                                "connect",
+                                "start"
+                              ]
+                            }
+                          },
+                          "status": "Created",
+                          "code": 201,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"object\": \"connect_attempt\",\n  \"id\": \"<string>\",\n  \"channel\": \"phone\",\n  \"expires_at\": \"<dateTime>\"\n}",
+                          "createdAt": "2026-10-22T01:36:48.000Z",
+                          "updatedAt": "2026-10-22T01:36:48.000Z",
+                          "uid": "35240-382c8968-8365-4f5d-a082-d6bfe16b2fd1"
+                        },
+                        {
+                          "id": "69c71ed4-36c4-437f-ad3a-f579e83bcfe5",
+                          "name": "`invalid_request` \u2014 missing or both of `email` and `phone`. `invalid_phone` \u2014 the number isn't valid or supported. `client_credentials_required` \u2014 the token wasn't minted from client credentials.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"email\": \"<email>\",\n  \"phone\": \"<string>\",\n  \"external_user_id\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/api/v2/connect/start",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "v2",
+                                "connect",
+                                "start"
+                              ]
+                            }
+                          },
+                          "status": "Bad Request",
+                          "code": 400,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"docs\": \"<string>\",\n    \"field_errors\": {\n      \"eu6\": \"<string>\",\n      \"nostrudc0\": \"<string>\"\n    },\n    \"warnings\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+                          "createdAt": "2026-10-22T01:36:48.000Z",
+                          "updatedAt": "2026-10-22T01:36:48.000Z",
+                          "uid": "35240-69c71ed4-36c4-437f-ad3a-f579e83bcfe5"
+                        },
+                        {
+                          "id": "69fa3649-0553-4bce-91bf-9ff77751214b",
+                          "name": "`unauthorized` \u2014 the platform access token is missing or expired. Exchange your client credentials for a fresh one.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"email\": \"<email>\",\n  \"phone\": \"<string>\",\n  \"external_user_id\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/api/v2/connect/start",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "v2",
+                                "connect",
+                                "start"
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"docs\": \"<string>\",\n    \"field_errors\": {\n      \"eu6\": \"<string>\",\n      \"nostrudc0\": \"<string>\"\n    },\n    \"warnings\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+                          "createdAt": "2026-10-22T01:36:48.000Z",
+                          "updatedAt": "2026-10-22T01:36:48.000Z",
+                          "uid": "35240-69fa3649-0553-4bce-91bf-9ff77751214b"
+                        },
+                        {
+                          "id": "f01a1ac4-930f-4db2-9b9f-c0e9c21ded91",
+                          "name": "`auth_provider_error` \u2014 the code couldn't be sent. Try again.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"email\": \"<email>\",\n  \"phone\": \"<string>\",\n  \"external_user_id\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/api/v2/connect/start",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "v2",
+                                "connect",
+                                "start"
+                              ]
+                            }
+                          },
+                          "status": "Bad Gateway",
+                          "code": 502,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"docs\": \"<string>\",\n    \"field_errors\": {\n      \"eu6\": \"<string>\",\n      \"nostrudc0\": \"<string>\"\n    },\n    \"warnings\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+                          "createdAt": "2026-10-22T01:36:48.000Z",
+                          "updatedAt": "2026-10-22T01:36:48.000Z",
+                          "uid": "35240-f01a1ac4-930f-4db2-9b9f-c0e9c21ded91"
+                        },
+                        {
+                          "id": "6b82649b-31d0-48d7-81c3-dfb996f2aa73",
+                          "name": "`auth_unavailable` \u2014 authentication is temporarily unavailable. Retry shortly.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"email\": \"<email>\",\n  \"phone\": \"<string>\",\n  \"external_user_id\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/api/v2/connect/start",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "v2",
+                                "connect",
+                                "start"
+                              ]
+                            }
+                          },
+                          "status": "Service Unavailable",
+                          "code": 503,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"docs\": \"<string>\",\n    \"field_errors\": {\n      \"eu6\": \"<string>\",\n      \"nostrudc0\": \"<string>\"\n    },\n    \"warnings\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+                          "createdAt": "2026-10-22T01:36:48.000Z",
+                          "updatedAt": "2026-10-22T01:36:48.000Z",
+                          "uid": "35240-6b82649b-31d0-48d7-81c3-dfb996f2aa73"
+                        }
+                      ],
+                      "createdAt": "2026-10-22T01:36:48.000Z",
+                      "updatedAt": "2026-10-22T01:36:48.000Z",
+                      "uid": "35240-e291ad2f-6574-4f76-8b5d-87124a318916"
+                    }
+                  ],
+                  "id": "d686f0d0-798e-4e41-bc68-0ea3399aa256",
+                  "createdAt": "2026-10-22T01:36:48.000Z",
+                  "updatedAt": "2026-10-22T01:36:48.000Z",
+                  "uid": "35240-d686f0d0-798e-4e41-bc68-0ea3399aa256"
+                },
+                {
+                  "name": "verify",
+                  "item": [
+                    {
+                      "name": "Verify the code",
+                      "id": "bc87e035-f5fe-4d97-8c7f-6b3df91c0a84",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"connect_id\": \"<string>\",\n  \"code\": \"<string>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v2/connect/verify",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v2",
+                            "connect",
+                            "verify"
+                          ]
+                        },
+                        "description": "Checks the code the user entered and, on success, connects the user and returns the token pair to store. Completing the code **is** the authorization \u2014 there is no separate approval screen.\n\nThe returned `access_token` is the **user's connection token**: it acts on behalf of this user (send it as the bearer token to the MCP server to create cards, check balances, and shop as them). It is not the platform token \u2014 the endpoints in this reference keep using your platform access token and name the user with `user_id`.\n\nA code can be verified once: a second verify of the same attempt returns `invalid_connect_attempt`.\n\nIn **sandbox** the code is always `111111`."
+                      },
+                      "response": [
+                        {
+                          "id": "3d47c2b7-a923-4e24-9c18-3e5773a6e1a1",
+                          "name": "The connection. Store the token pair and `user.id` \u2014 every KYC call names the user by it.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"connect_id\": \"<string>\",\n  \"code\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/api/v2/connect/verify",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "v2",
+                                "connect",
+                                "verify"
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"object\": \"connection\",\n  \"access_token\": \"<string>\",\n  \"refresh_token\": \"<string>\",\n  \"token_type\": \"Bearer\",\n  \"expires_in\": \"<integer>\",\n  \"user\": {\n    \"id\": \"<string>\",\n    \"email\": \"<string,null>\",\n    \"phone\": \"<string,null>\"\n  }\n}",
+                          "createdAt": "2026-10-22T01:36:48.000Z",
+                          "updatedAt": "2026-10-22T01:36:48.000Z",
+                          "uid": "35240-3d47c2b7-a923-4e24-9c18-3e5773a6e1a1"
+                        },
+                        {
+                          "id": "b1fe4c47-1916-4967-9535-65b87ab8bf8c",
+                          "name": "`invalid_request` \u2014 missing `connect_id` or `code`. `invalid_connect_attempt` \u2014 the attempt is unknown, already used, or expired. `client_credentials_required` \u2014 the token wasn't minted from client credentials.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"connect_id\": \"<string>\",\n  \"code\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/api/v2/connect/verify",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "v2",
+                                "connect",
+                                "verify"
+                              ]
+                            }
+                          },
+                          "status": "Bad Request",
+                          "code": 400,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"docs\": \"<string>\",\n    \"field_errors\": {\n      \"eu6\": \"<string>\",\n      \"nostrudc0\": \"<string>\"\n    },\n    \"warnings\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+                          "createdAt": "2026-10-22T01:36:48.000Z",
+                          "updatedAt": "2026-10-22T01:36:48.000Z",
+                          "uid": "35240-b1fe4c47-1916-4967-9535-65b87ab8bf8c"
+                        },
+                        {
+                          "id": "42451f68-ee4d-4dd2-b651-06b7ac4deee6",
+                          "name": "`invalid_code` \u2014 that code is invalid or expired.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"connect_id\": \"<string>\",\n  \"code\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/api/v2/connect/verify",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "v2",
+                                "connect",
+                                "verify"
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"docs\": \"<string>\",\n    \"field_errors\": {\n      \"eu6\": \"<string>\",\n      \"nostrudc0\": \"<string>\"\n    },\n    \"warnings\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+                          "createdAt": "2026-10-22T01:36:48.000Z",
+                          "updatedAt": "2026-10-22T01:36:48.000Z",
+                          "uid": "35240-42451f68-ee4d-4dd2-b651-06b7ac4deee6"
+                        },
+                        {
+                          "id": "c3283d47-49c8-4ce4-8eed-6e5448f62b04",
+                          "name": "`auth_provider_error` \u2014 verification failed downstream. Try again.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"connect_id\": \"<string>\",\n  \"code\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/api/v2/connect/verify",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "v2",
+                                "connect",
+                                "verify"
+                              ]
+                            }
+                          },
+                          "status": "Bad Gateway",
+                          "code": 502,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"docs\": \"<string>\",\n    \"field_errors\": {\n      \"eu6\": \"<string>\",\n      \"nostrudc0\": \"<string>\"\n    },\n    \"warnings\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+                          "createdAt": "2026-10-22T01:36:48.000Z",
+                          "updatedAt": "2026-10-22T01:36:48.000Z",
+                          "uid": "35240-c3283d47-49c8-4ce4-8eed-6e5448f62b04"
+                        }
+                      ],
+                      "createdAt": "2026-10-22T01:36:48.000Z",
+                      "updatedAt": "2026-10-22T01:36:48.000Z",
+                      "uid": "35240-bc87e035-f5fe-4d97-8c7f-6b3df91c0a84"
+                    }
+                  ],
+                  "id": "f4810b8a-2729-4e84-882d-aa4f3ea8acb3",
+                  "createdAt": "2026-10-22T01:36:48.000Z",
+                  "updatedAt": "2026-10-22T01:36:48.000Z",
+                  "uid": "35240-f4810b8a-2729-4e84-882d-aa4f3ea8acb3"
+                },
+                {
+                  "name": "consent",
+                  "item": [
+                    {
+                      "name": "Record consent",
+                      "id": "5ca8b294-d6a7-420c-964a-75dd2949e1ff",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"user_id\": \"<string>\",\n  \"terms_version\": \"<string>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v2/connect/consent",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v2",
+                            "connect",
+                            "consent"
+                          ]
+                        },
+                        "description": "Records that the user authorized your platform to act on their behalf. Safe to retry \u2014 it's idempotent per user, so a repeat call updates the same record instead of creating a duplicate."
+                      },
+                      "response": [
+                        {
+                          "id": "f127e544-93e8-4154-812d-502edebee5e8",
+                          "name": "The consent record.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"user_id\": \"<string>\",\n  \"terms_version\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/api/v2/connect/consent",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "v2",
+                                "connect",
+                                "consent"
+                              ]
+                            }
+                          },
+                          "status": "Created",
+                          "code": 201,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"object\": \"consent\",\n  \"id\": \"<string>\",\n  \"user_id\": \"<string>\",\n  \"terms_version\": \"<string,null>\",\n  \"created_at\": \"<dateTime>\"\n}",
+                          "createdAt": "2026-10-22T01:36:48.000Z",
+                          "updatedAt": "2026-10-22T01:36:48.000Z",
+                          "uid": "35240-f127e544-93e8-4154-812d-502edebee5e8"
+                        },
+                        {
+                          "id": "4aba000a-1ef7-4b96-a958-99853458fdce",
+                          "name": "`invalid_request` \u2014 missing `user_id`. `client_credentials_required` \u2014 the token wasn't minted from client credentials.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"user_id\": \"<string>\",\n  \"terms_version\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/api/v2/connect/consent",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "v2",
+                                "connect",
+                                "consent"
+                              ]
+                            }
+                          },
+                          "status": "Bad Request",
+                          "code": 400,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"docs\": \"<string>\",\n    \"field_errors\": {\n      \"eu6\": \"<string>\",\n      \"nostrudc0\": \"<string>\"\n    },\n    \"warnings\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+                          "createdAt": "2026-10-22T01:36:48.000Z",
+                          "updatedAt": "2026-10-22T01:36:48.000Z",
+                          "uid": "35240-4aba000a-1ef7-4b96-a958-99853458fdce"
+                        },
+                        {
+                          "id": "56cb88b4-fded-4cc2-9bc6-746d083b7ec8",
+                          "name": "`unauthorized` \u2014 the platform access token is missing or expired. Exchange your client credentials for a fresh one.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"user_id\": \"<string>\",\n  \"terms_version\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/api/v2/connect/consent",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "v2",
+                                "connect",
+                                "consent"
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"docs\": \"<string>\",\n    \"field_errors\": {\n      \"eu6\": \"<string>\",\n      \"nostrudc0\": \"<string>\"\n    },\n    \"warnings\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+                          "createdAt": "2026-10-22T01:36:48.000Z",
+                          "updatedAt": "2026-10-22T01:36:48.000Z",
+                          "uid": "35240-56cb88b4-fded-4cc2-9bc6-746d083b7ec8"
+                        },
+                        {
+                          "id": "4756e46f-b50e-413a-85ac-8b5575bad753",
+                          "name": "`connection_not_found` \u2014 no connection exists for that user under your client.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"user_id\": \"<string>\",\n  \"terms_version\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/api/v2/connect/consent",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "v2",
+                                "connect",
+                                "consent"
+                              ]
+                            }
+                          },
+                          "status": "Not Found",
+                          "code": 404,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"docs\": \"<string>\",\n    \"field_errors\": {\n      \"eu6\": \"<string>\",\n      \"nostrudc0\": \"<string>\"\n    },\n    \"warnings\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+                          "createdAt": "2026-10-22T01:36:48.000Z",
+                          "updatedAt": "2026-10-22T01:36:48.000Z",
+                          "uid": "35240-4756e46f-b50e-413a-85ac-8b5575bad753"
+                        }
+                      ],
+                      "createdAt": "2026-10-22T01:36:48.000Z",
+                      "updatedAt": "2026-10-22T01:36:48.000Z",
+                      "uid": "35240-5ca8b294-d6a7-420c-964a-75dd2949e1ff"
+                    }
+                  ],
+                  "id": "b0970ef0-47b1-430c-aed5-6fe08ec7f646",
+                  "createdAt": "2026-10-22T01:36:48.000Z",
+                  "updatedAt": "2026-10-22T01:36:48.000Z",
+                  "uid": "35240-b0970ef0-47b1-430c-aed5-6fe08ec7f646"
+                },
+                {
+                  "name": "refresh",
+                  "item": [
+                    {
+                      "name": "Refresh the connection",
+                      "id": "62cd93e6-6789-4397-ade3-c12ff1b8c24f",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"refresh_token\": \"<string>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/v2/connect/refresh",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v2",
+                            "connect",
+                            "refresh"
+                          ]
+                        },
+                        "description": "Connection access tokens expire after one hour. Exchange the refresh token for a new pair before then.\n\nEach refresh returns a **new** refresh token and invalidates the old one \u2014 replace the stored token every time."
+                      },
+                      "response": [
+                        {
+                          "id": "e8f159f5-6b82-458e-989a-caefbca1a080",
+                          "name": "The new token pair.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"refresh_token\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/api/v2/connect/refresh",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "v2",
+                                "connect",
+                                "refresh"
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"object\": \"connection\",\n  \"access_token\": \"<string>\",\n  \"refresh_token\": \"<string>\",\n  \"token_type\": \"Bearer\",\n  \"expires_in\": \"<integer>\"\n}",
+                          "createdAt": "2026-10-22T01:36:48.000Z",
+                          "updatedAt": "2026-10-22T01:36:48.000Z",
+                          "uid": "35240-e8f159f5-6b82-458e-989a-caefbca1a080"
+                        },
+                        {
+                          "id": "4cdde848-6919-47c5-8774-3bee057deb35",
+                          "name": "`invalid_request` \u2014 missing `refresh_token`. `client_credentials_required` \u2014 the token wasn't minted from client credentials.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"refresh_token\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/api/v2/connect/refresh",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "v2",
+                                "connect",
+                                "refresh"
+                              ]
+                            }
+                          },
+                          "status": "Bad Request",
+                          "code": 400,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"docs\": \"<string>\",\n    \"field_errors\": {\n      \"eu6\": \"<string>\",\n      \"nostrudc0\": \"<string>\"\n    },\n    \"warnings\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+                          "createdAt": "2026-10-22T01:36:48.000Z",
+                          "updatedAt": "2026-10-22T01:36:48.000Z",
+                          "uid": "35240-4cdde848-6919-47c5-8774-3bee057deb35"
+                        },
+                        {
+                          "id": "7c4381bb-c4d1-4c6e-be34-f31f79aa2656",
+                          "name": "`invalid_refresh_token` \u2014 that refresh token is invalid or expired.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"refresh_token\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/api/v2/connect/refresh",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "v2",
+                                "connect",
+                                "refresh"
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"docs\": \"<string>\",\n    \"field_errors\": {\n      \"eu6\": \"<string>\",\n      \"nostrudc0\": \"<string>\"\n    },\n    \"warnings\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+                          "createdAt": "2026-10-22T01:36:48.000Z",
+                          "updatedAt": "2026-10-22T01:36:48.000Z",
+                          "uid": "35240-7c4381bb-c4d1-4c6e-be34-f31f79aa2656"
+                        }
+                      ],
+                      "createdAt": "2026-10-22T01:36:48.000Z",
+                      "updatedAt": "2026-10-22T01:36:48.000Z",
+                      "uid": "35240-62cd93e6-6789-4397-ade3-c12ff1b8c24f"
+                    }
+                  ],
+                  "id": "50fec912-012f-4257-bd63-80746795614f",
+                  "createdAt": "2026-10-22T01:36:48.000Z",
+                  "updatedAt": "2026-10-22T01:36:48.000Z",
+                  "uid": "35240-50fec912-012f-4257-bd63-80746795614f"
                 }
               ],
-              "body": "{\n  \"object\": \"connect_attempt\",\n  \"id\": \"ca_9f8e7d6c\",\n  \"channel\": \"email\",\n  \"expires_at\": \"2026-07-12T20:30:00.000Z\"\n}",
-              "cookie": [],
-              "_postman_previewlanguage": "json"
+              "id": "a286afff-a924-4aa7-818a-4ccf2cb648cb",
+              "createdAt": "2026-10-22T01:36:48.000Z",
+              "updatedAt": "2026-10-22T01:36:48.000Z",
+              "uid": "35240-a286afff-a924-4aa7-818a-4ccf2cb648cb"
             },
             {
-              "id": "119893ba-5d17-4a2c-9141-84114e1cc4b2",
-              "name": "`invalid_request` — missing or both of `email` and `phone`. `invalid_phone` — the number isn't valid or supported. `client_credentials_required` — the token wasn't minted from client credentials.",
-              "originalRequest": {
-                "url": {
-                  "path": [
-                    "api",
-                    "v2",
-                    "connect",
-                    "start"
-                  ],
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "query": [],
-                  "variable": []
-                },
-                "header": [
-                  {
-                    "description": {
-                      "content": "Added as a part of security scheme: bearer",
-                      "type": "text/plain"
-                    },
-                    "key": "Authorization",
-                    "value": "Bearer <token>"
-                  },
-                  {
-                    "key": "Accept",
-                    "value": "application/json"
-                  }
-                ],
-                "method": "POST",
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"email\": \"user@example.com\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                }
-              },
-              "status": "Bad Request",
-              "code": 400,
-              "header": [
+              "name": "vault_users",
+              "item": [
                 {
-                  "key": "Content-Type",
-                  "value": "application/json"
+                  "name": "{user_id}",
+                  "item": [
+                    {
+                      "name": "connection",
+                      "item": [
+                        {
+                          "name": "Disconnect a user",
+                          "id": "80ed297e-843b-4c38-8676-6d8d63a1d170",
+                          "protocolProfileBehavior": {
+                            "disableBodyPruning": true
+                          },
+                          "request": {
+                            "method": "DELETE",
+                            "header": [
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/api/v2/vault_users/:user_id/connection",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "v2",
+                                "vault_users",
+                                ":user_id",
+                                "connection"
+                              ],
+                              "variable": [
+                                {
+                                  "id": "1e55e9cf-fec8-466f-ac62-d9b8d7977e8d",
+                                  "key": "user_id",
+                                  "value": "<string>",
+                                  "description": "(Required) The user's id, as your app stored it when they connected."
+                                }
+                              ]
+                            },
+                            "description": "Ends your app's connection to a user. Every token your app holds for the user stops working, Vault session links they have not opened stop opening, and their cards stay in their Vault. Idempotent: a second call answers `200` with every count at `0`."
+                          },
+                          "response": [
+                            {
+                              "id": "703c6ffd-0c0f-442a-a4c6-011ff80b2245",
+                              "name": "The user is disconnected from your app.",
+                              "originalRequest": {
+                                "method": "DELETE",
+                                "header": [
+                                  {
+                                    "key": "Accept",
+                                    "value": "application/json"
+                                  },
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/api/v2/vault_users/:user_id/connection",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "api",
+                                    "v2",
+                                    "vault_users",
+                                    ":user_id",
+                                    "connection"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "user_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "OK",
+                              "code": 200,
+                              "_postman_previewlanguage": "json",
+                              "header": [
+                                {
+                                  "key": "Content-Type",
+                                  "value": "application/json"
+                                }
+                              ],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": "{\n  \"object\": \"vault_user_connection\",\n  \"user_id\": \"<string>\",\n  \"connected\": false,\n  \"revoked_tokens\": \"<integer>\",\n  \"revoked_wallet_links\": \"<integer>\",\n  \"revoked_sessions\": \"<integer>\",\n  \"test_mode\": \"<boolean>\"\n}",
+                              "createdAt": "2026-10-22T01:36:48.000Z",
+                              "updatedAt": "2026-10-22T01:36:48.000Z",
+                              "uid": "35240-703c6ffd-0c0f-442a-a4c6-011ff80b2245"
+                            },
+                            {
+                              "id": "0f1ee06a-f376-4a72-8f25-1f84256be498",
+                              "name": "`unauthorized` \u2014 the platform access token is missing or expired. Exchange your client credentials for a fresh one.",
+                              "originalRequest": {
+                                "method": "DELETE",
+                                "header": [
+                                  {
+                                    "key": "Accept",
+                                    "value": "application/json"
+                                  },
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/api/v2/vault_users/:user_id/connection",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "api",
+                                    "v2",
+                                    "vault_users",
+                                    ":user_id",
+                                    "connection"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "user_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Unauthorized",
+                              "code": 401,
+                              "_postman_previewlanguage": "json",
+                              "header": [
+                                {
+                                  "key": "Content-Type",
+                                  "value": "application/json"
+                                }
+                              ],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"docs\": \"<string>\",\n    \"field_errors\": {\n      \"eu6\": \"<string>\",\n      \"nostrudc0\": \"<string>\"\n    },\n    \"warnings\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+                              "createdAt": "2026-10-22T01:36:48.000Z",
+                              "updatedAt": "2026-10-22T01:36:48.000Z",
+                              "uid": "35240-0f1ee06a-f376-4a72-8f25-1f84256be498"
+                            },
+                            {
+                              "id": "54903526-2519-4c72-8dec-243706338a4f",
+                              "name": "`connection_not_found`: your app holds no connection to that user in this mode.",
+                              "originalRequest": {
+                                "method": "DELETE",
+                                "header": [
+                                  {
+                                    "key": "Accept",
+                                    "value": "application/json"
+                                  },
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/api/v2/vault_users/:user_id/connection",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "api",
+                                    "v2",
+                                    "vault_users",
+                                    ":user_id",
+                                    "connection"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "user_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Not Found",
+                              "code": 404,
+                              "_postman_previewlanguage": "json",
+                              "header": [
+                                {
+                                  "key": "Content-Type",
+                                  "value": "application/json"
+                                }
+                              ],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"docs\": \"<string>\",\n    \"field_errors\": {\n      \"eu6\": \"<string>\",\n      \"nostrudc0\": \"<string>\"\n    },\n    \"warnings\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+                              "createdAt": "2026-10-22T01:36:48.000Z",
+                              "updatedAt": "2026-10-22T01:36:48.000Z",
+                              "uid": "35240-54903526-2519-4c72-8dec-243706338a4f"
+                            },
+                            {
+                              "id": "54687645-88a8-4d59-b2ac-6f8e30640178",
+                              "name": "`partner_disconnect_pending`: the tokens are off, and the user's auto-approval for your app is not yet. Call again until it answers `200`.",
+                              "originalRequest": {
+                                "method": "DELETE",
+                                "header": [
+                                  {
+                                    "key": "Accept",
+                                    "value": "application/json"
+                                  },
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/api/v2/vault_users/:user_id/connection",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "api",
+                                    "v2",
+                                    "vault_users",
+                                    ":user_id",
+                                    "connection"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "user_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Service Unavailable",
+                              "code": 503,
+                              "_postman_previewlanguage": "json",
+                              "header": [
+                                {
+                                  "key": "Content-Type",
+                                  "value": "application/json"
+                                }
+                              ],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"docs\": \"<string>\",\n    \"field_errors\": {\n      \"eu6\": \"<string>\",\n      \"nostrudc0\": \"<string>\"\n    },\n    \"warnings\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+                              "createdAt": "2026-10-22T01:36:48.000Z",
+                              "updatedAt": "2026-10-22T01:36:48.000Z",
+                              "uid": "35240-54687645-88a8-4d59-b2ac-6f8e30640178"
+                            }
+                          ],
+                          "createdAt": "2026-10-22T01:36:48.000Z",
+                          "updatedAt": "2026-10-22T01:36:48.000Z",
+                          "uid": "35240-80ed297e-843b-4c38-8676-6d8d63a1d170"
+                        }
+                      ],
+                      "id": "2e11cd8a-6e3e-4591-a990-c315e7174e49",
+                      "createdAt": "2026-10-22T01:36:48.000Z",
+                      "updatedAt": "2026-10-22T01:36:48.000Z",
+                      "uid": "35240-2e11cd8a-6e3e-4591-a990-c315e7174e49"
+                    }
+                  ],
+                  "id": "f6ea5123-05b7-488b-92ec-6ad42c09026d",
+                  "createdAt": "2026-10-22T01:36:48.000Z",
+                  "updatedAt": "2026-10-22T01:36:48.000Z",
+                  "uid": "35240-f6ea5123-05b7-488b-92ec-6ad42c09026d"
                 }
               ],
-              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\",\n    \"docs\": \"string\",\n    \"field_errors\": {\n      \"key_0\": \"string\",\n      \"key_1\": \"string\",\n      \"key_2\": \"string\"\n    },\n    \"warnings\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
-              "cookie": [],
-              "_postman_previewlanguage": "json"
-            },
-            {
-              "id": "2a195d1f-411e-4f97-99fb-9b82dc53ae8a",
-              "name": "`unauthorized` — the platform access token is missing or expired. Exchange your client credentials for a fresh one.",
-              "originalRequest": {
-                "url": {
-                  "path": [
-                    "api",
-                    "v2",
-                    "connect",
-                    "start"
-                  ],
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "query": [],
-                  "variable": []
-                },
-                "header": [
-                  {
-                    "description": {
-                      "content": "Added as a part of security scheme: bearer",
-                      "type": "text/plain"
-                    },
-                    "key": "Authorization",
-                    "value": "Bearer <token>"
-                  },
-                  {
-                    "key": "Accept",
-                    "value": "application/json"
-                  }
-                ],
-                "method": "POST",
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"email\": \"user@example.com\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                }
-              },
-              "status": "Unauthorized",
-              "code": 401,
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\",\n    \"docs\": \"string\",\n    \"field_errors\": {\n      \"key_0\": \"string\",\n      \"key_1\": \"string\",\n      \"key_2\": \"string\"\n    },\n    \"warnings\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
-              "cookie": [],
-              "_postman_previewlanguage": "json"
-            },
-            {
-              "id": "014ff983-6544-4a3c-b1b9-e0652669b2a9",
-              "name": "`auth_provider_error` — the code couldn't be sent. Try again.",
-              "originalRequest": {
-                "url": {
-                  "path": [
-                    "api",
-                    "v2",
-                    "connect",
-                    "start"
-                  ],
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "query": [],
-                  "variable": []
-                },
-                "header": [
-                  {
-                    "description": {
-                      "content": "Added as a part of security scheme: bearer",
-                      "type": "text/plain"
-                    },
-                    "key": "Authorization",
-                    "value": "Bearer <token>"
-                  },
-                  {
-                    "key": "Accept",
-                    "value": "application/json"
-                  }
-                ],
-                "method": "POST",
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"email\": \"user@example.com\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                }
-              },
-              "status": "Bad Gateway",
-              "code": 502,
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\",\n    \"docs\": \"string\",\n    \"field_errors\": {\n      \"key_0\": \"string\",\n      \"key_1\": \"string\",\n      \"key_2\": \"string\"\n    },\n    \"warnings\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
-              "cookie": [],
-              "_postman_previewlanguage": "json"
-            },
-            {
-              "id": "422e31fd-bacc-499d-9c7e-1916ffb7bea7",
-              "name": "`auth_unavailable` — authentication is temporarily unavailable. Retry shortly.",
-              "originalRequest": {
-                "url": {
-                  "path": [
-                    "api",
-                    "v2",
-                    "connect",
-                    "start"
-                  ],
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "query": [],
-                  "variable": []
-                },
-                "header": [
-                  {
-                    "description": {
-                      "content": "Added as a part of security scheme: bearer",
-                      "type": "text/plain"
-                    },
-                    "key": "Authorization",
-                    "value": "Bearer <token>"
-                  },
-                  {
-                    "key": "Accept",
-                    "value": "application/json"
-                  }
-                ],
-                "method": "POST",
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"email\": \"user@example.com\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                }
-              },
-              "status": "Service Unavailable",
-              "code": 503,
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\",\n    \"docs\": \"string\",\n    \"field_errors\": {\n      \"key_0\": \"string\",\n      \"key_1\": \"string\",\n      \"key_2\": \"string\"\n    },\n    \"warnings\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
-              "cookie": [],
-              "_postman_previewlanguage": "json"
+              "id": "f32b9163-86ac-4e85-a30f-b17a6b83c6d2",
+              "createdAt": "2026-10-22T01:36:48.000Z",
+              "updatedAt": "2026-10-22T01:36:48.000Z",
+              "uid": "35240-f32b9163-86ac-4e85-a30f-b17a6b83c6d2"
             }
           ],
-          "event": [],
-          "protocolProfileBehavior": {
-            "disableBodyPruning": true
-          }
-        },
-        {
-          "id": "fe097164-0bf7-4676-ac30-d9e1fd2c67cd",
-          "name": "Verify the code",
-          "request": {
-            "name": "Verify the code",
-            "description": {
-              "content": "Checks the code the user entered and, on success, connects the user and returns the token pair to store. Completing the code **is** the authorization — there is no separate approval screen.\n\nThe returned `access_token` is the **user's connection token**: it acts on behalf of this user (send it as the bearer token to the MCP server to create cards, check balances, and shop as them). It is not the platform token — the endpoints in this reference keep using your platform access token and name the user with `user_id`.\n\nA code can be verified once: a second verify of the same attempt returns `invalid_connect_attempt`.\n\nIn **sandbox** the code is always `111111`.",
-              "type": "text/plain"
-            },
-            "url": {
-              "path": [
-                "api",
-                "v2",
-                "connect",
-                "verify"
-              ],
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "query": [],
-              "variable": []
-            },
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "method": "POST",
-            "auth": null,
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"connect_id\": \"<string>\",\n  \"code\": \"<string>\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          },
-          "response": [
-            {
-              "id": "0bdcaef7-38ad-456b-842d-414697e6d19f",
-              "name": "The connection. Store the token pair and `user.id` — every KYC call names the user by it.",
-              "originalRequest": {
-                "url": {
-                  "path": [
-                    "api",
-                    "v2",
-                    "connect",
-                    "verify"
-                  ],
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "query": [],
-                  "variable": []
-                },
-                "header": [
-                  {
-                    "description": {
-                      "content": "Added as a part of security scheme: bearer",
-                      "type": "text/plain"
-                    },
-                    "key": "Authorization",
-                    "value": "Bearer <token>"
-                  },
-                  {
-                    "key": "Accept",
-                    "value": "application/json"
-                  }
-                ],
-                "method": "POST",
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"connect_id\": \"ca_9f8e7d6c\",\n  \"code\": \"111111\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                }
-              },
-              "status": "OK",
-              "code": 200,
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": "{\n  \"object\": \"connection\",\n  \"access_token\": \"act_1a2b3c…\",\n  \"refresh_token\": \"rct_4d5e6f…\",\n  \"token_type\": \"Bearer\",\n  \"expires_in\": 3600,\n  \"user\": {\n    \"id\": \"user_7g8h9i\",\n    \"email\": \"user@example.com\",\n    \"phone\": null\n  }\n}",
-              "cookie": [],
-              "_postman_previewlanguage": "json"
-            },
-            {
-              "id": "2032e2d3-078a-4601-b32c-278daffc2a17",
-              "name": "`invalid_request` — missing `connect_id` or `code`. `invalid_connect_attempt` — the attempt is unknown, already used, or expired. `client_credentials_required` — the token wasn't minted from client credentials.",
-              "originalRequest": {
-                "url": {
-                  "path": [
-                    "api",
-                    "v2",
-                    "connect",
-                    "verify"
-                  ],
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "query": [],
-                  "variable": []
-                },
-                "header": [
-                  {
-                    "description": {
-                      "content": "Added as a part of security scheme: bearer",
-                      "type": "text/plain"
-                    },
-                    "key": "Authorization",
-                    "value": "Bearer <token>"
-                  },
-                  {
-                    "key": "Accept",
-                    "value": "application/json"
-                  }
-                ],
-                "method": "POST",
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"connect_id\": \"ca_9f8e7d6c\",\n  \"code\": \"111111\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                }
-              },
-              "status": "Bad Request",
-              "code": 400,
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\",\n    \"docs\": \"string\",\n    \"field_errors\": {\n      \"key_0\": \"string\",\n      \"key_1\": \"string\",\n      \"key_2\": \"string\"\n    },\n    \"warnings\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
-              "cookie": [],
-              "_postman_previewlanguage": "json"
-            },
-            {
-              "id": "aae041f9-747a-4eac-82bd-3103376b7816",
-              "name": "`invalid_code` — that code is invalid or expired.",
-              "originalRequest": {
-                "url": {
-                  "path": [
-                    "api",
-                    "v2",
-                    "connect",
-                    "verify"
-                  ],
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "query": [],
-                  "variable": []
-                },
-                "header": [
-                  {
-                    "description": {
-                      "content": "Added as a part of security scheme: bearer",
-                      "type": "text/plain"
-                    },
-                    "key": "Authorization",
-                    "value": "Bearer <token>"
-                  },
-                  {
-                    "key": "Accept",
-                    "value": "application/json"
-                  }
-                ],
-                "method": "POST",
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"connect_id\": \"ca_9f8e7d6c\",\n  \"code\": \"111111\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                }
-              },
-              "status": "Unauthorized",
-              "code": 401,
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\",\n    \"docs\": \"string\",\n    \"field_errors\": {\n      \"key_0\": \"string\",\n      \"key_1\": \"string\",\n      \"key_2\": \"string\"\n    },\n    \"warnings\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
-              "cookie": [],
-              "_postman_previewlanguage": "json"
-            },
-            {
-              "id": "f3fc4af7-b995-4d65-9ecd-d9936fc15422",
-              "name": "`auth_provider_error` — verification failed downstream. Try again.",
-              "originalRequest": {
-                "url": {
-                  "path": [
-                    "api",
-                    "v2",
-                    "connect",
-                    "verify"
-                  ],
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "query": [],
-                  "variable": []
-                },
-                "header": [
-                  {
-                    "description": {
-                      "content": "Added as a part of security scheme: bearer",
-                      "type": "text/plain"
-                    },
-                    "key": "Authorization",
-                    "value": "Bearer <token>"
-                  },
-                  {
-                    "key": "Accept",
-                    "value": "application/json"
-                  }
-                ],
-                "method": "POST",
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"connect_id\": \"ca_9f8e7d6c\",\n  \"code\": \"111111\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                }
-              },
-              "status": "Bad Gateway",
-              "code": 502,
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\",\n    \"docs\": \"string\",\n    \"field_errors\": {\n      \"key_0\": \"string\",\n      \"key_1\": \"string\",\n      \"key_2\": \"string\"\n    },\n    \"warnings\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
-              "cookie": [],
-              "_postman_previewlanguage": "json"
-            }
-          ],
-          "event": [],
-          "protocolProfileBehavior": {
-            "disableBodyPruning": true
-          }
-        },
-        {
-          "id": "16ef1e38-d668-40ac-b068-ffaf476cb7c5",
-          "name": "Record consent",
-          "request": {
-            "name": "Record consent",
-            "description": {
-              "content": "Records that the user authorized your platform to act on their behalf. Safe to retry — it's idempotent per user, so a repeat call updates the same record instead of creating a duplicate.",
-              "type": "text/plain"
-            },
-            "url": {
-              "path": [
-                "api",
-                "v2",
-                "connect",
-                "consent"
-              ],
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "query": [],
-              "variable": []
-            },
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "method": "POST",
-            "auth": null,
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"user_id\": \"<string>\",\n  \"terms_version\": \"<string>\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          },
-          "response": [
-            {
-              "id": "f7245a26-af92-4973-a2ad-750dd664b1ea",
-              "name": "The consent record.",
-              "originalRequest": {
-                "url": {
-                  "path": [
-                    "api",
-                    "v2",
-                    "connect",
-                    "consent"
-                  ],
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "query": [],
-                  "variable": []
-                },
-                "header": [
-                  {
-                    "description": {
-                      "content": "Added as a part of security scheme: bearer",
-                      "type": "text/plain"
-                    },
-                    "key": "Authorization",
-                    "value": "Bearer <token>"
-                  },
-                  {
-                    "key": "Accept",
-                    "value": "application/json"
-                  }
-                ],
-                "method": "POST",
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"user_id\": \"user_7g8h9i\",\n  \"terms_version\": \"2026-07-01\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                }
-              },
-              "status": "Created",
-              "code": 201,
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": "{\n  \"object\": \"consent\",\n  \"id\": \"cns_1a2b3c\",\n  \"user_id\": \"user_7g8h9i\",\n  \"terms_version\": \"2026-07-01\",\n  \"created_at\": \"2026-07-12T20:30:00.000Z\"\n}",
-              "cookie": [],
-              "_postman_previewlanguage": "json"
-            },
-            {
-              "id": "73521919-f2e7-4235-b84d-18494e0c756a",
-              "name": "`invalid_request` — missing `user_id`. `client_credentials_required` — the token wasn't minted from client credentials.",
-              "originalRequest": {
-                "url": {
-                  "path": [
-                    "api",
-                    "v2",
-                    "connect",
-                    "consent"
-                  ],
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "query": [],
-                  "variable": []
-                },
-                "header": [
-                  {
-                    "description": {
-                      "content": "Added as a part of security scheme: bearer",
-                      "type": "text/plain"
-                    },
-                    "key": "Authorization",
-                    "value": "Bearer <token>"
-                  },
-                  {
-                    "key": "Accept",
-                    "value": "application/json"
-                  }
-                ],
-                "method": "POST",
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"user_id\": \"user_7g8h9i\",\n  \"terms_version\": \"2026-07-01\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                }
-              },
-              "status": "Bad Request",
-              "code": 400,
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\",\n    \"docs\": \"string\",\n    \"field_errors\": {\n      \"key_0\": \"string\",\n      \"key_1\": \"string\",\n      \"key_2\": \"string\"\n    },\n    \"warnings\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
-              "cookie": [],
-              "_postman_previewlanguage": "json"
-            },
-            {
-              "id": "3ab18e8f-1f81-41c0-8ec0-c49ee678c909",
-              "name": "`unauthorized` — the platform access token is missing or expired. Exchange your client credentials for a fresh one.",
-              "originalRequest": {
-                "url": {
-                  "path": [
-                    "api",
-                    "v2",
-                    "connect",
-                    "consent"
-                  ],
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "query": [],
-                  "variable": []
-                },
-                "header": [
-                  {
-                    "description": {
-                      "content": "Added as a part of security scheme: bearer",
-                      "type": "text/plain"
-                    },
-                    "key": "Authorization",
-                    "value": "Bearer <token>"
-                  },
-                  {
-                    "key": "Accept",
-                    "value": "application/json"
-                  }
-                ],
-                "method": "POST",
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"user_id\": \"user_7g8h9i\",\n  \"terms_version\": \"2026-07-01\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                }
-              },
-              "status": "Unauthorized",
-              "code": 401,
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\",\n    \"docs\": \"string\",\n    \"field_errors\": {\n      \"key_0\": \"string\"\n    },\n    \"warnings\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
-              "cookie": [],
-              "_postman_previewlanguage": "json"
-            },
-            {
-              "id": "93f75be1-0366-4c6c-8216-81c40c53585a",
-              "name": "`connection_not_found` — no connection exists for that user under your client.",
-              "originalRequest": {
-                "url": {
-                  "path": [
-                    "api",
-                    "v2",
-                    "connect",
-                    "consent"
-                  ],
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "query": [],
-                  "variable": []
-                },
-                "header": [
-                  {
-                    "description": {
-                      "content": "Added as a part of security scheme: bearer",
-                      "type": "text/plain"
-                    },
-                    "key": "Authorization",
-                    "value": "Bearer <token>"
-                  },
-                  {
-                    "key": "Accept",
-                    "value": "application/json"
-                  }
-                ],
-                "method": "POST",
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"user_id\": \"user_7g8h9i\",\n  \"terms_version\": \"2026-07-01\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                }
-              },
-              "status": "Not Found",
-              "code": 404,
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\",\n    \"docs\": \"string\",\n    \"field_errors\": {\n      \"key_0\": \"string\",\n      \"key_1\": \"string\",\n      \"key_2\": \"string\"\n    },\n    \"warnings\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
-              "cookie": [],
-              "_postman_previewlanguage": "json"
-            }
-          ],
-          "event": [],
-          "protocolProfileBehavior": {
-            "disableBodyPruning": true
-          }
-        },
-        {
-          "id": "93634c42-6623-4af0-876a-48253f34d263",
-          "name": "Refresh the connection",
-          "request": {
-            "name": "Refresh the connection",
-            "description": {
-              "content": "Connection access tokens expire after one hour. Exchange the refresh token for a new pair before then.\n\nEach refresh returns a **new** refresh token and invalidates the old one — replace the stored token every time.",
-              "type": "text/plain"
-            },
-            "url": {
-              "path": [
-                "api",
-                "v2",
-                "connect",
-                "refresh"
-              ],
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "query": [],
-              "variable": []
-            },
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "method": "POST",
-            "auth": null,
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"refresh_token\": \"<string>\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          },
-          "response": [
-            {
-              "id": "e1bd2706-f2f6-4c39-849d-0d012b0ed2d6",
-              "name": "The new token pair.",
-              "originalRequest": {
-                "url": {
-                  "path": [
-                    "api",
-                    "v2",
-                    "connect",
-                    "refresh"
-                  ],
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "query": [],
-                  "variable": []
-                },
-                "header": [
-                  {
-                    "description": {
-                      "content": "Added as a part of security scheme: bearer",
-                      "type": "text/plain"
-                    },
-                    "key": "Authorization",
-                    "value": "Bearer <token>"
-                  },
-                  {
-                    "key": "Accept",
-                    "value": "application/json"
-                  }
-                ],
-                "method": "POST",
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"refresh_token\": \"rct_4d5e6f…\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                }
-              },
-              "status": "OK",
-              "code": 200,
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": "{\n  \"object\": \"connection\",\n  \"access_token\": \"act_9z8y7x…\",\n  \"refresh_token\": \"rct_6w5v4u…\",\n  \"token_type\": \"Bearer\",\n  \"expires_in\": 3600\n}",
-              "cookie": [],
-              "_postman_previewlanguage": "json"
-            },
-            {
-              "id": "90e4419b-8aaf-4a28-9874-5a5e8df7af6e",
-              "name": "`invalid_request` — missing `refresh_token`. `client_credentials_required` — the token wasn't minted from client credentials.",
-              "originalRequest": {
-                "url": {
-                  "path": [
-                    "api",
-                    "v2",
-                    "connect",
-                    "refresh"
-                  ],
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "query": [],
-                  "variable": []
-                },
-                "header": [
-                  {
-                    "description": {
-                      "content": "Added as a part of security scheme: bearer",
-                      "type": "text/plain"
-                    },
-                    "key": "Authorization",
-                    "value": "Bearer <token>"
-                  },
-                  {
-                    "key": "Accept",
-                    "value": "application/json"
-                  }
-                ],
-                "method": "POST",
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"refresh_token\": \"rct_4d5e6f…\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                }
-              },
-              "status": "Bad Request",
-              "code": 400,
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\",\n    \"docs\": \"string\",\n    \"field_errors\": {\n      \"key_0\": \"string\",\n      \"key_1\": \"string\",\n      \"key_2\": \"string\"\n    },\n    \"warnings\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
-              "cookie": [],
-              "_postman_previewlanguage": "json"
-            },
-            {
-              "id": "adf0945d-6f0e-46ae-ac51-3cf49d4876c4",
-              "name": "`invalid_refresh_token` — that refresh token is invalid or expired.",
-              "originalRequest": {
-                "url": {
-                  "path": [
-                    "api",
-                    "v2",
-                    "connect",
-                    "refresh"
-                  ],
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "query": [],
-                  "variable": []
-                },
-                "header": [
-                  {
-                    "description": {
-                      "content": "Added as a part of security scheme: bearer",
-                      "type": "text/plain"
-                    },
-                    "key": "Authorization",
-                    "value": "Bearer <token>"
-                  },
-                  {
-                    "key": "Accept",
-                    "value": "application/json"
-                  }
-                ],
-                "method": "POST",
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"refresh_token\": \"rct_4d5e6f…\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                }
-              },
-              "status": "Unauthorized",
-              "code": 401,
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\",\n    \"docs\": \"string\",\n    \"field_errors\": {\n      \"key_0\": \"string\",\n      \"key_1\": \"string\",\n      \"key_2\": \"string\"\n    },\n    \"warnings\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
-              "cookie": [],
-              "_postman_previewlanguage": "json"
-            }
-          ],
-          "event": [],
-          "protocolProfileBehavior": {
-            "disableBodyPruning": true
-          }
+          "id": "d5ca6b8d-dfbc-446e-935a-4ec8d73c3e70",
+          "createdAt": "2026-10-22T01:36:48.000Z",
+          "updatedAt": "2026-10-22T01:36:48.000Z",
+          "uid": "35240-d5ca6b8d-dfbc-446e-935a-4ec8d73c3e70"
         }
       ],
-      "event": []
-    }
-  ],
-  "event": [],
-  "variable": [
-    {
-      "type": "string",
-      "value": "https://api.agentcard.sh",
-      "key": "baseUrl"
+      "id": "d269aec8-77d6-430d-8698-b18f8da1335a",
+      "createdAt": "2026-10-22T01:36:48.000Z",
+      "updatedAt": "2026-10-22T01:36:48.000Z",
+      "uid": "35240-d269aec8-77d6-430d-8698-b18f8da1335a"
     }
   ],
   "auth": {
@@ -1093,17 +1489,15 @@
     "bearer": [
       {
         "key": "token",
-        "value": "{{bearerToken}}"
+        "value": "{{bearerToken}}",
+        "type": "string"
       }
     ]
   },
-  "info": {
-    "_postman_id": "4aa97f04-43a3-416d-8c6a-d47f1aa69037",
-    "name": "Agentcard Authentication Connect API",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": {
-      "content": "The Agentcard v2 API — connect your users and verify their identity from your own backend. Every call is authenticated with a platform access token minted from your `client_id` + `client_secret`.",
-      "type": "text/plain"
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.agentcard.sh"
     }
-  }
+  ]
 }
