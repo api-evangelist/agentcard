@@ -64,6 +64,149 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Agentcard is a company surfaced as a portfolio company of y-combinator and added to the API Evangelist network as a stub for enrichment. This profile is a lead awaiting the enrichment pipeline.
+Agentcard is a Y Combinator (Summer 2026) startup building card-issuing payments infrastructure for AI agents. It issues virtual Visa cards that are funded with a fixed USD amount and close after their first charge, giving agents scoped, single-use spending power with hard budget limits and no overdraft risk. Access is available three ways over one host: a REST v2 API, a hosted Model Context Protocol (MCP) server, and first-party CLIs. There are two products: Personal (an individual gives their own agent a card, funded via Apple Pay / Google Pay) and Companies ("Connect with Agentcard" — a platform issues cards to many users through OAuth 2.1 + PKCE). The platform covers user connect, identity verification (KYC), wallet funding, withdrawals, virtual card creation, transactions, and merchant shopping (buy) with HMAC-signed webhooks and a sandbox mode split from live by credential.
 
-Backed by: y-combinator
+**Areas:** Company · Payments · Virtual Cards · Card Issuing · AI Agents · Agentic Commerce · MCP · Fintech · Wallets · Visa · A2A
+
+## Agentcard on APIs.io
+
+Everything profiled for Agentcard is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/agentcard/](https://apis.io/providers/agentcard/)** — or go straight to one of the APIs or properties below.
+
+### APIs (5)
+
+- [Agentcard Authentication API](https://apis.io/apis/agentcard/agentcard-authentication-api/) — Exchange your client credentials for a platform access token, and introspect what a token acts as.
+- [Agentcard Connect API](https://apis.io/apis/agentcard/agentcard-connect-api/) — Connect a user to your platform: send a one-time code, verify it, record consent, and keep the connection alive.
+- [Agentcard Identity verification API](https://apis.io/apis/agentcard/agentcard-identity-verification-api/) — Verify a connected user's identity: upload their ID, submit any extra fields we ask for, then show a short face scan.
+- [Agentcard Wallet funding API](https://apis.io/apis/agentcard/agentcard-wallet-funding-api/) — Fund a connected user's wallet from your own UI — request a payment link, relay the phone verification code, and poll until the funds land.
+- [Agentcard Withdrawals API](https://apis.io/apis/agentcard/agentcard-withdrawals-api/) — Move money out of a connected user's wallet — to a saved bank account or a crypto address on Base. Transfers are processed manually by the Agentcard team,…
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### Arazzo workflows (2)
+
+Multi-step workflows that chain operations into a business task.
+
+- [Agentcard — connect a user and verify identity](https://apis.io/arazzos/agentcard/agentcard-connect-and-verify.arazzo/)
+- [Agentcard — verify phone and fund wallet](https://apis.io/arazzos/agentcard/agentcard-fund-wallet.arazzo/)
+
+#### AsyncAPI (2)
+
+Event-driven and webhook contracts.
+
+- [Agentcard Webhooks](https://apis.io/asyncapis/agentcard/agentcard-webhooks/)
+- [Agentcard Webhooks](https://apis.io/asyncapis/agentcard/agentcard-webhooks-asyncapi/)
+
+#### Event channels (1)
+
+Individual events and webhooks the provider emits.
+
+- [/webhooks/agentcard](https://apis.io/channels/agentcard/webhooks-agentcard/)
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [Agentcard](https://apis.io/servers/agentcard/agentcard/)
+
+#### Agentic access (1)
+
+Which operations an agent can call, which act, and which need a human in the loop.
+
+- [Agentcard Agentic Access](https://apis.io/agentic-access/agentcard/agentcard-agentic-access/)
+
+#### Collections (5)
+
+Postman and Open Collection request collections.
+
+- [Agentcard Authentication API](https://apis.io/collections/agentcard/open-agentcard-authentication-api/)
+- [Agentcard Authentication Connect API](https://apis.io/collections/agentcard/open-agentcard-connect-api/)
+- [Agentcard Authentication Identity verification API](https://apis.io/collections/agentcard/open-agentcard-identity-verification-api/)
+- [Agentcard Authentication Wallet funding API](https://apis.io/collections/agentcard/open-agentcard-wallet-funding-api/)
+- [Agentcard Authentication Withdrawals API](https://apis.io/collections/agentcard/open-agentcard-withdrawals-api/)
+
+#### Overlays (1)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Agentcard V2 Overlay](https://apis.io/overlays/agentcard/agentcard-v2-overlay/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Agentcard Authentication](https://apis.io/security/agentcard/agentcard-authentication/)
+- [Agentcard Domain Security](https://apis.io/security/agentcard/agentcard-domain-security/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://www.agentcard.sh)
+- [Documentation](https://docs.agentcard.sh)
+- [Getting started](https://docs.agentcard.sh/companies/getting-started/quickstart)
+- [API reference](https://docs.agentcard.sh/companies/api/reference)
+- [Pricing](https://docs.agentcard.sh/personal/plans)
+- [Sign up](https://app.agentcard.sh)
+- [Support](https://docs.agentcard.sh/personal/support)
+- [Blog](https://www.agentcard.sh/blog/)
+- [Terms of service](https://www.agentcard.sh/terms)
+- [Privacy policy](https://www.agentcard.sh/privacy)
+- [GitHub](https://github.com/agentcard)
+- [Status](https://agentcard.checkly-status-page.com)
+
+## API Evangelist rating
+
+**Kin Score 52.9** — developing · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 75.0 |
+| Contract quality | 58.8 |
+| Contract governance | 4.5 |
+| Operational transparency | 26.3 |
+| Developer ergonomics | 90.5 |
+| Access clarity | 44.7 |
+
+**Agent readiness 72.2** — agent-native
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | — |
+| MCP Server | verified |
+| Auth Clarity | served (partial credit) |
+| Idempotency | verified |
+| Error Semantics | verified |
+| OpenAPI Examples | verified |
+| Rate Limit Signal | — |
+| Event Surface Described | yes |
+| Agent Skills | yes |
+| Well Known Catalog | yes |
+| Consent Identity | — |
+| Agent Card | flavored (partial credit) |
+| Dry Run Mode | — |
+| Delegated Identity | served (partial credit) |
+| Protected Resource Metadata | verified |
+| Dynamic Client Registration | yes |
+| Agentic Commerce | — |
+| Pagination Ratio | na |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 22.3** — Payments
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/agentcard/](https://apis.io/providers/agentcard/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Agentcard: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/agentcard/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
